@@ -1,0 +1,9 @@
+package jeu;
+
+/**
+ *	
+ */
+
+class Pion{
+	
+}
