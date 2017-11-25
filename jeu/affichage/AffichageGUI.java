@@ -4,6 +4,6 @@ package jeu.affichage;
  *	L'affichage graphique	
  */
 
-class AffichageGUI implements Affichage{
+public class AffichageGUI /*implements Affichage*/{
 	
 }

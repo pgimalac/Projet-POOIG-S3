@@ -4,6 +4,6 @@ package jeu;
  *	
  */
 
-class Joueur{
+public class Joueur{
 	
 }

@@ -17,9 +17,14 @@ public class Case{
 		suivante=s;
 	}
 
-	Case next(){ return suivante; }
-	Case previous(){ return precedente; }
+	public Case(int i){ this(i,null,null); }
 
-	boolean peutBouger(){ return false; }
+	public Case getNext(){ return suivante; }
+	public Case getPrevious(){ return precedente; }
+	public void setNext(Case c){ suivante=c; }
+	public void setPrevious(Case c){ precedente=c; }
+
+	public boolean peutBouger(){ return false; }
+	public int getDestination(){ return numero; }
 	
 }

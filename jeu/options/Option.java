@@ -4,6 +4,6 @@ package jeu.options;
  *
  */
 
-abstract class Option{
+public interface Option{
 
 }

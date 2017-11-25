@@ -7,16 +7,30 @@ package jeu.options;
 		
 import java.util.LinkedList;
 
-class ListeDOptions{
+public final class ListeDOptions{
 
+	public static final ListeDOptions OIE;
+	public static final ListeDOptions NUMERI;
+	
+	static {
+		OIE=new ListeDOptions();
+
+		NUMERI=new ListeDOptions();
+	}
+	
 	private LinkedList<Option> options;
 
-	ListeDOptions(){ options=new LinkedList<Option>(); } 
+	public ListeDOptions(){ options=new LinkedList<Option>(); } 
 
-	void add(Option o){
+	public void add(Option o){
 		for (Option e : options){
-
+			if (o.getClass().equals(e.getClass())) {
+				options.remove(e);
+				options.add(o);
+				return;
+			}
 		}
+		options.add(o);
 	}
 
 	void remove(Option o){
@@ -27,4 +41,6 @@ class ListeDOptions{
 		return null;
 	}
 
+	
+	
 }

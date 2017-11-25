@@ -4,6 +4,6 @@ package jeu;
  *	
  */
 
-class Pion{
+public class Pion{
 	
 }
