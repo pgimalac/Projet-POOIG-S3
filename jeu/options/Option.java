@@ -1,9 +1,9 @@
-package jeu.option;
+package jeu.options;
 
 /**
  *
  */
 
 abstract class Option{
-	
+
 }

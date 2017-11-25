@@ -5,7 +5,7 @@ package jeu.plateau;
  *
  */
 
-import cases.*;
+import jeu.plateau.cases.*;
 import java.util.LinkedList;
 import java.io.Serializable;
 

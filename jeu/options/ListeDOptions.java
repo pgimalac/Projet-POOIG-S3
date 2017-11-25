@@ -5,6 +5,7 @@ package jeu.options;
  *	
  */
 		
+import java.util.LinkedList;
 
 class ListeDOptions{
 
