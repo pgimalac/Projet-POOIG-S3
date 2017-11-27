@@ -7,7 +7,6 @@ package jeu;
 
 import jeu.plateau.Plateau;
 import jeu.affichage.*;
-import jeu.options.*;
 
 import java.util.LinkedList;
 
@@ -20,12 +19,10 @@ public class Jeu implements Serializable {
 	
 	private LinkedList<Joueur> joueurs;
 	private Plateau plateau;
-	private ListeDOptions options;
 	private Affichage affichage;
 
-	public Jeu(Plateau p, ListeDOptions o){
+	public Jeu(Plateau p){
 		plateau=p;
-		options=o;
 	}
 	
 	public void jouer() {

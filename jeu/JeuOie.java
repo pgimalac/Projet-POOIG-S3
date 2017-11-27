@@ -5,7 +5,6 @@ package jeu;
  */
 
 import jeu.plateau.Plateau;
-import jeu.options.ListeDOptions;
 
 public class JeuOie extends Jeu{
 

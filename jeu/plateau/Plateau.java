@@ -1,13 +1,13 @@
 package jeu.plateau;
 
+import jeu.plateau.cases.*;
+import java.util.ArrayList;
+import java.io.Serializable;
+
 /**
  *
  *
  */
-
-import jeu.plateau.cases.*;
-import java.util.ArrayList;
-import java.io.Serializable;
 
 public class Plateau implements Serializable{
 
@@ -15,39 +15,51 @@ public class Plateau implements Serializable{
 
 	private ArrayList<Case> cases;
 
-	public final static Plateau OIE;
-	public final static Plateau NUMERI;
-
-	static{
-		OIE=new Plateau();
+	public static final Plateau setDefaultOie(Plateau p) {
+		p=new Plateau();
 		for (int i=0;i<63;i++){
-			if (i==0) OIE.add(new CaseDepart(i+1)); 
-			else if (i==62) OIE.add(new CaseGagnante(i+1));
-			else if (i==18) OIE.add(new CaseHotel(i+1));
-			else if (i==30) OIE.add(new CasePuit(i+1));
-			else if (i==41) OIE.add(new CaseLabyrinthe(i+1,30));
-			else if (i==51) OIE.add(new CasePrison(i+1));
-			else if (i==57) OIE.add(new CaseMort(i+1));
-			else if ((i+1)%9==0) OIE.add(new CaseOie(i+1));
-			else OIE.add(new Case(i+1));
+			if (i==0) p.add(new CaseDepart(i+1)); 
+			else if (i==62) p.add(new CaseGagnante(i+1));
+			else if (i==18) p.add(new CaseHotel(i+1));
+			else if (i==30) p.add(new CasePuit(i+1));
+			else if (i==41) p.add(new CaseLabyrinthe(i+1,30));
+			else if (i==51) p.add(new CasePrison(i+1));
+			else if (i==57) p.add(new CaseMort(i+1));
+			else if ((i+1)%9==0) p.add(new CaseOie(i+1));
+			else p.add(new Case(i+1));
 		}
-
-		NUMERI=new Plateau();
+		return p;
+	}
+	public static final Plateau setDefaultNumeri(Plateau p) {
+		p=new Plateau();
 		int[] t= {-3,-3,-3,-2,-2,-1,-1,0,0,1,0,0,0,2,0,3,0,4,0,5,6,0,0,7,0,0,8,0,9,10,0,11,12,0,13,15,0,20,25,30};
 		for (int i=0;i<t.length;i++) {
-			if (t[i]==0) NUMERI.add(new Case(i+1));
-			else NUMERI.add(new CaseScore(i+1,t[i]));
+			if (t[i]==0) p.add(new Case(i+1));
+			else p.add(new CaseScore(i+1,t[i]));
 		}
+		return p;
 	}
-
+	public final Plateau setDefaultOie() {
+		return setDefaultOie(this);
+	}
+	public final Plateau setDefaultNumeri() {
+		return setDefaultNumeri(this);
+	}
+	
 	public Plateau(){ cases=new ArrayList<Case>(); }
 	public Plateau(ArrayList<Case> c){ cases=c; }
 
-	public void remove(Case c){}
-	public void remove(int i){}
-	public void add(Case c){}
-	public void inserer(int i, Case c){
-
+	private void remove(Case c){
+		cases.remove(c);
+	}
+	private void remove(int i){
+		cases.remove(i);
+	}
+	private void add(Case c){
+		cases.add(c);
+	}
+	private void inserer(int i, Case c){
+		cases.add(i,c);
 	}
 
 
