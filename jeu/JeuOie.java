@@ -12,7 +12,7 @@ public class JeuOie extends Jeu{
 	private static final long serialVersionUID = -6311358070333990328L;
 
 	public JeuOie(){
-		super(Plateau.OIE,ListeDOptions.OIE);
+		super(new Plateau().setDefaultOie());
 	}
 
 }
