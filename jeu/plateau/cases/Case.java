@@ -6,7 +6,7 @@ package jeu.plateau.cases;
 
 public class Case{
 
-	// pas final car un éventuel outil de création intéractive de plateau pourrait obliger à changer ce numéro au fur et à mesure de la création...
+	// pas final car un éventuel outil de création intéractif de plateau pourrait obliger à changer ce numéro au fur et à mesure de la création...
 	private int numero; 
 	private Case suivante;
 	private Case precedente;

@@ -13,4 +13,6 @@ public class CaseScore extends Case {
 		this(i,null,null,s);
 	}
 
+	public int getScore(){return score;}
+
 }
