@@ -5,18 +5,15 @@ public class CaseScore extends Case {
 	/**
 	 * 
 	 */
+
 	private static final long serialVersionUID = -1992087893710853030L;
 	private int score;
 	
-	public CaseScore(int i, Case p, Case s, int sc) {
-		super(i, p, s);
-		score=sc;
-	}
+	public CaseScore(int sc){super();score=sc;}
 
-	public CaseScore(int i, int s) {
-		this(i,null,null,s);
-	}
+	public CaseScore(){super();score=0;}
 
 	public int getScore(){return score;}
+
 
 }

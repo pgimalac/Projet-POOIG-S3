@@ -10,8 +10,13 @@ public class CasePont extends Case{
 	 * 
 	 */
 	private static final long serialVersionUID = 9079542156062507379L;
-	public CasePont(int i, Case p, Case s){ super(i,p,s); }
-	public CasePont(int i){ this(i,null,null); }
+	
+
+	private int destination;
+
+	public CasePont(){super();destination=12;}
+
+	public CasePont(int d){super();destination=d;}
 
 
 }
