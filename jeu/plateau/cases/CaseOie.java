@@ -10,14 +10,12 @@ public class CaseOie extends Case{
 	 * 
 	 */
 	private static final long serialVersionUID = 5595502758871248475L;
-	private int coefficient;
+	
+	public CaseOie(){ super();}
 
-	public CaseOie(int i, Case p, Case s){ super(i,p,s); }
-	public CaseOie(int i){ this(i,null,null); }
+	public void arriveSurCase(int i){
 
-	public int getCoefficient(){ return coefficient; }
-	public void setCoefficient(int i){ coefficient=i; }
-
+	}
 
 
 }

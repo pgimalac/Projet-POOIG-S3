@@ -21,26 +21,18 @@ public class Case implements Serializable{
 	/**
 	 * 
 	 */
-	private int numero; 
-	private Case suivante;
-	
-	
-	private Case precedente;
 
-	public Case(int i, Case p, Case s){
-		numero=i;
-		precedente=p;
-		suivante=s;
+	protected int[] joueurs;
+
+	public Case(){ joueurs=null;}
+
+	public void setJ(int n){joueurs= new int[n];}
+
+	public boolean peutJouer(int i){
+		if(i>=joueurs.length || i<0) return false 
+		else return true; 
 	}
 
-	public Case(int i){ this(i,null,null); }
-
-	public Case getNext(){ return suivante; }
-	public Case getPrevious(){ return precedente; }
-	public void setNext(Case c){ suivante=c; }
-	public void setPrevious(Case c){ precedente=c; }
-
-	public boolean peutBouger(){ return false; }
-	public int getDestination(){ return numero; }
+	public void arriveSurCase(int i){}
 	
 }
