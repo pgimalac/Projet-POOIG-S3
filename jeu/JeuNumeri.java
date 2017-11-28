@@ -13,4 +13,8 @@ public class JeuNumeri extends Jeu{
 	public JeuNumeri(){
 		super(new Plateau().setDefaultNumeri());
 	}
+
+	public void faireJouerLeJoueur(Joueur joueur){
+		
+	}
 }

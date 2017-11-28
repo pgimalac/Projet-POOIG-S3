@@ -14,4 +14,8 @@ public class JeuOie extends Jeu{
 		super(new Plateau().setDefaultOie());
 	}
 
+	public void faireJouerLeJoueur(Joueur joueur){
+		
+	}
+
 }

@@ -1,8 +1,3 @@
-/**
- *
- *
- */
-
 import jeu.*;
 import jeu.affichage.*;
 
