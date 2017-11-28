@@ -1,8 +1,8 @@
-/**
-	
-*/
-
 package jeu.plateau.cases;
+
+/**
+*
+*/
 
 public class CasePuit extends Case{
 
