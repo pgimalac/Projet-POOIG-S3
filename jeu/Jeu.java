@@ -9,6 +9,7 @@ import jeu.plateau.Plateau;
 import jeu.affichage.*;
 
 import java.util.LinkedList;
+import java.util.Random;
 
 import java.io.Serializable;
 
@@ -16,6 +17,7 @@ import java.io.Serializable;
 public abstract class Jeu implements Serializable {
 
 	private static final long serialVersionUID = 3350919143027733149L;
+	private static final Random des=new Random();
 
 	private boolean fini;
 	private int numeroDuTour;
@@ -29,6 +31,7 @@ public abstract class Jeu implements Serializable {
 		fini=false;
 		plateau=p;
 	}
+
 
 	public boolean estFini(){ return fini; }
 	public int getNumeroDuTour(){ return numeroDuTour; }
@@ -45,6 +48,7 @@ public abstract class Jeu implements Serializable {
 		}
 	}
 
+	public int getDes(){ return des.nextInt(6)+1; }
 	public abstract void faireJouerLeJoueur(Joueur joueur);
 	public boolean peutJouer(int numeroDuJoueur){
 		return true;

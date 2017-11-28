@@ -15,7 +15,12 @@ public class JeuOie extends Jeu{
 	}
 
 	public void faireJouerLeJoueur(Joueur joueur){
-		
+		int nombreDes=getDes();
+		joueur.avancer(nombreDes);
+	}
+
+	private int getDes(){
+		return super.getDes()+super.getDes();
 	}
 
 }
