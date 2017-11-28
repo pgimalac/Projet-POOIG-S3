@@ -26,7 +26,6 @@ public class Jouer{
 		jeu.jouer();
 	}
 
-
 	public Jeu chargerLeJeu(String nom){
 		ObjectInputStream ois = null;
 		Jeu jeu=null;
