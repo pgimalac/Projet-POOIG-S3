@@ -6,7 +6,6 @@ package jeu;
  */
 
 import jeu.plateau.Plateau;
-import jeu.affichage.*;
 
 import java.util.LinkedList;
 import java.util.Random;
@@ -18,13 +17,13 @@ public abstract class Jeu implements Serializable {
 
 	private static final long serialVersionUID = 3350919143027733149L;
 	private static final Random des=new Random();
+	public static int getDes(){ return des.nextInt(6)+1; } // lancé d'un dé à 6 faces
 
 	private boolean fini;
 	private int numeroDuTour;
 	
-	private LinkedList<Joueur> joueurs;
+	private Joueur[] joueurs;
 	private Plateau plateau;
-	private Affichage affichage;
 
 	public Jeu(Plateau p){
 		numeroDuTour=0;
@@ -48,11 +47,10 @@ public abstract class Jeu implements Serializable {
 		}
 	}
 
-	public int getDes(){ return des.nextInt(6)+1; }
+	private Joueur getJoueur(int i){ return joueurs[i]; }
+
 	public abstract void faireJouerLeJoueur(Joueur joueur);
 	public boolean peutJouer(int numeroDuJoueur){
 		return true;
 	}
-
-		
 }

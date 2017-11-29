@@ -13,7 +13,10 @@ public class Plateau implements Serializable{
 
 	private static final long serialVersionUID = 2520277206423394352L;
 
-	private ArrayList<Case> cases;
+	private final Case[] cases;
+
+	private Plateau(int i){ cases=new Case[i]; }
+	public Plateau(Case[] c){ cases=c; }
 
 	public static final Plateau setDefaultOie(Plateau p) {
 		p=new Plateau();
@@ -39,28 +42,8 @@ public class Plateau implements Serializable{
 		}
 		return p;
 	}
-	public final Plateau setDefaultOie() {
-		return setDefaultOie(this);
-	}
-	public final Plateau setDefaultNumeri() {
-		return setDefaultNumeri(this);
-	}
+	public final Plateau setDefaultOie() { return setDefaultOie(this); }
+	public final Plateau setDefaultNumeri() { return setDefaultNumeri(this); }
 	
-	public Plateau(){ cases=new ArrayList<Case>(); }
-	public Plateau(ArrayList<Case> c){ cases=c; }
-
-	private void remove(Case c){
-		cases.remove(c);
-	}
-	private void remove(int i){
-		cases.remove(i);
-	}
-	private void add(Case c){
-		cases.add(c);
-	}
-	private void inserer(int i, Case c){
-		cases.add(i,c);
-	}
-
-
+	private void add(Case c){ int i=0; while(cases[i]!=null) i++; cases[i]=c; }
 }
