@@ -18,6 +18,8 @@ public class Plateau implements Serializable{
 	private Plateau(int i){ cases=new Case[i]; }
 	public Plateau(Case[] c){ cases=c; }
 
+	public Case getCase(int i){ return cases[i]; }
+
 	public static final Plateau setDefaultOie(Plateau p) {
 		p=new Plateau();
 		for (int i=0;i<63;i++){
