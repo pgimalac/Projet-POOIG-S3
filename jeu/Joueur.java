@@ -1,6 +1,7 @@
 package jeu;
 
 import jeu.plateau.cases.Case;
+import jeu.JeuException;
 
 /**
  *	
@@ -12,16 +13,20 @@ public class Joueur{
 	private int score;
 
 	public Case getCase(){ return getCase(0); }
-	public Case getCase(int i){ return pions[0].getCase(); }
+	public Case getCase(int i){ return pions[i].getCase(); }
 
 	public void setCase(Case c){ setCase(0,c); }
 	public void setCase(int i, Case c){ pions[i].setCase(c); }
 
-	public Joueur(int i){
-		nom="Joueur "+i;
+	public Joueur(int numero){
+		nom="Joueur "+numero;
 		score=0;
 		pions=null;
 	}
+
+	public boolean estHumain(){ return true; }
+
+	public void setNom(String nom){ this.nom=nom; }
 
 	public void initialiserPionsJoueurs(int nbPionsParJoueur, Case c){
 		if (pions!=null) throw new PionsDejaInitialisesException(nom);
@@ -31,7 +36,7 @@ public class Joueur{
 		}
 	}
 
-	class PionsDejaInitialisesException extends RuntimeException{
+	class PionsDejaInitialisesException extends JeuException{
 		PionsDejaInitialisesException(String nom){ super("Les pions de "+nom+" ont déjà été initialisés !"); }
 	}
 
