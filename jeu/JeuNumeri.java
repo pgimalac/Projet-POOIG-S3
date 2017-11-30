@@ -12,6 +12,7 @@ public class JeuNumeri extends Jeu{
 
 	public JeuNumeri(){
 		super(new Plateau().setDefaultNumeri());
+		super.initialiserPionsJoueurs(6,null);
 	}
 
 	public void faireJouerLeJoueur(Joueur joueur){

@@ -12,6 +12,7 @@ public class JeuOie extends Jeu{
 
 	public JeuOie(){
 		super(new Plateau().setDefaultOie());
+		super.initialiserPionsJoueurs(1,getCase(0));
 	}
 
 	public void faireJouerLeJoueur(Joueur joueur){
