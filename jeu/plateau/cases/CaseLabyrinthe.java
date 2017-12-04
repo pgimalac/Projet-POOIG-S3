@@ -19,4 +19,6 @@ public class CaseLabyrinthe extends Case{
 
 	public int getDestination(){ return destination; }
 
+	public void arriveSurCase(int i){ System.out.println(i+" vous etes tombe sur la case Labyrinthe, vous etes redirige vers la case "+destination;)}
+
 }

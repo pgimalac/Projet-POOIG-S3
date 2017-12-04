@@ -10,7 +10,6 @@ public class CaseGagnante extends Case{
 	 * 
 	 */
 	private static final long serialVersionUID = -1652475914965460316L;
-	public CaseGagnante(int i, Case p, Case s){ super(i,p,s); }
-	public CaseGagnante(int i){ this(i,null,null); }
-	
+	public CaseGagnante(){super();}
+	public void arriveSurCase(int i){ System.out.println(i+" vous etes arrive sur la case gagnante BRAVO !");}
 }

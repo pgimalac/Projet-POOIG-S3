@@ -23,14 +23,15 @@ public class Plateau implements Serializable{
 	public static final Plateau setDefaultOie(Plateau p) {
 		p=new Plateau();
 		for (int i=0;i<63;i++){
-			if (i==0) p.add(new CaseDepart(i+1)); 
-			else if (i==62) p.add(new CaseGagnante(i+1));
-			else if (i==18) p.add(new CaseHotel(i+1));
-			else if (i==30) p.add(new CasePuit(i+1));
-			else if (i==41) p.add(new CaseLabyrinthe(i+1,30));
-			else if (i==51) p.add(new CasePrison(i+1));
-			else if (i==57) p.add(new CaseMort(i+1));
-			else if ((i+1)%9==0) p.add(new CaseOie(i+1));
+			if (i==0) p.add(new CaseDepart()); 
+			else if (i==6) p.add(new CasePont());
+			else if (i==62) p.add(new CaseGagnante());
+			else if (i==18) p.add(new CaseHotel());
+			else if (i==30) p.add(new CasePuit());
+			else if (i==41) p.add(new CaseLabyrinthe());
+			else if (i==51) p.add(new CasePrison());
+			else if (i==57) p.add(new CaseMort());
+			else if ((i+1)%9==0) p.add(new CaseOie());
 			else p.add(new Case(i+1));
 		}
 		return p;
@@ -39,8 +40,8 @@ public class Plateau implements Serializable{
 		p=new Plateau();
 		int[] t= {-3,-3,-3,-2,-2,-1,-1,0,0,1,0,0,0,2,0,3,0,4,0,5,6,0,0,7,0,0,8,0,9,10,0,11,12,0,13,15,0,20,25,30};
 		for (int i=0;i<t.length;i++) {
-			if (t[i]==0) p.add(new Case(i+1));
-			else p.add(new CaseScore(i+1,t[i]));
+			if (t[i]==0) p.add(new Case());
+			else p.add(new CaseScore(t[i]));
 		}
 		return p;
 	}
