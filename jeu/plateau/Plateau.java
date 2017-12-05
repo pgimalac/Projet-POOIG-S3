@@ -38,18 +38,11 @@ public class Plateau implements Serializable{
 	}
 	public final Plateau setDefaultNumeri() {
 		Cases[] c=new Cases[40];
-		int[] t= {-3,-3,-3,-2,-2,-1,-1,0,0,1,0,0,0,2,0,3,0,4,0,5,6,0,0,7,0,0,8,0,9,10,0,11,12,0,13,15,0,20,25,30};
+		int[] t={-3,-3,-3,-2,-2,-1,-1,0,0,1,0,0,0,2,0,3,0,4,0,5,6,0,0,7,0,0,8,0,9,10,0,11,12,0,13,15,0,20,25,30};
 		for (int i=0;i<40;i++){
-			if (t[i]==0) p[i]=new Case();
-			else p[i]=new CaseScore(t[i]);
+			if (t[i]==0) c[i]=new Case();
+			else c[i]=new CaseScore(t[i]);
 		}
 		return new Plateau(c);
-	}
-	
-	private boolean add(Case c){ 
-		int i=0; 
-		while(cases[i]!=null) i++; 
-		if (i<cases.length){ cases[i]=c; return true; }
-		return false;
 	}
 }
