@@ -16,37 +16,40 @@ public class Plateau implements Serializable{
 	private final Case[] cases;
 
 	private Plateau(int i){ cases=new Case[i]; }
-	public Plateau(Case[] c){ cases=c; }
+	private Plateau(Case[] c){ cases=c; }
 
 	public Case getCase(int i){ return cases[i]; }
 
-	public static final Plateau setDefaultOie(Plateau p) {
-		p=new Plateau();
+	public final Plateau setDefaultOie() {
+		Cases[] c=new Cases[63];
 		for (int i=0;i<63;i++){
-			if (i==0) p.add(new CaseDepart()); 
-			else if (i==6) p.add(new CasePont());
-			else if (i==62) p.add(new CaseGagnante());
-			else if (i==18) p.add(new CaseHotel());
-			else if (i==30) p.add(new CasePuit());
-			else if (i==41) p.add(new CaseLabyrinthe());
-			else if (i==51) p.add(new CasePrison());
-			else if (i==57) p.add(new CaseMort());
-			else if ((i+1)%9==0) p.add(new CaseOie());
-			else p.add(new Case(i+1));
+			if (i==0) c[i]=new CaseDepart();
+			else if (i==6) c[i]=new CasePont();
+			else if (i==62) c[i]=new CaseGagnante();
+			else if (i==18) c[i]=new CaseHotel();
+			else if (i==30) c[i]=new CasePuit();
+			else if (i==41) c[i]=new CaseLabyrinthe();
+			else if (i==51) c[i]=new CasePrison();
+			else if (i==57) c[i]=new CaseMort();
+			else if ((i+1)%9==0) c[i]=new CaseOie();
+			else c[i]=new Case(i+1);
 		}
-		return p;
+		return new Plateau(c);
 	}
-	public static final Plateau setDefaultNumeri(Plateau p) {
-		p=new Plateau();
+	public final Plateau setDefaultNumeri() {
+		Cases[] c=new Cases[40];
 		int[] t= {-3,-3,-3,-2,-2,-1,-1,0,0,1,0,0,0,2,0,3,0,4,0,5,6,0,0,7,0,0,8,0,9,10,0,11,12,0,13,15,0,20,25,30};
-		for (int i=0;i<t.length;i++) {
-			if (t[i]==0) p.add(new Case());
-			else p.add(new CaseScore(t[i]));
+		for (int i=0;i<40;i++){
+			if (t[i]==0) p[i]=new Case();
+			else p[i]=new CaseScore(t[i]);
 		}
-		return p;
+		return new Plateau(c);
 	}
-	public final Plateau setDefaultOie() { return setDefaultOie(this); }
-	public final Plateau setDefaultNumeri() { return setDefaultNumeri(this); }
 	
-	private void add(Case c){ int i=0; while(cases[i]!=null) i++; cases[i]=c; }
+	private boolean add(Case c){ 
+		int i=0; 
+		while(cases[i]!=null) i++; 
+		if (i<cases.length){ cases[i]=c; return true; }
+		return false;
+	}
 }
