@@ -67,27 +67,12 @@ public abstract class Jeu implements Serializable {
 		enTrainDeJouer=(enTrainDeJouer+1)%nombreDeJoueurs;
 		if (enTrainDeJouer==0) numeroDuTour++;
 
-		if (!joueurEnTrainDeJouer().peutJouer()) return joueurSuivant();
-		else return joueurEnTrainDeJouer();
+		if (joueurEnTrainDeJouer().peutJouer()) return joueurEnTrainDeJouer();
+		else return joueurSuivant();
 	}
 
-/*	
-	public void jouer() {
-		while (!this.estFini()){
-			numeroDuTour++;
-			int numeroDuJoueur=-1;
-			for (Joueur joueur : joueurs){
-				numeroDuJoueur++;
-				if (this.estFini()) break;
-				else if (peutJouer(numeroDuJoueur)) faireJouerLeJoueur(joueur);
-				if (aFini(joueur));
-			}
-		}
-	}
-*/
 	private Joueur getJoueur(int i){ return joueurs[i]; }
 
-	public abstract void faireJouerLeJoueur(Joueur joueur);
 	public boolean peutJouer(int numeroDuJoueur){
 		return true;
 	}
