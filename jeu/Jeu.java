@@ -28,14 +28,26 @@ public abstract class Jeu implements Serializable {
 	private int enTrainDeJouer;
 	private final Joueur[] joueurs;
 	private final Plateau plateau;
-	private final int[] classement;
+	private final ArrayList<Joueur> classement;
 	private final int nombreDeJoueurs;
+	private final EventListenerList jeuFiniListeners;
 
+	public void addJeuFiniListener(jeuFiniListener j){ jeuFiniListeners.add(j); }
+	protected void fireJeuFini(JeuFiniEvent e) {
+        for(JeuFiniListener jeuFiniListener : jeuFiniListeners)
+            jeuFiniListener.jeuFini(e);
+    }
 	private Joueur joueurEnTrainDeJouer(){ return joueurs[enTrainDeJouer]; }
 	protected Case getCase(int i){ return plateau.getCase(i); }
-	protected void jeuFini(){ fini=true; }
+	protected void jeuFini(){ fini=true; fireJeuFini(new JeuFiniEvent()); }
 	public boolean estFini(){ return fini; }
+	public String getRaisonFin(){
+		if (!estFini()) throw new jeuFiniException("Le jeu n'est pas encore fini");
+		else{ return "Partie finie !\n"+getClassement(); }
+	}
+	private Joueur getJoueur(int i){ return joueurs[i]; }
 	public int getNumeroDuTour(){ return numeroDuTour; }
+	public Joueur getClassement(int i){ return classement.get(i); }
 
 	public Jeu(Plateau plateau, int nombreDeJoueursHumains, int nombreDeJoueursIA){
 		if (plateau==null) throw new IllegalArgumentException("Le plateau n'a pas été initialisé");
@@ -47,8 +59,9 @@ public abstract class Jeu implements Serializable {
 		fini=false;
 		this.plateau=plateau;
 		joueurs=new Joueur[nombreDeJoueurs];
-		for (int i=0;i<nombreDeJoueursHumains;i++) if (i<nombreDeJoueursHumains) joueurs[i]=new Joueur(i+1); else joueurs[i]=new JoueurIA(i+1);
+		for (int i=0;i<nombreDeJoueurs;i++){ if (i<nombreDeJoueursHumains) joueurs[i]=new Joueur(i+1); else joueurs[i]=new JoueurIA(i+1); classement.add(getJoueur(i)); }
 		enTrainDeJouer=0;
+		jeuFiniListeners= new EventListenerList();
 	}
 
 	public Jeu(Plateau plateau, int nombreDeJoueursHumains, int nombreDeJoueursIA, int nbPionsParJoueur, Case c){
@@ -71,9 +84,14 @@ public abstract class Jeu implements Serializable {
 		else return joueurSuivant();
 	}
 
-	private Joueur getJoueur(int i){ return joueurs[i]; }
 
 	public boolean peutJouer(int numeroDuJoueur){
 		return true;
+	}
+
+	public String getClassement(){
+		StringBuilder sb=new StringBuilder();
+		for (int i=0;i<nombreDeJoueurs;i++)
+			sb.append(i+". "+getClassement(i)+"\n");
 	}
 }

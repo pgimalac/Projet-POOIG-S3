@@ -3,6 +3,7 @@
 ## TODO
 
 - [x] commencer
+- [ ] avancer un peu...
 - [ ] écrire le jeu de base (possiblement sans Listener,... en donnant directement à l'affichage les informations)
 - [ ] affichage console
 - [ ] écrire le jeu de base avec listeners,...
