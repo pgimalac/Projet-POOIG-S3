@@ -7,7 +7,7 @@ import jeu.JeuException;
  *	
  */
 
-public class Joueur{
+public class Joueur implements Comparable{
 	private Pion[] pions;
 	private String nom;
 	private int score;
@@ -18,15 +18,23 @@ public class Joueur{
 	public void setCase(Case c){ setCase(0,c); }
 	public void setCase(int i, Case c){ pions[i].setCase(c); }
 
+	public int getScore(){ return score; }
+	public void setScore(int sc){ score=sc; }
+
+	public boolean estHumain(){ return true; }
+	public void setNom(String nom){ this.nom=nom; }
+	public String toString(){ return nom; }
+
 	public Joueur(int numero){
 		nom="Joueur "+numero;
 		score=0;
 		pions=null;
 	}
 
-	public boolean estHumain(){ return true; }
-
-	public void setNom(String nom){ this.nom=nom; }
+	public int compareTo(Joueur j){
+		if (j==null) throw new NullPointerException();
+		return ((j.getScore()==this.getScore())?0:((j.getScore()>this.getScore())?-1:1));
+	}
 
 	public void initialiserPionsJoueurs(int nbPionsParJoueur, Case c){
 		if (pions!=null) throw new PionsDejaInitialisesException(nom);
