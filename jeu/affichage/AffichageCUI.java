@@ -15,9 +15,15 @@ public class AffichageCUI implements Affichage{
 	private static Scanner sc=new Scanner(System.in);
 
 	public AffichageCUI(){
-		System.out.println("Bienvenue dans ce jeu !");
-		System.out.println("Il s'agit d'un jeu de l'oie très personnalisable : basiquement c'est un jeu de plateau au tracé relativement linéaire (un départ, un ensemble de cases ordonnées, un parcours par défaut du plateau menant à au moins une case finale.");
-		System.out.println("En mode console il n'est pas possible de beaucoup personnaliser sa partie, le jeu est relativement limité mais certaines options sont tout de même paramétrables. Le choix que vous devez faire tout d'abord est : jeu de l'oie ou numéri ?");
+		help();
+		menu();
+	}
+
+	public void afficher(){
+		while (!jeu.estFini()){
+
+		}
+		System.out.println(jeu.getClassement()+"\n");		
 	}
 
 	public Jeu getJeu(){
@@ -25,8 +31,17 @@ public class AffichageCUI implements Affichage{
 		String s=sc.nextLine();
 		if (s==null || s.length()==0) return null;
 		char c=s.toLowerCase().charAt(0);
-		if (c=='o') return new JeuOie();
-		else if (c=='n') return new JeuNumeri();
-		else return null;
+		Jeu jeu=null;
+		if (c=='o') jeu=new JeuOie();
+		else if (c=='n') jeu=new JeuNumeri();
+		super.setJeu(jeu);
+		return jeu;
+	}
+
+	private void help(){
+		System.out.println("Bienvenue dans ce jeu !");
+		System.out.println("Vous pouvez jouer au jeu de l'oie ou au numéri, et parametrer de nombreuses options.");
+		System.out.println("En mode console il n'est pas possible de créer un plateau personnalisé mais les options sont toujours modifiables.");
+		System.out.println(" Le choix que vous devez faire tout d'abord est : jeu de l'oie ou numéri ?");
 	}
 }
