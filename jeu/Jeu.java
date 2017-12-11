@@ -16,6 +16,8 @@ import java.io.Serializable;
 public abstract class Jeu implements Serializable {
 
 	private static final long serialVersionUID = 3350919143027733149L;
+	public static final int MAXIMUM_JOUEURS=20;
+
 
 	private static final Random des=new Random();
 	public static int getDes(){ return des.nextInt(6)+1; } // lancé d'un dé à 6 faces
@@ -52,10 +54,10 @@ public abstract class Jeu implements Serializable {
 	public Jeu(Plateau plateau, int nombreDeJoueursHumains, int nombreDeJoueursIA){
 		if (plateau==null) throw new IllegalArgumentException("Le plateau n'a pas été initialisé");
 		else if (nombreDeJoueursHumains<0 || nombreDeJoueursIA<0) throw new IllegalArgumentException("Le nombre d"+((nombreDeJoueursHumains<0)?"e joueurs":"'IA")+"est négatif");
-		else if (nombreDeJoueursHumains+nombreDeJoueursIA>20) throw new IllegalArgumentException("Le nombre de joueurs est trop grand");
+		else if (nombreDeJoueursHumains+nombreDeJoueursIA>MAXIMUM_JOUEURS) throw new IllegalArgumentException("Le nombre de joueurs est trop grand");
 
 		nombreDeJoueurs=nombreDeJoueursHumains+nombreDeJoueursIA;
-		numeroDuTour=0;
+		numeroDuTour=1;
 		fini=false;
 		this.plateau=plateau;
 		joueurs=new Joueur[nombreDeJoueurs];
@@ -84,6 +86,7 @@ public abstract class Jeu implements Serializable {
 		else return joueurSuivant();
 	}
 
+	public Plateau getPlateau(){ return plateau; }
 
 	public boolean peutJouer(int numeroDuJoueur){
 		return true;

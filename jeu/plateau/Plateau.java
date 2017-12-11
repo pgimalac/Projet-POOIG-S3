@@ -45,4 +45,5 @@ public class Plateau implements Serializable{
 		}
 		return new Plateau(c);
 	}
+
 }
