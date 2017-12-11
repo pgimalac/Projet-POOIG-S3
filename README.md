@@ -1,14 +1,21 @@
 # projetInfo
 
+## Disclaimer
+A moins que la case "affichage console" ne soit cochée ce n'est même pas la peine de regarder le code.
+Si la case "affichage graphique" est cochée le jeu ne doit pas être très loin d'être fini, vous pouvez regarder le code sans trop de crainte.
+Néanmoins, rien n'est garanti !
+
 ## TODO
 
 - [x] commencer
-- [ ] avancer un peu...
+- [x] avancer un peu...
+- [ ] continuer sur une bonne lancée et avancer plus !
 - [ ] écrire le jeu de base (possiblement sans Listener,... en donnant directement à l'affichage les informations)
 - [ ] affichage console
 - [ ] écrire le jeu de base avec listeners,...
 - [ ] rectifier l'affichage console
 - [ ] affichage graphique
+- [ ] différentes options de jeu
 - [ ] création interactive du jeu (options, plateau,...)
 - [ ] possibilité de sauvegarder / de charger une partie
 - [ ] finir de programmer
