@@ -6,18 +6,39 @@ package jeu.affichage;
 
 import jeu.Jeu;
 
-public interface Affichage {
+public abstract class Affichage implements Serializable{
 
 	private Jeu jeu;
+	private AffichagePlateau typeDAffichage;
 
-	default protected void setJeu(Jeu j){ jeu=j; }
+	public int getMaximumLargeur();
+	public int getMaximumHauteur();
 
-	// nécéssaire pour un affiche actif (affichage console par exemple)
-	default public void afficher(){}
+	protected abstract AffichagePlateau getDefaultAffichagePlateau(); 
 
-	public Jeu getJeu();
+	{
+		jeu=null;
+		typeDAffichage=this.getDefaultAffichagePlateau();
+	}
 
-	protected static Jeu chargerLeJeu(String nom){
+	interface AffichagePlateau{
+		public void afficher(Plateau plateau);
+	}
+
+	protected void setAffichage(AffichagePlateau affichage){
+		typeDAffichage=affichage;
+	}
+
+
+	protected void setJeu(Jeu j){
+		jeu=j;
+	}
+
+	protected Jeu getJeu(){
+		return jeu;
+	}
+
+	static protected Jeu chargerLeJeu(String nom){
 		ObjectInputStream ois = null;
 		Jeu jeu=null;
 		try {
@@ -40,7 +61,7 @@ public interface Affichage {
 		return jeu;
 	}
 
-	protected static void sauvegarderLeJeu(Jeu jeu){
+	static protected void sauvegarderLeJeu(Jeu jeu){
 		Date aujourdhui=new Date();
 		SimpleDateFormat date=new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss");
 
@@ -63,6 +84,4 @@ public interface Affichage {
 			}
 		}
 	}
-
-
 }
