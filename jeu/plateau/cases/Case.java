@@ -16,8 +16,6 @@ public class Case implements Serializable{
 	 */
 	private static final long serialVersionUID = -905604265593242877L;
 	
-	// pas final car un éventuel outil de création interactif de plateau pourrait obliger à changer ce numéro au fur et à mesure de la création...
-
 	/**
 	 * 
 	 */
