@@ -16,8 +16,8 @@ import java.io.Serializable;
 public abstract class Jeu implements Serializable {
 
 	private static final long serialVersionUID = 3350919143027733149L;
-	public static final int MAXIMUM_JOUEURS=20;
-
+	public int MAXIMUM_JOUEURS=Integer.MAX_VALUE;
+	public int MINIMUM_JOUEURS=2;
 
 	private static final Random des=new Random();
 	public static int getDes(){ return des.nextInt(6)+1; } // lancé d'un dé à 6 faces
@@ -32,23 +32,34 @@ public abstract class Jeu implements Serializable {
 	private final Plateau plateau;
 	private final ArrayList<Joueur> classement;
 	private final int nombreDeJoueurs;
+
 	private final EventListenerList jeuFiniListeners;
 
 	public void addJeuFiniListener(jeuFiniListener j){ jeuFiniListeners.add(j); }
+
 	protected void fireJeuFini(JeuFiniEvent e) {
         for(JeuFiniListener jeuFiniListener : jeuFiniListeners)
             jeuFiniListener.jeuFini(e);
     }
+
+
 	private Joueur joueurEnTrainDeJouer(){ return joueurs[enTrainDeJouer]; }
+
 	protected Case getCase(int i){ return plateau.getCase(i); }
+
 	protected void jeuFini(){ fini=true; fireJeuFini(new JeuFiniEvent()); }
+
 	public boolean estFini(){ return fini; }
+
 	public String getRaisonFin(){
 		if (!estFini()) throw new jeuFiniException("Le jeu n'est pas encore fini");
 		else{ return "Partie finie !\n"+getClassement(); }
 	}
+
 	private Joueur getJoueur(int i){ return joueurs[i]; }
+
 	public int getNumeroDuTour(){ return numeroDuTour; }
+
 	public Joueur getClassement(int i){ return classement.get(i); }
 
 	public Jeu(Plateau plateau, int nombreDeJoueursHumains, int nombreDeJoueursIA){
@@ -66,9 +77,13 @@ public abstract class Jeu implements Serializable {
 		jeuFiniListeners= new EventListenerList();
 	}
 
-	public Jeu(Plateau plateau, int nombreDeJoueursHumains, int nombreDeJoueursIA, int nbPionsParJoueur, Case c){
+	public Jeu(Plateau plateau, int nombreDeJoueursHumains, int nombreDeJoueursIA, int nbPionsParJoueur, Case depart){
 		this(plateau,nombreDeJoueursHumains,nombreDeJoueursIA);
-		initialiserPionsJoueurs(nbPionsParJoueur,c);
+		initialiserPionsJoueurs(nbPionsParJoueur,depart);
+	}
+
+	public Jeu(Plateau plateau, int nombreDeJoueursHumains, int nombreDeJoueursIA, int nbPionsParJoueur){
+		this(plateau,nombreDeJoueursHumains,nombreDeJoueursIA,nbPionsParJoueur,plateau.getCase(0));
 	}
 
 	protected void initialiserPionsJoueurs(int nbPionsParJoueur, Case c){ // doit être appelée avant de commencer à jouer

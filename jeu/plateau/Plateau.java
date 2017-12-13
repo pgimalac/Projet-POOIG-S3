@@ -20,7 +20,7 @@ public class Plateau implements Serializable{
 
 	public Case getCase(int i){ return cases[i]; }
 
-	public int getSize(){ return cases.length; }
+	public int size(){ return cases.length; }
 
 	public final Plateau setDefaultOie() {
 		Cases[] c=new Cases[63];

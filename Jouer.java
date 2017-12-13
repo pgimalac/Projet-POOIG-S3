@@ -23,6 +23,7 @@ public class Jouer{
 	public Jouer(){
 		if (args!=null && args.length==1 && args[0].toLowerCase().equals("gui")) affichage=new AffichageGUI();
 		else affichage=new AffichageCUI();
+		affichage.afficher();
 	}
 
 	private Affichage affichage;
