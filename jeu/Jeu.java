@@ -20,7 +20,11 @@ public abstract class Jeu implements Serializable {
 	public int MINIMUM_JOUEURS=2;
 
 	private static final Random des=new Random();
-	public static int getDes(){ return des.nextInt(6)+1; } // lancé d'un dé à 6 faces
+	public int getDes(){
+		valeurDe=des.nextInt(6)+1;
+	} // lancé d'un dé à 6 faces
+
+	private int valeurDe=1;
 
 	public static final JeuNumeri getNewNumeri(){ return new JeuNumeri(); }
 	public static final JeuOie getNewOie(){ return new JeuOie(); }
@@ -42,39 +46,66 @@ public abstract class Jeu implements Serializable {
             jeuFiniListener.jeuFini(e);
     }
 
+    public int getValeurDe(){
+    	return valeurDe;
+    }
 
-	private Joueur joueurEnTrainDeJouer(){ return joueurs[enTrainDeJouer]; }
+	private Joueur joueurEnTrainDeJouer(){
+		return joueurs[enTrainDeJouer];
+	}
 
-	protected Case getCase(int i){ return plateau.getCase(i); }
+	protected Case getCase(int i){
+		return plateau.getCase(i);
+	}
 
-	protected void jeuFini(){ fini=true; fireJeuFini(new JeuFiniEvent()); }
+	protected void jeuFini(){
+		fini=true;
+		fireJeuFini(new JeuFiniEvent());
+	}
 
-	public boolean estFini(){ return fini; }
+	public boolean estFini(){
+		return fini;
+	}
 
 	public String getRaisonFin(){
 		if (!estFini()) throw new jeuFiniException("Le jeu n'est pas encore fini");
 		else{ return "Partie finie !\n"+getClassement(); }
 	}
 
-	private Joueur getJoueur(int i){ return joueurs[i]; }
+	private Joueur getJoueur(int i){
+		return joueurs[i];
+	}
 
-	public int getNumeroDuTour(){ return numeroDuTour; }
+	public int getNumeroDuTour(){
+		return numeroDuTour;
+	}
 
-	public Joueur getClassement(int i){ return classement.get(i); }
+	public Joueur getClassement(int i){
+		return classement.get(i);
+	}
 
 	public Jeu(Plateau plateau, int nombreDeJoueursHumains, int nombreDeJoueursIA){
-		if (plateau==null) throw new IllegalArgumentException("Le plateau n'a pas été initialisé");
-		else if (nombreDeJoueursHumains<0 || nombreDeJoueursIA<0) throw new IllegalArgumentException("Le nombre d"+((nombreDeJoueursHumains<0)?"e joueurs":"'IA")+"est négatif");
-		else if (nombreDeJoueursHumains+nombreDeJoueursIA>MAXIMUM_JOUEURS) throw new IllegalArgumentException("Le nombre de joueurs est trop grand");
+		if (plateau==null)
+			throw new IllegalArgumentException("Le plateau n'a pas été initialisé");
+		else if (nombreDeJoueursHumains<0 || nombreDeJoueursIA<0)
+			throw new IllegalArgumentException("Le nombre d"+((nombreDeJoueursHumains<0)?"e joueurs":"'IA")+"est négatif");
+		else if (nombreDeJoueursHumains+nombreDeJoueursIA>MAXIMUM_JOUEURS)
+			throw new IllegalArgumentException("Le nombre de joueurs est trop grand");
 
 		nombreDeJoueurs=nombreDeJoueursHumains+nombreDeJoueursIA;
 		numeroDuTour=1;
 		fini=false;
 		this.plateau=plateau;
 		joueurs=new Joueur[nombreDeJoueurs];
-		for (int i=0;i<nombreDeJoueurs;i++){ if (i<nombreDeJoueursHumains) joueurs[i]=new Joueur(i+1); else joueurs[i]=new JoueurIA(i+1); classement.add(getJoueur(i)); }
+		for (int i=0;i<nombreDeJoueurs;i++){
+			if (i<nombreDeJoueursHumains) 
+				joueurs[i]=new Joueur(i+1); 
+			else 
+				joueurs[i]=new JoueurIA(i+1); 
+			classement.add(getJoueur(i));
+		}
 		enTrainDeJouer=0;
-		jeuFiniListeners= new EventListenerList();
+		jeuFiniListeners = new EventListenerList();
 	}
 
 	public Jeu(Plateau plateau, int nombreDeJoueursHumains, int nombreDeJoueursIA, int nbPionsParJoueur, Case depart){
@@ -93,20 +124,25 @@ public abstract class Jeu implements Serializable {
 			joueur.initialiserPionsJoueurs(nbPionsParJoueur, c);
 	}
 
+	public void recommencer(){
+		for (Joueur joueur : joueurs)
+			joueur.recommencer();
+
+	}
 
 	private Joueur joueurSuivant(){
 		if (jeuFini()) throw new jeuFiniException("Le jeu est fini : aucun joueur ne peut jouer.");
 		enTrainDeJouer=(enTrainDeJouer+1)%nombreDeJoueurs;
 		if (enTrainDeJouer==0) numeroDuTour++;
 
-		if (joueurEnTrainDeJouer().peutJouer()) return joueurEnTrainDeJouer();
-		else return joueurSuivant();
+		if (joueurEnTrainDeJouer().peutJouer())
+			return joueurEnTrainDeJouer();
+		else 
+			return joueurSuivant();
 	}
 
-	public Plateau getPlateau(){ return plateau; }
-
-	public void recommencer(){
-		initialiserPionsJoueurs()
+	public Plateau getPlateau(){
+		return plateau;
 	}
 
 	public boolean peutJouer(int numeroDuJoueur){
