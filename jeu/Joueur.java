@@ -12,6 +12,8 @@ public class Joueur implements Comparable{
 	private String nom;
 	private int score;
 
+	private final CaseDepart depart;
+
 	public Case getCase(){ return getCase(0); }
 	public Case getCase(int i){ return pions[i].getCase(); }
 
@@ -25,8 +27,8 @@ public class Joueur implements Comparable{
 	public void setNom(String nom){ this.nom=nom; }
 	public String toString(){ return nom; }
 
-	public Joueur(int numero){
-		nom="Joueur "+numero;
+	public Joueur(String s){
+		nom=s;
 		score=0;
 		pions=null;
 	}
@@ -36,16 +38,17 @@ public class Joueur implements Comparable{
 		return ((j.getScore()==this.getScore())?0:((j.getScore()>this.getScore())?-1:1));
 	}
 
-	public void initialiserPionsJoueurs(int nbPionsParJoueur, Case c){
-		if (pions!=null) throw new PionsDejaInitialisesException(nom);
+	public void initialiserPionsJoueurs(int nbPionsParJoueur, CaseDepart c){
+		depart=c;
 		pions=new Pions[nbPionsParJoueur];
 		for (int i=0;i<nbPionsParJoueur;i++){
 			pions[i]=new Pion(c);
 		}
 	}
 
-	class PionsDejaInitialisesException extends JeuException{
-		PionsDejaInitialisesException(String nom){ super("Les pions de "+nom+" ont déjà été initialisés !"); }
+	public void recommencer(){
+		score=0;
+		for (Pion p : pions) p.setCase(depart);
 	}
 
 	class Pion{
@@ -54,7 +57,7 @@ public class Joueur implements Comparable{
 		void setCase(Case c){ case=c; }
 		Case getCase(){ return case; }
 
-		Pion(Case case){ this.case=case; }
+		Pion(CaseDepart case){ this.case=case; }
 		Pion(){ this(null); }
 	}
 	
