@@ -10,14 +10,13 @@ public class JeuOie extends Jeu{
 
 	private static final long serialVersionUID = -6311358070333990328L;
 
-	public JeuOie(){
-		super(new Plateau().setDefaultOie());
+	public JeuOie(Plateau plateau){
+		super(plateau);
 		super.initialiserPionsJoueurs(1,getCase(0));
 	}
 
-	public void faireJouerLeJoueur(Joueur joueur){
-		int nombreDes=getDes();
-		joueur.avancer(nombreDes);
+	public JeuOie(){
+		this(new Plateau().setDefaultOie());
 	}
 
 	private int getDes(){
