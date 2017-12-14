@@ -8,27 +8,44 @@ import jeu.Jeu;
 
 public abstract class Affichage implements Serializable{
 
+	interface AffichagePlateau{
+		public void afficher(Plateau plateau);
+	}
+
 	private Jeu jeu;
-	private AffichagePlateau typeDAffichage;
+	private AffichagePlateau affichagePlateau;
+
+	public static final String CHEMIN_SAUVEGARDE="./sauvegardes/";
+	public static final String REGEX_SAVE=".+\.save$";
+	public static final File sauvegardes;
+
+	static{
+		sauvegardes=new File(CHEMIN_SAUVEGARDE);
+		if (!sauvegardes.exists() || !sauvegardes.isDirectory()) System.out.println("Sauvegarde ou chargement de sauvegarde impossible."); // throw Exception ??
+		else if (!sauvegardes.canWrite() || !sauvegardes.canRead()) System.out.println("Droits manquants sur le dossier de sauvegarde pour charger et sauvegarder des parties."); // throw Exception ?
+	}
+
+	{
+		jeu=null;
+		affichagePlateau=this.getDefaultAffichagePlateau();
+	}
 
 	public int getMaximumLargeur();
 	public int getMaximumHauteur();
 
 	protected abstract AffichagePlateau getDefaultAffichagePlateau(); 
 
-	{
-		jeu=null;
-		typeDAffichage=this.getDefaultAffichagePlateau();
-	}
-
-	interface AffichagePlateau{
-		public void afficher(Plateau plateau);
-	}
-
 	protected void setAffichage(AffichagePlateau affichage){
-		typeDAffichage=affichage;
+		affichagePlateau=affichage;
 	}
 
+	protected void afficherPlateau(){
+		affichagePlateau.afficher(jeu.getPlateau());
+	}
+
+	public boolean jeuEnCours(){
+		return jeu!=null;
+	}
 
 	protected void setJeu(Jeu j){
 		jeu=j;
@@ -61,13 +78,13 @@ public abstract class Affichage implements Serializable{
 		return jeu;
 	}
 
-	static protected void sauvegarderLeJeu(Jeu jeu){
-		Date aujourdhui=new Date();
-		SimpleDateFormat date=new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss");
+	static protected void sauvegarderLeJeu(Jeu jeu, String nom){
+		if (nom==null || nom.equals("")) sauvegarderLeJeu(jeu);
+		if (!nom.matches(REGEX_SAVE)) nom=nom+".save";
 
 		ObjectOutputStream oos = null;
 		try {
-			final FileOutputStream fichier = new FileOutputStream("sauvegardes/"+date.format(aujourdhui)+".save");
+			final FileOutputStream fichier = new FileOutputStream("sauvegardes/"+nom);
 			oos = new ObjectOutputStream(fichier);
 			oos.writeObject(jeu);
 			oos.flush();
@@ -82,6 +99,12 @@ public abstract class Affichage implements Serializable{
 			} catch (IOException ex) {
 				ex.printStackTrace();
 			}
-		}
+		}		
+	}
+
+	static protected void sauvegarderLeJeu(Jeu jeu){
+		Date aujourdhui=new Date();
+		SimpleDateFormat date=new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss");
+		sauvegarderLeJeu(jeu,date.format(aujourdhui)+".save");
 	}
 }
