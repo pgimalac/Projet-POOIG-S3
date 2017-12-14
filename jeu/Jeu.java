@@ -86,9 +86,11 @@ public abstract class Jeu implements Serializable {
 		this(plateau,nombreDeJoueursHumains,nombreDeJoueursIA,nbPionsParJoueur,plateau.getCase(0));
 	}
 
-	protected void initialiserPionsJoueurs(int nbPionsParJoueur, Case c){ // doit être appelée avant de commencer à jouer
+	protected void initialiserPionsJoueurs(int nbPionsParJoueur, CaseDepart depart){ // doit être appelée avant de commencer à jouer
+		this.nbPionsParJoueur=nbPionsParJoueur;
+		this.caseDepart=depart;
 		for (Joueur joueur:joueurs)
-			initialiserPionsJoueurs(nbPionsParJoueur, c);
+			joueur.initialiserPionsJoueurs(nbPionsParJoueur, c);
 	}
 
 
@@ -102,6 +104,10 @@ public abstract class Jeu implements Serializable {
 	}
 
 	public Plateau getPlateau(){ return plateau; }
+
+	public void recommencer(){
+		initialiserPionsJoueurs()
+	}
 
 	public boolean peutJouer(int numeroDuJoueur){
 		return true;
