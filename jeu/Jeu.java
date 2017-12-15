@@ -37,6 +37,7 @@ public abstract class Jeu implements Serializable {
 	private final ArrayList<Joueur> classement;
 	private final int nombreDeJoueurs;
 
+	/*
 	private final EventListenerList jeuFiniListeners;
 
 	public void addJeuFiniListener(jeuFiniListener j){ jeuFiniListeners.add(j); }
@@ -45,6 +46,7 @@ public abstract class Jeu implements Serializable {
         for(JeuFiniListener jeuFiniListener : jeuFiniListeners)
             jeuFiniListener.jeuFini(e);
     }
+    */
 
     public int getValeurDe(){
     	return valeurDe;
@@ -67,6 +69,10 @@ public abstract class Jeu implements Serializable {
 		return fini;
 	}
 
+	public String getName(){
+		return joueurEnTrainDeJouer().toString();
+	}
+
 	public String getRaisonFin(){
 		if (!estFini()) throw new jeuFiniException("Le jeu n'est pas encore fini");
 		else{ return "Partie finie !\n"+getClassement(); }
@@ -80,8 +86,8 @@ public abstract class Jeu implements Serializable {
 		return numeroDuTour;
 	}
 
-	public Joueur getClassement(int i){
-		return classement.get(i);
+	public String getClassement(int i){
+		return classement.get(i).toString();
 	}
 
 	public Jeu(Plateau plateau, int nombreDeJoueursHumains, int nombreDeJoueursIA){
@@ -153,5 +159,6 @@ public abstract class Jeu implements Serializable {
 		StringBuilder sb=new StringBuilder();
 		for (int i=0;i<nombreDeJoueurs;i++)
 			sb.append(i+". "+getClassement(i)+"\n");
+		return sb.toString();
 	}
 }
