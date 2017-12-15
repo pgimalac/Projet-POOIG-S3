@@ -44,7 +44,7 @@ public abstract class Affichage implements Serializable{
 	}
 
 	public boolean jeuEnCours(){
-		return jeu!=null;
+		return jeu!=null && !jeu.estFini();
 	}
 
 	protected void setJeu(Jeu j){

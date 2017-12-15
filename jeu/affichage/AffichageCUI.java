@@ -132,15 +132,15 @@ public class AffichageCUI extends Affichage{
 		switch (c){
 			case QUITTER : System.exit(0);
 			case SAUVEGARDER : Affichage.sauvegarderLeJeu(super.getJeu()); break;
-			case RECOMMENCER : super.getJeu().recommencer(); jouer(super.getJeu()); break;
 			case CHARGER : charger(); break;
 			case NOUVEAU : setJeu(); break;
 			case CREDITS : credits(); break;
-			case CONTINUER : return; // inutile mais plus clair
+			case RECOMMENCER : super.getJeu().recommencer();
+			case CONTINUER : jouer(); break;
 		}
 	}
 
-	private void charger(){
+	private boolean charger(){
 		StringBuilder sb=new StringBuilder("Voici la liste des sauvegardes existantes :\n");
 		String[] t=Affichage.sauvegardes.list();
 		int i=1;
@@ -151,7 +151,7 @@ public class AffichageCUI extends Affichage{
 			}
 		}
 
-		if (i==1){ System.out.println("Il n'existe aucune sauvegarde !"); return; }
+		if (i==1){ System.out.println("Il n'existe aucune sauvegarde !"); return false; }
 
 		sb.append("\nEntrez le numéro ou le nom complet d'une sauvegarde pour charger la partie : ")
 		System.out.print(sb.toString());
@@ -161,11 +161,12 @@ public class AffichageCUI extends Affichage{
 			n=sc.nextLine();
 			if (n==null) continue;
 			else if (n.length()==1 && n.charAt(0)==QUITTER) System.exit(0);
-			else if (n.length()==1 && n.charAt(0)==MENU) break;
+			else if (n.length()==1 && n.charAt(0)==MENU) return false;
 			else if (n.matches(Affichage.REGEX_SAVE)){
 				for (String s:t){
 					if (s.equals(n)){
 						super.setJeu(Affichage.chargerLeJeu(n));
+						return true;
 					}
 				}
 			}else{
@@ -173,12 +174,13 @@ public class AffichageCUI extends Affichage{
 					int j=Integer.parseInt(n);
 					if (j>0 && j<i){
 						for (String s:t){
-							if (s.matches(REGEX_SAVE && j==1){ super.setJeu(Affichage.chargerLeJeu(s)); break; }
+							if (s.matches(REGEX_SAVE && j==1){ super.setJeu(Affichage.chargerLeJeu(s)); return true; }
 							else if (s.matches(REGEX_SAVE)) j--;
 						}
 					}
 				}catch(NumberFormatException nfe){}
-			}		
+			}
+			return false;
 		}
 	}
 
@@ -188,8 +190,15 @@ public class AffichageCUI extends Affichage{
 		int numeroDuTour=jeu.getNumeroDuTour()-1;
 		while (!jeu.estFini()){
 			int tmp=jeu.getNumeroDuTour();
-			if (tmp!=numeroDuTour){ super.afficherPlateau(); numeroDuTour=tmp; }
-			jeu.jouer();
+			if (tmp!=numeroDuTour){
+				super.afficherPlateau();
+				numeroDuTour=tmp;
+				System.out.println("Tour "+numeroDuTour);
+			}
+
+			String s=jeu.getJoueur getName();
+
+			
 		}
 	}
 
