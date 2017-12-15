@@ -7,7 +7,7 @@ import jeu.JeuException;
  *	
  */
 
-public class Joueur implements Comparable{
+public class Joueur implements Comparable,Serializable{
 	private Pion[] pions;
 	private String nom;
 	private int score;
