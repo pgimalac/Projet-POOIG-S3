@@ -9,7 +9,7 @@ Néanmoins, rien n'est garanti !
 
 - [x] commencer
 - [x] avancer un peu...
-- [ ] continuer sur une bonne lancée et avancer plus !
+- [x] continuer sur une bonne lancée et avancer plus !
 - [ ] écrire le jeu de base (possiblement sans Listener,... en donnant directement à l'affichage les informations)
 - [ ] affichage console
 - [ ] écrire le jeu de base avec listeners,...

@@ -1,6 +1,6 @@
 package jeu;
 
-import jeu.JeuException;
+import jeu.GameException;
 import jeu.plateau.cases.Case;
 import jeu.plateau.cases.CaseDepart;
 
@@ -16,7 +16,7 @@ public class Joueur implements Comparable<Joueur>,Serializable{
 	private String nom;
 	private int score;
 
-	private final CaseDepart depart;
+	private CaseDepart depart;
 
 	public Case getCase(){ return getCase(0); }
 	public Case getCase(int i){ return pions[i].getCase(); }
@@ -37,6 +37,7 @@ public class Joueur implements Comparable<Joueur>,Serializable{
 		nom=s;
 		score=0;
 		pions=null;
+		depart=null;
 	}
 
 	public Joueur(int i){
@@ -50,7 +51,7 @@ public class Joueur implements Comparable<Joueur>,Serializable{
 
 	public void initialiserPionsJoueurs(int nbPionsParJoueur, CaseDepart c){
 		depart=c;
-		pions=new Pions[nbPionsParJoueur];
+		pions=new Pion[nbPionsParJoueur];
 		for (int i=0;i<nbPionsParJoueur;i++)
 			pions[i]=new Pion(c);
 	}

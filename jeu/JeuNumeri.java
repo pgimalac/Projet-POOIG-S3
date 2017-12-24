@@ -27,23 +27,32 @@ public class JeuNumeri extends Jeu{
 		return 6;
 	}
 
-	public boolean choix(int d){
+	@Override
+	protected GameOverEvent getGameOver(){
+		return new GameOverNumeriEvent(this);
+	}
+
+	@Override
+	public boolean choix(){
 		return false;
 	}
 
-	public String choix(){
-		throw new PasDeChoixException();
-		return "";
+	@Override
+	public String getChoix(){
+		throw new ChoiceException();
+		//return "";
 	}
 
-	public boolean choix(int d, String entree){
-		throw new PasDeChoixException();
-		return false;
+	@Override
+	public boolean choix(String entree){
+		throw new ChoiceException();
+		//return false;
 	}
 
-	public void jouer(int d){
+	@Override
+	public void jouer(){
 		Joueur joueur=super.joueurEnTrainDeJouer();
-		joueur.setCase(super.getCase(joueur.getCase(),d));
+		joueur.setCase(super.getCase(joueur.getCase(),super.getValeurDes()));
 		joueurSuivant();
 	}
 

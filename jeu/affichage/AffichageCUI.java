@@ -116,10 +116,10 @@ public class AffichageCUI extends Affichage{
 		return maximum_hauteur;
 	}
 
-	public int setMaximumLargeur(int l){
+	public void setMaximumLargeur(int l){
 		maximum_largeur=l;
 	}
-	public int setMaximumHauteur(int l){
+	public void setMaximumHauteur(int l){
 		maximum_hauteur=l;
 	}
 
@@ -213,13 +213,13 @@ public class AffichageCUI extends Affichage{
 			Joueur joueur=jeu.joueurEnTrainDeJouer();
 			System.out.print("C'est au tour de "+joueur+" de jouer : appuie sur entrée pour lancer les dés ! ");
 			int d=jeu.getDes();
-			if (jeu.choix(d)){
-				System.out.println(jeu.choix());
-				while (!jeu.choix(d,sc.nextLine())){
+			if (jeu.choix()){
+				System.out.println(jeu.getChoix());
+				while (!jeu.choix(sc.nextLine())){
 					System.out.println("Entrée invalide !");
 				}
 			}else{
-				jeu.jouer(d);
+				jeu.jouer();
 			}
 			
 		}
@@ -234,7 +234,6 @@ public class AffichageCUI extends Affichage{
 				if (jeuEnCours || (c!=CONTINUER && c!=SAUVEGARDER && c!=RECOMMENCER)) return c;
 			}
 		}
-		return '.';
 	}
 
 	private void menu(){
@@ -250,7 +249,7 @@ public class AffichageCUI extends Affichage{
 		boolean b=true;
 		Jeu jeu=super.getJeu();
 
-		int min,max;
+		int min=2,max=2;
 
 		do{
 			s=sc.nextLine();

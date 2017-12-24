@@ -5,9 +5,9 @@ package jeu;
  *
  */
 
-import jeu.JeuFiniListener;
-import jeu.JeuFiniEvent;
-import jeu.JeuFiniException;
+import jeu.GameOverListener;
+import jeu.GameOverEvent;
+import jeu.GameOverException;
 import jeu.plateau.Plateau;
 import jeu.plateau.cases.Case;
 import jeu.plateau.cases.CaseDepart;
@@ -35,11 +35,13 @@ public abstract class Jeu implements Serializable {
 	}
 
 	private static final Random des=new Random();
+
 	public int getDes(){
-		valeurDe=des.nextInt(6)+1;
+		valeurDes=des.nextInt(6)+1;
+		return valeurDes;
 	} // lancé d'un dé à 6 faces
 
-	private int valeurDe=1;
+	private int valeurDes=1;
 
 	private boolean fini;
 	private int numeroDuTour;
@@ -49,20 +51,20 @@ public abstract class Jeu implements Serializable {
 	private final ArrayList<Joueur> classement;
 	private final int nombreDeJoueurs;
 
-	private final EventListenerList jeuFiniListeners;
+	private final EventListenerList GameOverListeners;
 
-	public void addJeuFiniListener(JeuFiniListener j){
-		jeuFiniListeners.add(j);
+	public void addGameOverListener(GameOverListener j){
+		GameOverListeners.add(GameOverListener.class,j);
 	}
 
-	protected void fireJeuFini(JeuFiniEvent e) {
-		jfl=jeuFiniListeners.getListenerList();
-        for(JeuFiniListener jeuFiniListener : jfl)
-            jeuFiniListener.jeuFini(e);
+	protected void fireGameOver(GameOverEvent e) {
+		GameOverListener[] jfl=GameOverListeners.getListeners(GameOverListener.class);
+        for(GameOverListener GameOverListener : jfl)
+            GameOverListener.GameOver(e);
     }
 
-    public int getValeurDe(){
-    	return valeurDe;
+    public int getValeurDes(){
+    	return valeurDes;
     }
 
 	public Joueur joueurEnTrainDeJouer(){
@@ -73,9 +75,19 @@ public abstract class Jeu implements Serializable {
 		return plateau.getCase(i);
 	}
 
-	protected void jeuFini(){
+	protected abstract GameOverEvent getGameOver();
+
+	protected void GameOver(){
 		fini=true;
-		fireJeuFini(new JeuFiniEvent());
+		fireGameOver(getGameOver());
+	}
+
+	public Joueur getGagnant(){
+		if (!estFini()){
+			throw new GameOverException("Le jeu n'est pas fini.");
+		}else{
+			return classement.get(0);
+		}
 	}
 
 	public boolean estFini(){
@@ -87,7 +99,7 @@ public abstract class Jeu implements Serializable {
 	}
 
 	public String getRaisonFin(){
-		if (!estFini()) throw new JeuFiniException("Le jeu n'est pas encore fini");
+		if (!estFini()) throw new GameOverException("Le jeu n'est pas encore fini");
 		else{ return "Partie finie !\n"+getClassement(); }
 	}
 
@@ -116,6 +128,7 @@ public abstract class Jeu implements Serializable {
 		fini=false;
 		this.plateau=plateau;
 		joueurs=new Joueur[nombreDeJoueurs];
+		classement=new ArrayList<Joueur>();
 		for (int i=0;i<nombreDeJoueurs;i++){
 			if (i<nombreDeJoueursHumains) 
 				joueurs[i]=new Joueur(i+1); 
@@ -124,7 +137,7 @@ public abstract class Jeu implements Serializable {
 			classement.add(getJoueur(i));
 		}
 		enTrainDeJouer=0;
-		jeuFiniListeners = new EventListenerList();
+		GameOverListeners = new EventListenerList();
 	}
 
 	public Jeu(Plateau plateau, int nombreDeJoueursHumains, int nombreDeJoueursIA, int nbPionsParJoueur, CaseDepart depart){
@@ -147,7 +160,7 @@ public abstract class Jeu implements Serializable {
 	}
 
 	protected Joueur joueurSuivant(){
-		if (estFini()) throw new JeuFiniException("Le jeu est fini : aucun joueur ne peut jouer.");
+		if (estFini()) throw new GameOverException("Le jeu est fini : aucun joueur ne peut jouer.");
 		enTrainDeJouer=(enTrainDeJouer+1)%nombreDeJoueurs;
 		if (enTrainDeJouer==0) numeroDuTour++;
 
@@ -186,10 +199,10 @@ public abstract class Jeu implements Serializable {
 		return plateau.getCase(depart);
 	}
 
-	public abstract String choix();
-	public abstract boolean choix(int d);
-	public abstract boolean choix(int d, String entree);
-	public abstract void jouer(int d);
+	public abstract String getChoix();
+	public abstract boolean choix();
+	public abstract boolean choix(String entree);
+	public abstract void jouer();
 
 
 }
