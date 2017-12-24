@@ -5,6 +5,19 @@ package jeu.affichage;
  */
 
 import jeu.Jeu;
+import jeu.plateau.Plateau;
+
+import java.io.Serializable;
+import java.io.File;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import java.util.Date;
+
+import java.text.SimpleDateFormat;
 
 public abstract class Affichage implements Serializable{
 
@@ -16,7 +29,7 @@ public abstract class Affichage implements Serializable{
 	private AffichagePlateau affichagePlateau;
 
 	public static final String CHEMIN_SAUVEGARDE="./sauvegardes/";
-	public static final String REGEX_SAVE=".+\.save$";
+	public static final String REGEX_SAVE=".+\\.save$";
 	public static final File sauvegardes;
 
 	static{
@@ -30,8 +43,9 @@ public abstract class Affichage implements Serializable{
 		affichagePlateau=this.getDefaultAffichagePlateau();
 	}
 
-	public int getMaximumLargeur();
-	public int getMaximumHauteur();
+	public abstract int getMaximumLargeur();
+	public abstract int getMaximumHauteur();
+	public abstract void afficher();
 
 	protected abstract AffichagePlateau getDefaultAffichagePlateau(); 
 

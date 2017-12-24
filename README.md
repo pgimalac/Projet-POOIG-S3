@@ -40,3 +40,7 @@ Pour lancer le programme il faut executer le fichier Jouer(.class)
 ### Pensées et difficultés
 
 - la différence gênante entre le jeu de l'oie et le numéri est que dans le premier le joueur n'a qu'un jeton donc pas de choix à faire au moment du jeu, alors que dans le second le joueur possède 6 jetons et a un choix à faire pour jouer, le jeton qui bouge n'est pas directement décidé par le dé. Cette distinction empèche de représenter ces deux jeux comme un seul avec des options différentes mais oblige à faire deux systèmes de jeu différents.
+
+
+## Notes pour plus tard
+- si un créateur de plateau est fait, il ne faut pas que deux cases puissent renvoyer l'une sur l'autre

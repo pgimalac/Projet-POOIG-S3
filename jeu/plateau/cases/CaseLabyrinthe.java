@@ -11,14 +11,19 @@ public class CaseLabyrinthe extends Case{
 	 */
 	private static final long serialVersionUID = -7985409714027022714L;
 	
-	private  int destination;
+	private Case destination;
 
-	public CaseLabyrinthe(){super();destination=30;}
+	public CaseLabyrinthe(Case c){
+		super();
+		destination=c;
+	}
 
-	public CaseLabyrinthe(int d){super();destination=d;}
+	public Case getDestination(){ return destination; }
 
-	public int getDestination(){ return destination; }
+	public void arriveSurCase(int i){}
 
-	public void arriveSurCase(int i){ System.out.println(i+" vous etes tombe sur la case Labyrinthe, vous etes redirige vers la case "+destination;)}
+	public Case getCase(){
+		return destination;
+	}
 
 }

@@ -26,11 +26,13 @@ public class Case implements Serializable{
 
 	public void setJ(int n){joueurs= new int[n];}
 
-	public boolean peutJouer(int i){
-		if(i>=joueurs.length || i<0) return false 
-		else return true; 
+	public boolean peutJouer(){
+		return true;
 	}
 
-	public void arriveSurCase(int i){}
-	
+	public Case getCase(){ // renvoie la case vers laquelle cette case renvoie (@overide pour CasePont)
+		return this;
+	}
+
+	public void arriveSurCase(int i){}	
 }

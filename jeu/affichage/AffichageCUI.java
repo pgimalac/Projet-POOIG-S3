@@ -7,6 +7,9 @@ package jeu.affichage;
 import jeu.Jeu;
 import jeu.JeuOie;
 import jeu.JeuNumeri;
+import jeu.Joueur;
+import jeu.JoueurIA;
+import jeu.plateau.Plateau;
 
 import java.util.Scanner;
 
@@ -30,9 +33,9 @@ public class AffichageCUI extends Affichage{
 				StringBuilder separation=new StringBuilder();
 				int size=plateau.size();
 				for (int i=0;i<size;i++){
-					sb.append(COLORS[i%COLORS.length]+centrer(LARGEUR_CASE,(i+1)+"-"+plateau.getCase(i).toString())+"  ");
+					sb.append(COLORS[i%COLORS.length]+centrer(getMaximumLargeur(),(i+1)+"-"+plateau.getCase(i).toString())+"  ");
 					if (i%maximum_largeur==0 && i!=size-1){ sb.append("\n"+separation.toString()+"\n"); separation=new StringBuilder(WHITEb); }
-					for (int i=LARGEUR_CASE+ESPACE_CASE;i>=0;i--)
+					for (int j=getMaximumLargeur()+ESPACE_CASE;j>=0;j--)
 						separation.append('-');
 				}
 				sb.append(separation.toString()+RESET);
@@ -69,20 +72,26 @@ public class AffichageCUI extends Affichage{
 	private static final String[] COLORS;
 
 	public static final String HELP="Les commandes attendues sont soit indiquées explicitement soit entre parenthèses.\nTaper autre chose que ce qui est attendu ne fera rien.\nTaper q pour quitter ou m pour accéder au menu (sauf cas particuliers, si une réponse est attendue par exemple).\n";
-	public static final char MENU='m',QUITTER='q',SAUVEGARDER='s',CONTINUER='c',RECOMMENCER='r',CHARGER='l',NOUVEAU='n',CREDITS='z'/*,MODIFIER_PARAM='p'*/;
+	public static final char MENU='m',QUITTER='q',SAUVEGARDER='s',CONTINUER='c',RECOMMENCER='r',CHARGER='l',NOUVEAU='n',CREDITS='z',MODIFIER_PARAM='p';
 
 	static{
 		if (System.getProperty("os.name").startsWith("Windows")){
-			EFFACER="",RESET="";
-			BLACKf="", REDf="", GREENf="", YELLOWf="", BLUEf="", MAGENTAf="", CYANf="", WHITEf="";
-			BLACKb="", REDb="", GREENb="", YELLOWb="", BLUEb="", MAGENTAb="", CYANb="", WHITEb="";
+			EFFACER="";RESET="";
+			BLACKf=""; REDf=""; GREENf=""; YELLOWf=""; BLUEf=""; MAGENTAf=""; CYANf=""; WHITEf="";
+			BLACKb=""; REDb=""; GREENb=""; YELLOWb=""; BLUEb=""; MAGENTAb=""; CYANb=""; WHITEb="";
 			COLORS=new String[1];
 			COLORS[0]="";
 		}else{
-			EFFACER="\033[H\033[2J",RESET="\u001b[0m";
-			BLACKf="\u001b[30m", REDf="\u001b[31m", GREENf="\u001b[32m", YELLOWf="\u001b[33m", BLUEf="\u001b[34m", MAGENTAf="\u001b[35m", CYANf="\u001b[36m", WHITEf="\u001b[37m";
-			BLACKb="\u001b[40m", REDb="\u001b[41m", GREENb="\u001b[42m", YELLOWb="\u001b[43m", BLUEb="\u001b[44m", MAGENTAb="\u001b[45m", CYANb="\u001b[46m", WHITEb="\u001b[47m";
-			COLORS={REDb,GREENb,YELLOWb,BLUEb,MAGENTAb,CYANb};
+			EFFACER="\033[H\033[2J";RESET="\u001b[0m";
+			BLACKf="\u001b[30m"; REDf="\u001b[31m"; GREENf="\u001b[32m"; YELLOWf="\u001b[33m"; BLUEf="\u001b[34m"; MAGENTAf="\u001b[35m"; CYANf="\u001b[36m"; WHITEf="\u001b[37m";
+			BLACKb="\u001b[40m"; REDb="\u001b[41m"; GREENb="\u001b[42m"; YELLOWb="\u001b[43m"; BLUEb="\u001b[44m"; MAGENTAb="\u001b[45m"; CYANb="\u001b[46m"; WHITEb="\u001b[47m";
+			COLORS=new String[6];
+			COLORS[0]=REDb;
+			COLORS[1]=GREENb;
+			COLORS[2]=YELLOWb;
+			COLORS[3]=BLUEb;
+			COLORS[4]=MAGENTAb;
+			COLORS[5]=CYANb;
 		}
 	}
 
@@ -93,10 +102,12 @@ public class AffichageCUI extends Affichage{
 	public AffichageCUI(){
 		maximum_largeur=10;
 		maximum_hauteur=15;
+		ESPACE_CASE=3;
 	}
 
 	private int maximum_hauteur;
 	private int maximum_largeur;
+	private int ESPACE_CASE;
 
 	public int getMaximumLargeur(){
 		return maximum_largeur; 
@@ -114,7 +125,7 @@ public class AffichageCUI extends Affichage{
 
 	private String centrer(int largeur, String s){
 		if (s.length()>largeur){
-			return s.subString(0,largeur-2)+".";
+			return s.substring(0,largeur-2)+".";
 		}else{
 			StringBuilder sb=new StringBuilder(s);
 			for (int i=largeur-s.length();i>=0;i--){
@@ -153,7 +164,7 @@ public class AffichageCUI extends Affichage{
 
 		if (i==1){ System.out.println("Il n'existe aucune sauvegarde !"); return false; }
 
-		sb.append("\nEntrez le numéro ou le nom complet d'une sauvegarde pour charger la partie : ")
+		sb.append("\nEntrez le numéro ou le nom complet d'une sauvegarde pour charger la partie : ");
 		System.out.print(sb.toString());
 		String n=null;
 
@@ -174,7 +185,10 @@ public class AffichageCUI extends Affichage{
 					int j=Integer.parseInt(n);
 					if (j>0 && j<i){
 						for (String s:t){
-							if (s.matches(REGEX_SAVE && j==1){ super.setJeu(Affichage.chargerLeJeu(s)); return true; }
+							if (s.matches(REGEX_SAVE) && j==1){ 
+								super.setJeu(Affichage.chargerLeJeu(s));
+								return true;
+							}
 							else if (s.matches(REGEX_SAVE)) j--;
 						}
 					}
@@ -196,8 +210,17 @@ public class AffichageCUI extends Affichage{
 				System.out.println("Tour "+numeroDuTour);
 			}
 
-			String s=jeu.getJoueur getName();
-
+			Joueur joueur=jeu.joueurEnTrainDeJouer();
+			System.out.print("C'est au tour de "+joueur+" de jouer : appuie sur entrée pour lancer les dés ! ");
+			int d=jeu.getDes();
+			if (jeu.choix(d)){
+				System.out.println(jeu.choix());
+				while (!jeu.choix(d,sc.nextLine())){
+					System.out.println("Entrée invalide !");
+				}
+			}else{
+				jeu.jouer(d);
+			}
 			
 		}
 	}
@@ -211,13 +234,13 @@ public class AffichageCUI extends Affichage{
 				if (jeuEnCours || (c!=CONTINUER && c!=SAUVEGARDER && c!=RECOMMENCER)) return c;
 			}
 		}
-		return '';
+		return '.';
 	}
 
 	private void menu(){
 		StringBuilder sb=new StringBuilder(EFFACER+RESET+"MENU\n\n");
-		if (super.getJeu()!=null) sb.append("Continuer (c)\nRecommencer avec les mêmes paramètres (r)\nSauvegarder (s)\n");
-		sb.append("Nouveau jeu (n)\nCharger une sauvegarde ("")\nModifier les paramètres (p)\nCrédits (z)\nQuitter (q)\n");
+		if (super.getJeu()!=null) sb.append("Continuer ("+CONTINUER+")\nRecommencer avec les mêmes paramètres ("+RECOMMENCER+")\nSauvegarder ("+SAUVEGARDER+")\n");
+		sb.append("Nouveau jeu ("+NOUVEAU+")\nCharger une sauvegarde ("+CHARGER+")\nModifier les paramètres ("+MODIFIER_PARAM+")\nCrédits ("+CREDITS+")\nQuitter ("+QUITTER+")\n");
 		System.out.println(sb.toString());
 	}
 
@@ -225,17 +248,69 @@ public class AffichageCUI extends Affichage{
 		System.out.print("Entrer o pour jouer au jeu de l'oie ou n pour jouer au numéri : ");
 		String s=null;
 		boolean b=true;
-		Jeu j=super.getJeu();
+		Jeu jeu=super.getJeu();
+
+		int min,max;
+
 		do{
 			s=sc.nextLine();
 			if (s!=null && s.length()==1){
-				if (s.charAt(0)=='n'){ b=true; j=new JeuNumeri(); }
-				else if (s.charAt(0)=='o'){ b=true; j=new JeuOie(); }
-				else if (s.charAt(0)=='q') System.exit(0);
-				else if (s.charAt(0)=='m') b=true;
+				if (s.charAt(0)=='n'){
+					b=true;
+					min=JeuNumeri.getMinimumJoueurs();
+					max=JeuNumeri.getMaximumJoueurs();
+				}
+				else if (s.charAt(0)=='o'){
+					b=true;
+					min=JeuOie.getMinimumJoueurs();
+					max=JeuOie.getMaximumJoueurs();
+				}
+				else if (s.charAt(0)==QUITTER)
+					System.exit(0);
+				else if (s.charAt(0)==MENU) 
+					return jeu;
 			}
 		}while(b);
+
+		System.out.print("Il doit y avoir entre "+min+" et "+max+" joueurs. Combien de joueurs humains y-a-t-il ? ");
+
+		int humains=-1;
+		do{
+			try{
+				humains=Integer.parseInt(sc.next());
+			}catch(NumberFormatException nfe){
+				System.out.println("Entrée invalide !");
+			}
+		}while(humains<0 || humains>max);
+
+		min=Math.max(0,min-humains);
+		max-=humains;
+		System.out.print("Combien y-a-t-il de joueurs IA (entre "+min+" et "+max+") ? ");
+
+		int ia=-1;
+		do{
+			try{
+				ia=Integer.parseInt(sc.next());
+			}catch(NumberFormatException nfe){
+				System.out.println("Entrée invalide !");
+			}
+		}while(ia<0 || ia>max);
+
+		if (s.charAt(0)=='o'){
+			jeu=new JeuOie(humains,ia);
+		}else{
+			jeu=new JeuNumeri(humains,ia);
+		}
 		super.setJeu(jeu);
+
+
+		// paramétrage de la partie
+		System.out.print("Modifier les options par défaut du jeu ? (O/n) ");
+		String tmp=sc.nextLine().toLowerCase();
+		if (tmp.length()==0 || tmp.charAt(0)!='n'){
+
+		}
+
 		return jeu;
 	}
 

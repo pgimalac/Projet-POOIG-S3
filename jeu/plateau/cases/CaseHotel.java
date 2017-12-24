@@ -19,7 +19,7 @@ public class CaseHotel extends Case{
 	}
 
 	public boolean peutJouer(int i){
-		if(super.peutJouer(i)){
+		if(super.peutJouer()){
 			if(joueurs[i]==0) return true;
 			joueurs[i]--;
 			return false;

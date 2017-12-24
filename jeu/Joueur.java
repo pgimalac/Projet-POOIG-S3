@@ -1,13 +1,17 @@
 package jeu;
 
-import jeu.plateau.cases.Case;
 import jeu.JeuException;
+import jeu.plateau.cases.Case;
+import jeu.plateau.cases.CaseDepart;
 
-/**
- *	
+import java.io.Serializable;
+
+
+/*
+ **	
  */
 
-public class Joueur implements Comparable,Serializable{
+public class Joueur implements Comparable<Joueur>,Serializable{
 	private Pion[] pions;
 	private String nom;
 	private int score;
@@ -18,7 +22,9 @@ public class Joueur implements Comparable,Serializable{
 	public Case getCase(int i){ return pions[i].getCase(); }
 
 	public void setCase(Case c){ setCase(0,c); }
-	public void setCase(int i, Case c){ pions[i].setCase(c); }
+	public void setCase(int i, Case c){
+		pions[i].setCase(c.getCase());
+	}
 
 	public int getScore(){ return score; }
 	public void setScore(int sc){ score=sc; }
@@ -33,6 +39,10 @@ public class Joueur implements Comparable,Serializable{
 		pions=null;
 	}
 
+	public Joueur(int i){
+		this("Joueur "+i);
+	}
+
 	public int compareTo(Joueur j){
 		if (j==null) throw new NullPointerException();
 		return ((j.getScore()==this.getScore())?0:((j.getScore()>this.getScore())?-1:1));
@@ -41,23 +51,27 @@ public class Joueur implements Comparable,Serializable{
 	public void initialiserPionsJoueurs(int nbPionsParJoueur, CaseDepart c){
 		depart=c;
 		pions=new Pions[nbPionsParJoueur];
-		for (int i=0;i<nbPionsParJoueur;i++){
+		for (int i=0;i<nbPionsParJoueur;i++)
 			pions[i]=new Pion(c);
-		}
 	}
 
 	public void recommencer(){
 		score=0;
-		for (Pion p : pions) p.setCase(depart);
+		for (Pion p : pions)
+			p.setCase(depart);
+	}
+
+	public boolean peutJouer(){
+		return true;
 	}
 
 	class Pion{
-		private Case case;
+		private Case c;
 
-		void setCase(Case c){ case=c; }
-		Case getCase(){ return case; }
+		void setCase(Case c){ this.c=c; }
+		Case getCase(){ return c; }
 
-		Pion(CaseDepart case){ this.case=case; }
+		Pion(CaseDepart c){ this.c=c; }
 		Pion(){ this(null); }
 	}
 	

@@ -1,10 +1,24 @@
 package jeu;
 
-public abstract class JeuException extends RuntimeException{
-	
+import jeu.Jeu;
+
+public abstract class JeuException extends RuntimeException{	
 }
 
 class JeuFiniException extends JeuException{
-	JeuFiniException(){ super("Le jeu est fini."); }
-	JeuFiniException(String message){ super(message); }
+	String message;
+	JeuFiniException(){
+		this("Le jeu est fini.");
+	}
+
+	JeuFiniException(String m){
+		super();
+		message=m;
+	}
+}
+
+class PasDeChoixException extends JeuException{
+	PasDeChoixException(){
+		super("Il n'y a pas de choix possible.");
+	}
 }
