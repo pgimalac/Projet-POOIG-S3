@@ -28,6 +28,7 @@ public abstract class Jeu implements Serializable,Iterable<Joueur> {
 	private static final long serialVersionUID = 3350919143027733149L;
 	private static final int MAXIMUM_JOUEURS=Integer.MAX_VALUE-1;
 	private static final int MINIMUM_JOUEURS=2;
+	protected static final Random des=new Random();
 
 	public static int getMinimumJoueurs(){
 		return 2;
@@ -36,8 +37,6 @@ public abstract class Jeu implements Serializable,Iterable<Joueur> {
 	public static int getMaximumJoueurs(){
 		return Integer.MAX_VALUE-1;
 	}
-
-	private static final Random des=new Random();
 
 	public Iterator<Joueur> iterator(){
 		return (new ArrayList(Arrays.asList(joueurs))).iterator();
@@ -48,15 +47,6 @@ public abstract class Jeu implements Serializable,Iterable<Joueur> {
 		return valeurDes;
 	} // lancé d'un dé à 6 faces
 
-	public int lancerDes(Joueur joueur){
-		if (!joueur.estHumain()){
-			try{
-				Thread.sleep(100);
-			}catch(InterruptedException e){}
-		}
-		return lancerDes();
-	}
-
 	protected void setDes(int i){
 		valeurDes=i;
 	}
@@ -65,9 +55,8 @@ public abstract class Jeu implements Serializable,Iterable<Joueur> {
 		return valeurDes;
 	}
 
-	private int valeurDes=1;
-
 	private boolean fini;
+	private int valeurDes=1;
 	private int numeroDuTour;
 	private int enTrainDeJouer;
 	private final Joueur[] joueurs;
@@ -76,7 +65,6 @@ public abstract class Jeu implements Serializable,Iterable<Joueur> {
 	private final int nombreDeJoueurs;
 
 	private final EventListenerList GameOverListeners;
-
 
 	public void addGameOverListener(GameOverListener j){
 		GameOverListeners.add(GameOverListener.class,j);
@@ -87,6 +75,51 @@ public abstract class Jeu implements Serializable,Iterable<Joueur> {
         for(GameOverListener GameOverListener : jfl)
             GameOverListener.GameOver(e);
     }
+
+	public abstract class Option{
+		private final String option;
+		private String valeur;
+		private final String[] valeurs;
+
+		public String toString(){
+			return option;
+		}
+
+		public String[] getValues(){
+			return valeurs;
+		}
+
+		public String getValue(){
+			return valeur;
+		}
+
+		public int getIntValue(){
+			int i=0;
+			for (String s : valeurs){
+				if (s.equals(valeur))
+					return i;
+			}
+			return -1;
+		}
+
+		public void setValue(int i){
+			valeur=valeurs[i];
+		}
+
+		public void setValues(String[] v){
+			valeurs=v;
+		}
+
+		public void setOption(String o){
+			option=o;
+		}
+	}
+
+	private ArrayList<Option> options=new ArrayList<Option>();
+
+	protected void addOption(Option o){
+		options.add(o);
+	}
 
 
     public int getValeurDes(){

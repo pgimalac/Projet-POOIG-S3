@@ -105,10 +105,12 @@ public class AffichageCUI extends Affichage{
 	public AffichageCUI(){
 		NOMBRE_CASE_LARGEUR=9;
 		LARGEUR_CASE=12;
+		WAITING_TIME=300;
 	}
 
 	private int NOMBRE_CASE_LARGEUR;
 	private int LARGEUR_CASE;
+	private int WAITING_TIME;
 
 	private void setNombreCaseLargeur(int l){
 		NOMBRE_CASE_LARGEUR=l;
@@ -218,14 +220,17 @@ public class AffichageCUI extends Affichage{
 					return;
 			}
 
-			int d=jeu.lancerDes(joueur);
+			int d=jeu.lancerDes();
 			while(jeu.choix()){ // tant qu'il y a un choix à faire
 				System.out.println(jeu.getChoix()); // on affiche le choix à faire
 				while (!jeu.choix(sc.nextLine()))	// tant que la réponse au choix n'est pas valide, on demande une réponse
 					System.out.println("Entrée invalide !");
 			}
 			jeu.jouer();
-			System.out.println(getPositions(joueur));
+			System.out.println(joueur+" fait "+d+" : "+getPositions(joueur));
+			try{
+				Thread.sleep(WAITING_TIME);
+			}catch(InterruptedException e){}
 		}
 		System.out.println("La partie est finie !");
 	}

@@ -21,11 +21,11 @@ public class Plateau implements Serializable{
 	public Case getCase(int i){ return cases[i]; }
 
 	public int getCase(Case c){
-		int i=0;
+		int i=1;
 		for (Case cc : cases){
-			if (cc==c){
+			if (cc==c)
 				break;
-			}
+			i++;
 		}
 		return i;
 	}
