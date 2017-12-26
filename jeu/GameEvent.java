@@ -5,8 +5,8 @@ import jeu.Jeu;
 import java.util.EventObject;
 
 public class GameEvent extends EventObject{
-	public GameEvent(Jeu j){
-		super(j);
+	public GameEvent(Jeu jeu){
+		super(jeu);
 	}
 }
 

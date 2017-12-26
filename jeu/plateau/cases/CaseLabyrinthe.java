@@ -1,5 +1,7 @@
 package jeu.plateau.cases;
 
+import jeu.Joueur;
+
 /**
  *	
  */
@@ -18,12 +20,20 @@ public class CaseLabyrinthe extends Case{
 		destination=c;
 	}
 
-	public Case getDestination(){ return destination; }
+	@Override
+	public void arriveSurCase(Joueur j){
 
-	public void arriveSurCase(int i){}
+	}
 
+	@Override
 	public Case getCase(){
 		return destination;
 	}
+
+	@Override
+	public String toString(){
+		return "labyrinthe";
+	}
+
 
 }

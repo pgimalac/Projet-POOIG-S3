@@ -14,13 +14,16 @@ import jeu.plateau.cases.CaseDepart;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Iterator;
+import java.util.Arrays;
+import java.util.Collections;
 
 import javax.swing.event.EventListenerList;
 
 import java.io.Serializable;
 
 
-public abstract class Jeu implements Serializable {
+public abstract class Jeu implements Serializable,Iterable<Joueur> {
 
 	private static final long serialVersionUID = 3350919143027733149L;
 	private static final int MAXIMUM_JOUEURS=Integer.MAX_VALUE-1;
@@ -36,10 +39,31 @@ public abstract class Jeu implements Serializable {
 
 	private static final Random des=new Random();
 
-	public int getDes(){
-		valeurDes=des.nextInt(6)+1;
+	public Iterator<Joueur> iterator(){
+		return (new ArrayList(Arrays.asList(joueurs))).iterator();
+	}
+
+	public int lancerDes(){
+		setDes(des.nextInt(6)+1);
 		return valeurDes;
 	} // lancé d'un dé à 6 faces
+
+	public int lancerDes(Joueur joueur){
+		if (!joueur.estHumain()){
+			try{
+				Thread.sleep(100);
+			}catch(InterruptedException e){}
+		}
+		return lancerDes();
+	}
+
+	protected void setDes(int i){
+		valeurDes=i;
+	}
+
+	public int getDes(){
+		return valeurDes;
+	}
 
 	private int valeurDes=1;
 
@@ -53,6 +77,7 @@ public abstract class Jeu implements Serializable {
 
 	private final EventListenerList GameOverListeners;
 
+
 	public void addGameOverListener(GameOverListener j){
 		GameOverListeners.add(GameOverListener.class,j);
 	}
@@ -63,6 +88,7 @@ public abstract class Jeu implements Serializable {
             GameOverListener.GameOver(e);
     }
 
+
     public int getValeurDes(){
     	return valeurDes;
     }
@@ -70,6 +96,10 @@ public abstract class Jeu implements Serializable {
 	public Joueur joueurEnTrainDeJouer(){
 		return joueurs[enTrainDeJouer];
 	}
+
+    public int getCase(Case c){
+    	return plateau.getCase(c);
+    }
 
 	protected Case getCase(int i){
 		return plateau.getCase(i);
@@ -128,7 +158,12 @@ public abstract class Jeu implements Serializable {
 		fini=false;
 		this.plateau=plateau;
 		joueurs=new Joueur[nombreDeJoueurs];
-		classement=new ArrayList<Joueur>();
+		classement=new ArrayList<Joueur>(){
+			public Iterator<Joueur> iterator(){
+				Collections.sort(this, Collections.reverseOrder());
+				return (Iterator<Joueur>)this;
+			}
+		};
 		for (int i=0;i<nombreDeJoueurs;i++){
 			if (i<nombreDeJoueursHumains) 
 				joueurs[i]=new Joueur(i+1); 
@@ -192,7 +227,7 @@ public abstract class Jeu implements Serializable {
 	protected Case getCase(int depart, int des){
 		while(des!=0){
 			if (depart==plateau.size()-1 && des>0) des=-des; // si l'on voulait avancer mais que l'on est à la fin on recule.
-			if (depart==0 && des<0) des=0; // si l'on voulait reculer mais que l'on est au début on ne bouge pas.
+			if (depart==0 && des<0) break; // si l'on voulait reculer mais que l'on est au début on ne bouge pas.
 			depart+=Math.abs(des)/des;
 			des-=Math.abs(des)/des;
 		}
@@ -202,7 +237,7 @@ public abstract class Jeu implements Serializable {
 	public abstract String getChoix();
 	public abstract boolean choix();
 	public abstract boolean choix(String entree);
-	public abstract void jouer();
+	public abstract void jouer(); // joue le tour d'un joueur et passe le joueur en train de jouer au suivant 
 
 
 }

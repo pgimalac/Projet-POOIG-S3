@@ -36,7 +36,7 @@ public class Plateau implements Serializable{
 		Case[] c=new Case[63];
 		for (int i=0;i<63;i++){
 			if (i==0) c[i]=new CaseDepart();
-			else if (i==6) c[i]=new CasePont();
+			else if (i==6) c[i]=null;
 			else if (i==62) c[i]=new CaseGagnante();
 			else if (i==18) c[i]=new CaseHotel();
 			else if (i==30) c[i]=new CasePuit();
@@ -46,6 +46,7 @@ public class Plateau implements Serializable{
 			else if ((i+1)%9==0) c[i]=new CaseOie();
 			else c[i]=new Case();
 		}
+		c[6]=new CasePont(c[12]);
 		return new Plateau(c);
 	}
 	public static final Plateau getDefaultNumeri() {

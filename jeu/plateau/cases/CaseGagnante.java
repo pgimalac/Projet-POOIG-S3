@@ -1,5 +1,7 @@
 package jeu.plateau.cases;
 
+import jeu.Joueur;
+
 /**
  *	
  */
@@ -15,7 +17,14 @@ public class CaseGagnante extends Case{
 		super();
 	}
 
-	public void arriveSurCase(int i){
-		System.out.println(i+" vous etes arrive sur la case gagnante BRAVO !");
+	@Override
+	public void arriveSurCase(Joueur j){
+		System.out.println(j+" est arrivé sur la case gagnante, BRAVO !");
 	}
+
+	@Override
+	public String toString(){
+		return "victoire";
+	}
+
 }

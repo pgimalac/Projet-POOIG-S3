@@ -43,8 +43,6 @@ public abstract class Affichage implements Serializable{
 		affichagePlateau=this.getDefaultAffichagePlateau();
 	}
 
-	public abstract int getMaximumLargeur();
-	public abstract int getMaximumHauteur();
 	public abstract void afficher();
 
 	protected abstract AffichagePlateau getDefaultAffichagePlateau(); 

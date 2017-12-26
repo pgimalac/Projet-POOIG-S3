@@ -6,12 +6,15 @@ import jeu.plateau.cases.CaseDepart;
 
 import java.io.Serializable;
 
+import java.util.Iterator;
+import java.util.ArrayList;
+
 
 /*
  **	
  */
 
-public class Joueur implements Comparable<Joueur>,Serializable{
+public class Joueur implements Comparable<Joueur>,Serializable,Iterable<Case>{
 	private Pion[] pions;
 	private String nom;
 	private int score;
@@ -24,6 +27,13 @@ public class Joueur implements Comparable<Joueur>,Serializable{
 	public void setCase(Case c){ setCase(0,c); }
 	public void setCase(int i, Case c){
 		pions[i].setCase(c.getCase());
+	}
+
+	public Iterator<Case> iterator(){
+		ArrayList<Case> a=new ArrayList<Case>();
+		for (Pion p : pions)
+			a.add(p.getCase());
+		return a.iterator();
 	}
 
 	public int getScore(){ return score; }
@@ -49,11 +59,14 @@ public class Joueur implements Comparable<Joueur>,Serializable{
 		return ((j.getScore()==this.getScore())?0:((j.getScore()>this.getScore())?-1:1));
 	}
 
-	public void initialiserPionsJoueurs(int nbPionsParJoueur, CaseDepart c){
-		depart=c;
+	public int getNombrePions(){
+		return pions.length;
+	}
+
+	public void initialiserPionsJoueurs(int nbPionsParJoueur, CaseDepart depart){
 		pions=new Pion[nbPionsParJoueur];
 		for (int i=0;i<nbPionsParJoueur;i++)
-			pions[i]=new Pion(c);
+			pions[i]=new Pion(depart);
 	}
 
 	public void recommencer(){

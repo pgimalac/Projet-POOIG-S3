@@ -27,8 +27,9 @@ public class JeuOie extends Jeu{
 	}
 
 	@Override
-	public int getDes(){
-		return super.getDes()+super.getDes();
+	public int lancerDes(){
+		super.setDes(super.getDes()+super.getDes());
+		return super.getDes();
 	}
 
 	@Override

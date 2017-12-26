@@ -2,6 +2,8 @@ package jeu.plateau.cases;
 
 import java.io.Serializable;
 
+import jeu.Joueur;
+
 /**
  * Cette classe représente une case du plateau sans aucune particularité.
  * @see Plateau
@@ -20,19 +22,27 @@ public class Case implements Serializable{
 	 * 
 	 */
 
-	protected int[] joueurs;
+	public Case(){
 
-	public Case(){ joueurs=null;}
+	}
 
-	public void setJ(int n){joueurs= new int[n];}
+	public int getScore(){
+		return 0;
+	}
 
-	public boolean peutJouer(){
+	public boolean peutJouer(Joueur j){
 		return true;
 	}
 
-	public Case getCase(){ // renvoie la case vers laquelle cette case renvoie (@overide pour CasePont)
+	public String toString(){
+		return "normale";
+	}
+
+	public Case getCase(){ // renvoie la case vers laquelle cette case renvoie (@overide pour CasePont,...)
 		return this;
 	}
 
-	public void arriveSurCase(int i){}	
+	public void arriveSurCase(Joueur j){
+
+	}	
 }
