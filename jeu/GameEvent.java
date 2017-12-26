@@ -39,3 +39,16 @@ class GameOverOieEvent extends GameOverEvent{
 		super.setRaison(j.getRaisonFin());
 	}
 }
+
+class CannotPlayEvent extends GameEvent{
+	public Joueur getJoueur(){
+		return joueur;
+	}
+
+	private Joueur joueur;
+
+	public CannotPlayEvent(Jeu jeu, Joueur joueur){
+		super(jeu);
+		this.joueur=joueur;
+	}
+}

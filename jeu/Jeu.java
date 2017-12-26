@@ -64,22 +64,28 @@ public abstract class Jeu implements Serializable,Iterable<Joueur> {
 	private final ArrayList<Joueur> classement;
 	private final int nombreDeJoueurs;
 
-	private final EventListenerList GameOverListeners;
+	private final EventListenerList gameListeners;
 
-	public void addGameOverListener(GameOverListener j){
-		GameOverListeners.add(GameOverListener.class,j);
+	public void addGameListener(GameListener j){
+		gameListeners.add(GameListener.class,j);
 	}
 
 	protected void fireGameOver(GameOverEvent e) {
-		GameOverListener[] jfl=GameOverListeners.getListeners(GameOverListener.class);
-        for(GameOverListener GameOverListener : jfl)
-            GameOverListener.GameOver(e);
+		GameOverListener[] list=gameListeners.getListeners(GameOverListener.class);
+        for(GameOverListener gameOverListener : list)
+            gameOverListener.GameOver(e);
+    }
+
+    protected void fireCannotPlay(CannotPlayEvent e){
+		CannotPlayListener[] list=gameListeners.getListeners(CannotPlayListener.class);
+        for(CannotPlayListener cannotPlayListener : list)
+            cannotPlayListener.cannotPlay(e);
     }
 
 	public abstract class Option{
-		private final String option;
-		private String valeur;
-		private final String[] valeurs;
+		protected String option;
+		protected String valeur;
+		protected String[] valeurs;
 
 		public String toString(){
 			return option;
@@ -104,14 +110,6 @@ public abstract class Jeu implements Serializable,Iterable<Joueur> {
 
 		public void setValue(int i){
 			valeur=valeurs[i];
-		}
-
-		public void setValues(String[] v){
-			valeurs=v;
-		}
-
-		public void setOption(String o){
-			option=o;
 		}
 	}
 
@@ -205,7 +203,7 @@ public abstract class Jeu implements Serializable,Iterable<Joueur> {
 			classement.add(getJoueur(i));
 		}
 		enTrainDeJouer=0;
-		GameOverListeners = new EventListenerList();
+		gameListeners = new EventListenerList();
 	}
 
 	public Jeu(Plateau plateau, int nombreDeJoueursHumains, int nombreDeJoueursIA, int nbPionsParJoueur, CaseDepart depart){
@@ -232,17 +230,23 @@ public abstract class Jeu implements Serializable,Iterable<Joueur> {
 		enTrainDeJouer=(enTrainDeJouer+1)%nombreDeJoueurs;
 		if (enTrainDeJouer==0) numeroDuTour++;
 
-		if (joueurEnTrainDeJouer().peutJouer())
+		if (peutJouer())
 			return joueurEnTrainDeJouer();
-		else 
+		else{
+			fireCannotPlay(new CannotPlayEvent(this,joueurEnTrainDeJouer()));
 			return joueurSuivant();
+		}
 	}
 
 	public Plateau getPlateau(){
 		return plateau;
 	}
 
-	public boolean peutJouer(int numeroDuJoueur){
+	public boolean peutJouer(){
+		return peutJouer(joueurEnTrainDeJouer());
+	}
+
+	public boolean peutJouer(Joueur joueur){
 		return true;
 	}
 

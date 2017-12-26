@@ -14,23 +14,23 @@ public class JeuOie extends Jeu{
 
 	class OptionPositionFinOie extends Option{
 		public OptionPositionFinOie(){
-			super.setOption("position finale pour gagner");
+			super.option="position finale pour gagner";
 			String[] s=new String[2];
 			s[0]="au moins la case d'arrivée";
 			s[1]="exactement la case d'arrivée";
-			super.setValues(s);
+			super.valeurs=s;
 			super.setValue(0);
 		}
 	}
 
 	class OptionPionCaseOie extends Option{
-		public OptionPositionFinOie(){
-			super.setOption("arrivée d'un pion sur une case occupée");
+		public OptionPionCaseOie(){
+			super.option="arrivée d'un pion sur une case occupée";
 			String[] s=new String[3];
 			s[0]="rien ne se passe (plusieurs pions sont sur la même case)";
 			s[1]="les deux pions échangent de place";
 			s[2]="le pion qui arrive recule jusqu'à une case libre";
-			super.setValues(s);
+			super.valeurs=s;
 			super.setValue(0);
 		}
 	}
@@ -39,7 +39,7 @@ public class JeuOie extends Jeu{
 	public JeuOie(Plateau plateau, int nombreDeJoueursHumains, int nombreDeJoueursIA){
 		super(plateau,nombreDeJoueursHumains,nombreDeJoueursIA);
 		super.initialiserPionsJoueurs(1,(CaseDepart)getCase(0));
-		
+
 		super.addOption(new OptionPositionFinOie());
 		super.addOption(new OptionPionCaseOie());
 	}

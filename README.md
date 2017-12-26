@@ -7,21 +7,26 @@ Néanmoins, rien n'est garanti !
 
 ## TODO
 
+#### obligatoire
 - [x] commencer
 - [x] avancer un peu...
 - [x] continuer sur une bonne lancée et avancer plus !
-- [ ] écrire le jeu de base (possiblement sans Listener,... en donnant directement à l'affichage les informations)
+- [ ] écrire le jeu de l'oie de base
+- [ ] écrire le jeu de numéri de base
 - [ ] affichage console
 - [ ] écrire le jeu de base avec listeners,...
 - [ ] rectifier l'affichage console
 - [ ] affichage graphique
-- [ ] différentes options de jeu
-- [ ] création interactive du jeu (options, plateau,...)
-- [ ] possibilité de sauvegarder / de charger une partie
+- [ ] ajouter les options aux deux jeux
 - [ ] finir de programmer
+- [ ] ecrire le rapport
+
+#### optionnel
+- [ ] possibilité de sauvegarder / de charger une partie
 - [ ] mettre une visibilité minimale sur chaque variable, méthode, classe,...
 - [ ] représenter la hierarchie des classes et leurs interactions avec UML (ou autre)
-- [ ] ecrire le rapport
+- [ ] création interactive du jeu (options, plateau,...)
+
 
 ## Fonctionnement théorique du programme final
 Pour lancer le programme il faut executer le fichier Jouer(.class) 
