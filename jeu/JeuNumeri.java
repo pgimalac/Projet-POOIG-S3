@@ -6,6 +6,11 @@ package jeu;
 
 import jeu.plateau.Plateau;
 
+import jeu.events.GameOverEvent;
+
+import jeu.exceptions.ChoiceException;
+import jeu.exceptions.WrongOptionException;
+
 public class JeuNumeri extends Jeu{
 
 	private static final long serialVersionUID = -7585923130073982710L;
@@ -28,11 +33,6 @@ public class JeuNumeri extends Jeu{
 	}
 
 	@Override
-	protected GameOverEvent getGameOver(){
-		return new GameOverNumeriEvent(this);
-	}
-
-	@Override
 	public boolean choix(){
 		return false;
 	}
@@ -51,9 +51,16 @@ public class JeuNumeri extends Jeu{
 
 	@Override
 	public void jouer(){
-		Joueur joueur=super.joueurEnTrainDeJouer();
-		joueur.setCase(super.getCase(joueur.getCase(),super.getValeurDes()));
-		joueurSuivant();
+	}
+
+	@Override
+	public boolean peutJouer(Joueur joueur){
+		return true;
+	}
+
+	@Override
+	public boolean estFini(){
+		return false;
 	}
 
 

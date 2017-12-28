@@ -6,31 +6,20 @@ import jeu.Joueur;
  *	
  */
 
-public class CaseMort extends Case{
+public class CaseMort extends CaseLabyrinthe{
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -6125234066920613090L;
 
-	private CaseDepart depart;
-
-	public CaseMort(CaseDepart c){
-		super();
-		depart=c;
-	}
-
-	@Override
-	public Case getCase(){
-		return (Case)depart;
+	public CaseMort(){
+		super(null);
 	}
 
 	@Override
 	public String toString(){
 		return "mort";
 	}
-
-
-
 
 }

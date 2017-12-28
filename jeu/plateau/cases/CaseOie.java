@@ -18,13 +18,13 @@ public class CaseOie extends Case{
 	}
 
 	@Override
-	public void arriveSurCase(Joueur j){
-
+	public String toString(){
+		return "oie";
 	}
 
 	@Override
-	public String toString(){
-		return "oie";
+	public boolean moveAgain(){
+		return true;
 	}
 
 

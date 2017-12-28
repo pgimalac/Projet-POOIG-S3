@@ -23,6 +23,7 @@ public abstract class Affichage implements Serializable{
 
 	interface AffichagePlateau{
 		public void afficher(Plateau plateau);
+		public String toString();
 	}
 
 	private Jeu jeu;
@@ -40,7 +41,7 @@ public abstract class Affichage implements Serializable{
 
 	{
 		jeu=null;
-		affichagePlateau=this.getDefaultAffichagePlateau();
+		setAffichage(this.getDefaultAffichagePlateau());
 	}
 
 	public abstract void afficher();
@@ -56,7 +57,11 @@ public abstract class Affichage implements Serializable{
 	}
 
 	public boolean jeuEnCours(){
-		return jeu!=null && !jeu.estFini();
+		return jeu!=null;
+	}
+
+	public boolean jeuFini(){
+		return jeuEnCours() && jeu.estFini();
 	}
 
 	protected void setJeu(Jeu j){

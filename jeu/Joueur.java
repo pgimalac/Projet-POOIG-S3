@@ -1,6 +1,6 @@
 package jeu;
 
-import jeu.GameException;
+import jeu.exceptions.GameException;
 import jeu.plateau.cases.Case;
 import jeu.plateau.cases.CaseDepart;
 
@@ -26,6 +26,7 @@ public class Joueur implements Comparable<Joueur>,Serializable,Iterable<Case>{
 
 	public void setCase(Case c){ setCase(0,c); }
 	public void setCase(int i, Case c){
+		if (c==null) c=depart;
 		pions[i].setCase(c.getCase());
 	}
 
@@ -82,7 +83,9 @@ public class Joueur implements Comparable<Joueur>,Serializable,Iterable<Case>{
 	class Pion{
 		private Case c;
 
-		void setCase(Case c){ this.c=c; }
+		void setCase(Case c){ 
+			this.c=c;
+		}
 		Case getCase(){ return c; }
 
 		Pion(CaseDepart c){ this.c=c; }

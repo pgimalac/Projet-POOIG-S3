@@ -9,25 +9,46 @@ import jeu.JeuOie;
 import jeu.JeuNumeri;
 import jeu.Joueur;
 import jeu.JoueurIA;
+
+import jeu.listeners.GameListener;
+import jeu.listeners.GameOverListener;
+import jeu.listeners.CannotPlayListener;
+import jeu.listeners.PlayListener;
+
+import jeu.events.GameEvent;
+import jeu.events.GameOverEvent;
+import jeu.events.CannotPlayEvent;
+import jeu.events.PlayEvent;
+
+import jeu.options.Option;
+
 import jeu.plateau.Plateau;
 import jeu.plateau.cases.Case;
 
 import java.util.Scanner;
+import java.util.ArrayList;
 
-public class AffichageCUI extends Affichage{
+public class AffichageCUI extends Affichage implements GameOverListener,CannotPlayListener,PlayListener{
 
 	private static Scanner sc=new Scanner(System.in);
 
 	class AffichagePlateauSpiraleCUI implements AffichagePlateau{
 		private String plateauS;
 
+		@Override
 		public void afficher(Plateau plateau){
+		}
+
+		@Override
+		public String toString(){
+			return "spirale";
 		}
 	}
 
 	class AffichagePlateauRectangleCUI implements AffichagePlateau{
 		private String plateauS=null;
 
+		@Override
 		public void afficher(Plateau plateau){
 			if (plateauS==null){
 				StringBuilder sb=new StringBuilder(BLACKf);
@@ -47,21 +68,38 @@ public class AffichageCUI extends Affichage{
 			}
 			System.out.println(plateauS);
 		}
+
+		@Override
+		public String toString(){
+			return "rectangle";
+		}
 	}
 
 	class AffichagePlateauZigzagCUI implements AffichagePlateau{
 		private String plateauS;
 
+		@Override
 		public void afficher(Plateau plateau){
 
+		}
+
+		@Override
+		public String toString(){
+			return "zigzag";
 		}
 	}
 
 	class AffichagePlateauColonneCUI implements AffichagePlateau{
 		private String plateauS;
 
+		@Override
 		public void afficher(Plateau plateau){
 
+		}
+
+		@Override
+		public String toString(){
+			return "colonne";
 		}
 	}
 
@@ -78,7 +116,7 @@ public class AffichageCUI extends Affichage{
 	public static final char MENU='m',QUITTER='q',SAUVEGARDER='s',CONTINUER='c',RECOMMENCER='r',CHARGER='l',NOUVEAU='n',CREDITS='z',MODIFIER_PARAM='p';
 
 	static{
-		if (System.getProperty("os.name").startsWith("Windows")){
+		if (System.getProperty("os.name").toLowerCase().startsWith("windows")){
 			EFFACER="";RESET="";
 			BLACKf=""; REDf=""; GREENf=""; YELLOWf=""; BLUEf=""; MAGENTAf=""; CYANf=""; WHITEf="";
 			BLACKb=""; REDb=""; GREENb=""; YELLOWb=""; BLUEb=""; MAGENTAb=""; CYANb=""; WHITEb="";
@@ -105,7 +143,7 @@ public class AffichageCUI extends Affichage{
 	public AffichageCUI(){
 		NOMBRE_CASE_LARGEUR=9;
 		LARGEUR_CASE=12;
-		WAITING_TIME=300;
+		WAITING_TIME=800;
 	}
 
 	private int NOMBRE_CASE_LARGEUR;
@@ -133,7 +171,7 @@ public class AffichageCUI extends Affichage{
 		help();
 		while(true){
 			menu();
-			char c=getCommande(super.jeuEnCours());
+			char c=getCommande(super.jeuEnCours(),super.jeuFini());
 			switch (c){
 				case QUITTER : System.exit(0);
 				case SAUVEGARDER : Affichage.sauvegarderLeJeu(super.getJeu()); break;
@@ -142,6 +180,68 @@ public class AffichageCUI extends Affichage{
 				case CREDITS : credits(); break;
 				case RECOMMENCER : super.getJeu().recommencer();
 				case CONTINUER : jouer(); break;
+				case MODIFIER_PARAM : modifierParam(); break;
+			}
+		}
+	}
+
+	private void modifierParam(){
+		while(true){
+			String[] t=new String[4];
+			t[0]="type d'affichage du plateau";
+			t[1]="nombre de case sur la largeur de l'écran";
+			t[2]="largeur d'une case";
+			t[3]="temps d'attente après le tour d'une IA ou à la fin d'un tour";
+			StringBuilder sb=new StringBuilder("Voici les paramètres qui peuvent être modifiés :\n");
+			for (int i=0;i<t.length;i++)
+				sb.append((i+1)+". "+t[i]+"\n");
+			sb.append("\nEntrez le numero de l'option à modifier. Entrez rien ou autre chose pour retourner au menu. ");
+			System.out.print(sb.toString());
+			String tmp=sc.nextLine();
+			switch (tmp){
+				case "1" :
+					System.out.println(t[0]+", les affichages possibles sont ceux-ci :\n1. spirale\n2. rectangle\n3. zigzag\n4. colonne\nEntrez le numero de l'option choisie. ");
+					String choix=sc.nextLine();
+					switch(choix){
+						case "1" :
+							super.setAffichage(new AffichagePlateauSpiraleCUI());
+							break;
+						case "2" :
+							super.setAffichage(new AffichagePlateauRectangleCUI());
+							break;
+						case "3" :
+							super.setAffichage(new AffichagePlateauZigzagCUI());
+							break;
+						case "4" :
+							super.setAffichage(new AffichagePlateauColonneCUI());
+							break;
+					}
+					break;
+				case "2" :
+					System.out.println("Le nombre actuel de case sur la largeur de l'écran est "+NOMBRE_CASE_LARGEUR+". Entrez la nouvelle valeur : ");
+					try{
+						NOMBRE_CASE_LARGEUR=Integer.parseInt(sc.nextLine());
+					}catch(NumberFormatException nfe){
+						System.out.println("Entrée invalide.");
+					}
+					break;
+				case "3" :
+					System.out.println("La largeur actuelle d'une case est "+NOMBRE_CASE_LARGEUR+". Entrez la nouvelle valeur : ");
+					try{
+						LARGEUR_CASE=Integer.parseInt(sc.nextLine());
+					}catch(NumberFormatException nfe){
+						System.out.println("Entrée invalide.");
+					}
+					break;
+				case "4" :
+					System.out.println("Le temps d'attente actuel après le tour d'une IA est "+WAITING_TIME+". Entrez la nouvelle valeur : ");
+					try{
+						NOMBRE_CASE_LARGEUR=Integer.parseInt(sc.nextLine());
+					}catch(NumberFormatException nfe){
+						System.out.println("Entrée invalide.");
+					}
+					break;
+				default : return;
 			}
 		}
 	}
@@ -200,7 +300,7 @@ public class AffichageCUI extends Affichage{
 			int tour=jeu.getNumeroDuTour();
 			if (tour!=numeroDuTour){
 
-				System.out.println(RESET+EFFACER);
+				System.out.print(RESET+EFFACER);
 				super.afficherPlateau();
 				System.out.println("");
 
@@ -227,12 +327,7 @@ public class AffichageCUI extends Affichage{
 					System.out.println("Entrée invalide !");
 			}
 			jeu.jouer();
-			System.out.println(joueur+" fait "+d+" : "+getPositions(joueur));
-			try{
-				Thread.sleep(WAITING_TIME);
-			}catch(InterruptedException e){}
 		}
-		System.out.println("La partie est finie !");
 	}
 
 	private String getPositions(){
@@ -247,30 +342,42 @@ public class AffichageCUI extends Affichage{
 		StringBuilder sb=new StringBuilder();
 		Jeu jeu=super.getJeu();
 		if (joueur.getNombrePions()==1)
-			sb.append("case "+jeu.getCase(joueur.getCase())+" ("+joueur.getCase()+")");
+			sb.append("case "+(jeu.getCase(joueur.getCase())+1)+" (case "+joueur.getCase()+")");
 		else{
 			int i=1;
 			for (Case c : joueur){
-				sb.append("pion "+i+" : "+jeu.getCase(c)+" ("+c+"). ");
+				sb.append("pion "+i+" : "+(jeu.getCase(c)+1)+" (case "+c+"). ");
 			}
 		}
 		return sb.toString();
 	}
 
-	private char getCommande(boolean jeuEnCours){
+	private char getCommande(boolean jeuEnCours, boolean jeuFini){
 		while (true){
 			String s=sc.nextLine();
-			if (s==null || s.length()!=1) continue;
-			char c=s.charAt(0);
-			if (estCommande(c)){
-				if (jeuEnCours || (c!=CONTINUER && c!=SAUVEGARDER && c!=RECOMMENCER)) return c;
+			if (s!=null && s.length()==1){
+				char c=s.charAt(0);
+				if (estCommande(c)){
+					if (!jeuEnCours && c!=CONTINUER && c!=SAUVEGARDER && c!=RECOMMENCER) return c;
+					else if (jeuEnCours && !jeuFini) return c;
+					else if (jeuEnCours && jeuFini && c!=CONTINUER && c!=SAUVEGARDER) return c;
+				}
 			}
+			commandeInvalide();
 		}
+	}
+
+	private void commandeInvalide(){
+		System.out.println("Entrée invalide.");
 	}
 
 	private void menu(){
 		StringBuilder sb=new StringBuilder("MENU\n\n");
-		if (super.getJeu()!=null) sb.append("Continuer ("+CONTINUER+")\nRecommencer avec les mêmes paramètres ("+RECOMMENCER+")\nSauvegarder ("+SAUVEGARDER+")\n");
+		if (super.getJeu()!=null){
+			if (!super.getJeu().estFini())
+				sb.append("Continuer ("+CONTINUER+")\nSauvegarder ("+SAUVEGARDER+")\n");
+			sb.append("Recommencer avec les mêmes paramètres ("+RECOMMENCER+")\n");
+		}
 		sb.append("Nouveau jeu ("+NOUVEAU+")\nCharger une sauvegarde ("+CHARGER+")\nModifier les paramètres ("+MODIFIER_PARAM+")\nCrédits ("+CREDITS+")\nQuitter ("+QUITTER+")\n");
 		System.out.println(sb.toString());
 	}
@@ -301,7 +408,7 @@ public class AffichageCUI extends Affichage{
 				else if (s.charAt(0)==MENU) 
 					return jeu;
 				else
-					System.out.println("Entrée invalide !");
+					commandeInvalide();
 			}
 		}while(b);
 
@@ -312,7 +419,7 @@ public class AffichageCUI extends Affichage{
 			try{
 				humains=Integer.parseInt(sc.next());
 			}catch(NumberFormatException nfe){
-				System.out.println("Entrée invalide !");
+				commandeInvalide();
 			}
 		}while(humains<0 || humains>max);
 
@@ -325,7 +432,7 @@ public class AffichageCUI extends Affichage{
 			try{
 				ia=Integer.parseInt(sc.next());
 			}catch(NumberFormatException nfe){
-				System.out.println("Entrée invalide !");
+				commandeInvalide();
 			}
 		}while(ia<0 || ia>max);
 
@@ -342,7 +449,15 @@ public class AffichageCUI extends Affichage{
 		sc.nextLine();
 		String tmp=sc.nextLine();
 		if (tmp.length()!=0 && tmp.toLowerCase().charAt(0)=='o'){
-
+			ArrayList<Option> options=jeu.getOptions();
+			if (options.isEmpty()){
+				System.out.println("Aucune option disponible pour ce jeu !");
+			}else{
+				int nb=1;
+				for (Option option : options){
+					System.out.println(nb+". "+option);
+				}
+			}
 		}
 
 		return jeu;
@@ -355,6 +470,26 @@ public class AffichageCUI extends Affichage{
 
 	public void credits(){
 		System.out.println("Programme créé entièrement par Marie Bétend et Pierre Gimalac. Les bugs doivent avoir été causés par Maxime Flin car aucun code écrit par Marie ou Pierre ne peut être bugé.");
+	}
+
+	public void gameOver(GameOverEvent e){
+		System.out.println("Partie finie !");
+	}
+
+	public void cannotPlay(CannotPlayEvent e){
+		System.out.println(e.toString());
+	}
+
+	public void play(PlayEvent e){
+		Joueur joueur=e.getJoueur();
+		System.out.println(((joueur.estHumain())?"":"C'est au tour de "+joueur+" de jouer.\n")+joueur+" fait "+e.getDes()+" : "+getPositions(joueur));
+		sleep();
+	}
+
+	private void sleep(){
+		try{
+			Thread.sleep(WAITING_TIME);
+		}catch(InterruptedException e){}
 	}
 
 }

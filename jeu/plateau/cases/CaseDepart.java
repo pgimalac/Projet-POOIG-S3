@@ -22,5 +22,10 @@ public class CaseDepart extends Case{
 		return "départ";
 	}
 
+	@Override
+	public boolean estInitiale(){
+		return true;
+	}
+
 
 }

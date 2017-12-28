@@ -21,11 +21,6 @@ public class CaseLabyrinthe extends Case{
 	}
 
 	@Override
-	public void arriveSurCase(Joueur j){
-
-	}
-
-	@Override
 	public Case getCase(){
 		return destination;
 	}

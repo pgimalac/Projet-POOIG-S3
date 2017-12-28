@@ -42,7 +42,7 @@ public class Plateau implements Serializable{
 			else if (i==30) c[i]=new CasePuit();
 			else if (i==41) c[i]=new CaseLabyrinthe(c[30]);
 			else if (i==51) c[i]=new CasePrison();
-			else if (i==57) c[i]=new CaseMort((CaseDepart)c[0]);
+			else if (i==57) c[i]=new CaseMort();
 			else if ((i+1)%9==0) c[i]=new CaseOie();
 			else c[i]=new Case();
 		}
@@ -57,6 +57,15 @@ public class Plateau implements Serializable{
 			else c[i]=new CaseScore(t[i]);
 		}
 		return new Plateau(c);
+	}
+
+	public Case getLast(){
+		return this.cases[cases.length-1];
+	}
+
+	public void recommencer(){
+		for (Case c : cases)
+			c.recommencer();
 	}
 
 }

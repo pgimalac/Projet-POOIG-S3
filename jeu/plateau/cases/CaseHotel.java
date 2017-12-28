@@ -2,6 +2,8 @@ package jeu.plateau.cases;
 
 import jeu.Joueur;
 
+import java.util.ArrayList;
+
 /**
  *	
  */
@@ -13,19 +15,78 @@ public class CaseHotel extends Case{
 	 */
 	
 	private static final long serialVersionUID = -7025272972861574181L;
+
+	private Hotel hotel;
+	private int TOURS_A_PASSER;
+
+	private class Hotel{
+		private ArrayList<Chambre> chambres;
+
+		Hotel(){
+			chambres=new ArrayList<Chambre>();
+		}
+
+		public void unTourPasse(){
+			for (Chambre chambre : chambres){
+				chambre.unTourPasse();
+				if (chambre.getTime()==-1)
+					chambres.remove(chambre);
+			}
+		}
+
+		public boolean contains(Joueur joueur){
+			for (Chambre chambre : chambres){
+				if (chambre.contains(joueur))
+					return true;
+			}
+			return false;
+		}
+
+		public void add(Joueur joueur){
+			chambres.add(new Chambre(joueur,TOURS_A_PASSER));
+		}
+
+		private class Chambre{ // couple joueur-entier (je trouvais ça plus sympa de faire une classe chambre et une classe hotel que d'utiliser map ^^)
+			private Joueur joueur;
+			private int temps;
+
+			Chambre(Joueur joueur, int temps){
+				this.joueur=joueur;
+				this.temps=temps;
+			}
+
+			public int unTourPasse(){
+				temps--;
+				return temps;
+			}
+
+			public boolean contains(Joueur joueur){
+				return this.joueur==joueur;
+			}
+
+			public int getTime(){
+				return temps;
+			}
+		}
+	}
 	
 	public CaseHotel(){
+		this(2);
+	}
+
+	public CaseHotel(int temps){
 		super();
+		hotel=new Hotel();
 	}
 
 	@Override
 	public void arriveSurCase(Joueur j){
-		
+		hotel.add(j);
 	}
 
 	@Override
 	public boolean peutJouer(Joueur j){
-		return true;
+		return !hotel.contains(j);
 	}
 
 	@Override
@@ -33,8 +94,14 @@ public class CaseHotel extends Case{
 		return "hôtel";
 	}
 
+	@Override
+	public void unTourPasse(){
+		hotel.unTourPasse();
+	}
 
-
-
+	@Override
+	public void recommencer(){
+		hotel=new Hotel();
+	}
 
 }

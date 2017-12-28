@@ -5,9 +5,11 @@ package jeu;
  *
  */
 
-import jeu.GameOverListener;
-import jeu.GameOverEvent;
-import jeu.GameOverException;
+import jeu.listeners.*;
+import jeu.events.*;
+import jeu.exceptions.*;
+import jeu.options.Option;
+
 import jeu.plateau.Plateau;
 import jeu.plateau.cases.Case;
 import jeu.plateau.cases.CaseDepart;
@@ -18,7 +20,7 @@ import java.util.Iterator;
 import java.util.Arrays;
 import java.util.Collections;
 
-import javax.swing.event.EventListenerList;
+// import javax.swing.event.EventListenerList; je voulais utiliser ça au début mais ça ne m'a pas eu l'air très pratique...
 
 import java.io.Serializable;
 
@@ -39,7 +41,7 @@ public abstract class Jeu implements Serializable,Iterable<Joueur> {
 	}
 
 	public Iterator<Joueur> iterator(){
-		return (new ArrayList(Arrays.asList(joueurs))).iterator();
+		return (new ArrayList<Joueur>(Arrays.asList(joueurs))).iterator();
 	}
 
 	public int lancerDes(){
@@ -55,70 +57,58 @@ public abstract class Jeu implements Serializable,Iterable<Joueur> {
 		return valeurDes;
 	}
 
-	private boolean fini;
-	private int valeurDes=1;
-	private int numeroDuTour;
+	protected int valeurDes=1;
+	protected int numeroDuTour;
 	private int enTrainDeJouer;
-	private final Joueur[] joueurs;
-	private final Plateau plateau;
-	private final ArrayList<Joueur> classement;
-	private final int nombreDeJoueurs;
+	protected final Joueur[] joueurs;
+	protected final Plateau plateau;
+	protected final ArrayList<Joueur> classement;
+	protected final int nombreDeJoueurs;
 
-	private final EventListenerList gameListeners;
+	private final ArrayList<GameListener> gameListeners;
 
 	public void addGameListener(GameListener j){
-		gameListeners.add(GameListener.class,j);
+		gameListeners.add(j);
 	}
 
 	protected void fireGameOver(GameOverEvent e) {
-		GameOverListener[] list=gameListeners.getListeners(GameOverListener.class);
-        for(GameOverListener gameOverListener : list)
-            gameOverListener.GameOver(e);
+		for (GameListener listener : gameListeners){
+			if (listener instanceof GameOverListener)
+				((GameOverListener)listener).gameOver(e);
+		}
     }
 
     protected void fireCannotPlay(CannotPlayEvent e){
-		CannotPlayListener[] list=gameListeners.getListeners(CannotPlayListener.class);
-        for(CannotPlayListener cannotPlayListener : list)
-            cannotPlayListener.cannotPlay(e);
+		for (GameListener listener : gameListeners){
+			if (listener instanceof CannotPlayListener)
+				((CannotPlayListener)listener).cannotPlay(e);
+		}
     }
 
-	public abstract class Option{
-		protected String option;
-		protected String valeur;
-		protected String[] valeurs;
-
-		public String toString(){
-			return option;
+    protected void firePlay(PlayEvent e){
+		for (GameListener listener : gameListeners){
+			if (listener instanceof PlayListener)
+				((PlayListener)listener).play(e);
 		}
-
-		public String[] getValues(){
-			return valeurs;
-		}
-
-		public String getValue(){
-			return valeur;
-		}
-
-		public int getIntValue(){
-			int i=0;
-			for (String s : valeurs){
-				if (s.equals(valeur))
-					return i;
-			}
-			return -1;
-		}
-
-		public void setValue(int i){
-			valeur=valeurs[i];
-		}
-	}
+    }
 
 	private ArrayList<Option> options=new ArrayList<Option>();
+
+	protected Option getOption(Class c){
+		for(Option o : options){
+			if (o.getClass().equals(c))
+				return o;
+		}
+		return null;
+	}
+
+	public ArrayList<Option> getOptions(){
+		return options;
+	}
 
 	protected void addOption(Option o){
 		options.add(o);
 	}
-
 
     public int getValeurDes(){
     	return valeurDes;
@@ -136,32 +126,8 @@ public abstract class Jeu implements Serializable,Iterable<Joueur> {
 		return plateau.getCase(i);
 	}
 
-	protected abstract GameOverEvent getGameOver();
-
-	protected void GameOver(){
-		fini=true;
-		fireGameOver(getGameOver());
-	}
-
-	public Joueur getGagnant(){
-		if (!estFini()){
-			throw new GameOverException("Le jeu n'est pas fini.");
-		}else{
-			return classement.get(0);
-		}
-	}
-
-	public boolean estFini(){
-		return fini;
-	}
-
 	public String getName(){
 		return joueurEnTrainDeJouer().toString();
-	}
-
-	public String getRaisonFin(){
-		if (!estFini()) throw new GameOverException("Le jeu n'est pas encore fini");
-		else{ return "Partie finie !\n"+getClassement(); }
 	}
 
 	private Joueur getJoueur(int i){
@@ -170,10 +136,6 @@ public abstract class Jeu implements Serializable,Iterable<Joueur> {
 
 	public int getNumeroDuTour(){
 		return numeroDuTour;
-	}
-
-	public String getClassement(int i){
-		return classement.get(i).toString();
 	}
 
 	protected Jeu(Plateau plateau, int nombreDeJoueursHumains, int nombreDeJoueursIA){
@@ -186,7 +148,6 @@ public abstract class Jeu implements Serializable,Iterable<Joueur> {
 
 		nombreDeJoueurs=nombreDeJoueursHumains+nombreDeJoueursIA;
 		numeroDuTour=1;
-		fini=false;
 		this.plateau=plateau;
 		joueurs=new Joueur[nombreDeJoueurs];
 		classement=new ArrayList<Joueur>(){
@@ -203,7 +164,7 @@ public abstract class Jeu implements Serializable,Iterable<Joueur> {
 			classement.add(getJoueur(i));
 		}
 		enTrainDeJouer=0;
-		gameListeners = new EventListenerList();
+		gameListeners = new ArrayList<GameListener>();
 	}
 
 	public Jeu(Plateau plateau, int nombreDeJoueursHumains, int nombreDeJoueursIA, int nbPionsParJoueur, CaseDepart depart){
@@ -223,6 +184,7 @@ public abstract class Jeu implements Serializable,Iterable<Joueur> {
 	public void recommencer(){
 		for (Joueur joueur : joueurs)
 			joueur.recommencer();
+		plateau.recommencer();
 	}
 
 	protected Joueur joueurSuivant(){
@@ -242,39 +204,38 @@ public abstract class Jeu implements Serializable,Iterable<Joueur> {
 		return plateau;
 	}
 
+	protected void classement(){
+
+	}
+
+	public String getClassement(){ //TODO
+		int j=1;
+		StringBuilder sb=new StringBuilder();
+		for (int i=0;i<nombreDeJoueurs;i++)
+			sb.append((i+1)+". "+classement.get(i)+"\n");
+		return sb.toString();
+	}
+
 	public boolean peutJouer(){
 		return peutJouer(joueurEnTrainDeJouer());
 	}
 
-	public boolean peutJouer(Joueur joueur){
+	public boolean estVide(Case c){
+		for (Joueur joueur : this){
+			for (Case ca: joueur){
+				if (ca==c)
+					return false;
+			}
+		}
 		return true;
 	}
 
-	public String getClassement(){
-		StringBuilder sb=new StringBuilder();
-		for (int i=0;i<nombreDeJoueurs;i++)
-			sb.append(i+". "+getClassement(i)+"\n");
-		return sb.toString();
-	}
-
-	protected Case getCase(Case c, int des){
-		return getCase(plateau.getCase(c),des);
-	}
-
-	protected Case getCase(int depart, int des){
-		while(des!=0){
-			if (depart==plateau.size()-1 && des>0) des=-des; // si l'on voulait avancer mais que l'on est à la fin on recule.
-			if (depart==0 && des<0) break; // si l'on voulait reculer mais que l'on est au début on ne bouge pas.
-			depart+=Math.abs(des)/des;
-			des-=Math.abs(des)/des;
-		}
-		return plateau.getCase(depart);
-	}
-
+	public abstract boolean estFini();
+	public abstract boolean peutJouer(Joueur joueur);
 	public abstract String getChoix();
 	public abstract boolean choix();
 	public abstract boolean choix(String entree);
-	public abstract void jouer(); // joue le tour d'un joueur et passe le joueur en train de jouer au suivant 
+	public abstract void jouer(); // joue le tour d'un joueur
 
 
 }

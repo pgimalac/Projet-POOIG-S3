@@ -13,18 +13,23 @@ public class CasePrison extends Case{
 	 */
 	private static final long serialVersionUID = -1341834908599164419L;
 
+	private Joueur emprisonne;
+
 	public CasePrison(){
 		super();
+		emprisonne=null;
 	}
 
 	@Override
-	public void arriveSurCase(Joueur j){
-
+	public void arriveSurCase(Joueur joueur){
+		if (emprisonne==null)
+			emprisonne=joueur;
+		else emprisonne=null;
 	}
 
 	@Override
-	public boolean peutJouer(Joueur j){
-		return true;
+	public boolean peutJouer(Joueur joueur){
+		return joueur!=emprisonne;
 	}
 
 	@Override
@@ -32,7 +37,9 @@ public class CasePrison extends Case{
 		return "prison";
 	}
 
-	
 
-
+	@Override
+	public void recommencer(){
+		emprisonne=null;
+	}
 }

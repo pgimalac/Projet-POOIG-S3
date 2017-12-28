@@ -18,13 +18,23 @@ public class CaseGagnante extends Case{
 	}
 
 	@Override
-	public void arriveSurCase(Joueur j){
-		System.out.println(j+" est arrivé sur la case gagnante, BRAVO !");
+	public String toString(){
+		return "victoire";
 	}
 
 	@Override
-	public String toString(){
-		return "victoire";
+	public boolean estFinale(){
+		return true;
+	}
+
+	@Override
+	public boolean peutJouer(Joueur joueur){
+		return false;
+	}
+
+	@Override
+	public boolean willPlay(){
+		return false;
 	}
 
 }

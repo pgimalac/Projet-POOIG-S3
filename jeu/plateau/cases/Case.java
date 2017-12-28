@@ -44,5 +44,25 @@ public class Case implements Serializable{
 
 	public void arriveSurCase(Joueur j){
 
-	}	
+	}
+
+	public boolean estFinale(){
+		return false;
+	}
+
+	public boolean estInitiale(){
+		return false;
+	}
+
+	public void unTourPasse(){}
+
+	public boolean willPlay(){ // renvoie faux s'il faut une intervention exterieure pour que le joueur puisse jouer
+		return true;
+	}
+
+	public boolean moveAgain(){
+		return false;
+	}
+
+	public void recommencer(){}
 }
