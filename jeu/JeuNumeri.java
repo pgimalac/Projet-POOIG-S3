@@ -14,7 +14,7 @@ import jeu.exceptions.WrongOptionException;
 public class JeuNumeri extends Jeu{
 
 	private static final long serialVersionUID = -7585923130073982710L;
-	private String choixPions=""; //trouver un moyen de stocker le choix des pions et pouvoir le co;parer au tir du de
+	private String choixPions="";
 
 	public JeuNumeri(Plateau plateau, int nombreDeJoueursHumains, int nombreDeJoueursIA){
 		super(plateau,nombreDeJoueursHumains,nombreDeJoueursIA,false);
@@ -33,22 +33,22 @@ public class JeuNumeri extends Jeu{
 		return 6;
 	}
 
-	public Case getProchaineCaseVide(){
-		int n=getPosition();//trouver un moyen de choper le numero de la case du pion qu'on souhaite bouger 
+	public Case getProchaineCaseVide(Case c){
+		int n=plateau.getCase(c);
 		for(int i=n; i<plateau.size(); i++){
 			if(estVide(plateau.getCase(i))) return plateau.getCase(i);
 		}
 		return null;
 	}
 
-	private int getDerniereCaseOccupee(){
-		int ppc=0;
-		int caseCourante=0;
-		for(Joueur joueur: this){
-			for
-		}
-		return ppc;
-	}
+	//private int getDerniereCaseOccupee(){
+	//	int ppc=0;
+	//	int caseCourante=0;
+	//	for(Joueur joueur: this){
+	//		for(int)
+	//	}
+	//	return ppc;
+	//}
 
 	@Override
 	public boolean choix(){
@@ -58,23 +58,52 @@ public class JeuNumeri extends Jeu{
 
 	@Override
 	public String getChoix(){
-		System.out.println
+		try{
+			System.out.println("Quels pions voulez vous selectionner? Ne pas mettre d'espace entre les numeros");
+			Scanner sc=new Scanner(System.in);
+			return sc.next();
+		}
 		throw new ChoiceException();
-		//return "";
+		return "";
 	}
 
 	@Override
-	public boolean choix(String entree){
+	public boolean choix(String entree,int n){
+		try{
+			int e=0;
+			for(int i=0;i<entree.length();i++){
+				e+=Character.getNumericValue(entree.charAt(i));
+			}
+			if(e==n) {
+				choixPions=entree;
+				return true;
+			}
+			return false;
+		}
 		throw new ChoiceException();
-		//return false;
+		return false;
 	}
 
 	@Override
 	public void jouer(){
 		Joueur joueur = joueurEnTrainDeJouer();
 		int de=landerDes();
-
-
+		while(choix()){
+			while(!choix(getChoix,de)){}
+		}
+		for(int i=0;i<choixPions.length();i++){
+			joueur.setCase(i,plateau.getProchaineCaseVide(joueur.getCase(i)));
+		}
+		choixPions="";
+		int score=0;
+		for(int i=0;i<7;i++){
+			score+=i*joueur.getCase(i).getScore();
+		}
+		joueur.setScore(score);
+		super.firePlay(new PlayEvent(this,joueur,super.getDes()));//je sais pas si c'est ca Pierre tu corrigeras merci <3
+		while (!estFini() && !super.joueurSuivant().estHumain()){
+			jouer();
+		}
 	}
 
 	@Override
@@ -84,9 +113,19 @@ public class JeuNumeri extends Jeu{
 
 	@Override
 	public boolean estFini(){
-		if(getDerniereCaseOccupee()=plateau.size-((joueurs.length)*6+1)) return true;
-		return false;
+		boolean b1=false;
+		boolean b2=false;
+		boolean b3=false;
+		for(Joueur joueur : joueur){
+			for(Case cases : joueur){
+				if (cases==plateau.getCase(39)) b1=true;
+				if(cases==plateau.getCase(38)) b2=true;
+				if(cases==plateau.getCase(37)) b3=true;
+			}
+		}
+		return (b1&&b2&&b3);
 	}
+
 
 
 }

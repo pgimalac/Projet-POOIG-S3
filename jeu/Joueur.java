@@ -37,6 +37,7 @@ public class Joueur implements Comparable<Joueur>,Serializable,Iterable<Case>{
 		return a.iterator();
 	}
 
+	public int getScorePion(int i){return pions[i].getScorePion();}
 	public int getScore(){ return score; }
 	public void setScore(int sc){ score=sc; }
 
