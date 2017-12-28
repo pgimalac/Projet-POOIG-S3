@@ -64,11 +64,14 @@ public class Joueur implements Comparable<Joueur>,Serializable,Iterable<Case>{
 		return pions.length;
 	}
 
-	public void initialiserPionsJoueurs(int nbPionsParJoueur, CaseDepart depart){
+	public void initialiserPionsJoueurs(int nbPionsParJoueur, CaseDepart departm,boolean b){
 		pions=new Pion[nbPionsParJoueur];
-		for (int i=0;i<nbPionsParJoueur;i++)
-			pions[i]=new Pion(depart);
+		for (int i=0;i<nbPionsParJoueur;i++){
+			if(b) pions[i]=new Pion(depart);
+			else pions[i]=new Pion(depart,i);
+			}
 	}
+
 
 	public void recommencer(){
 		score=0;
@@ -82,14 +85,19 @@ public class Joueur implements Comparable<Joueur>,Serializable,Iterable<Case>{
 
 	class Pion{
 		private Case c;
+		private int score; 
 
 		void setCase(Case c){ 
 			this.c=c;
 		}
 		Case getCase(){ return c; }
 
-		Pion(CaseDepart c){ this.c=c; }
+		int getScorePion(){return score;}
+
+		Pion(CaseDepart c){ this.c=c; score=0;}
 		Pion(){ this(null); }
+		Pion(CaseDepart c,int n){this.c=c;score=n;}
+		Pion(int n){this(null,n);}	
 	}
 	
 }
