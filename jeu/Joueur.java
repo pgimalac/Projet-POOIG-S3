@@ -37,11 +37,11 @@ public class Joueur implements Comparable<Joueur>,Serializable,Iterable<Case>{
 		return a.iterator();
 	}
 
-	public int getScorePion(int i){return pions[i].getScorePion();}
 	public int getScore(){ return score; }
 	public void setScore(int sc){ score=sc; }
 
 	public boolean estHumain(){ return true; }
+
 	public void setNom(String nom){ this.nom=nom; }
 	public String toString(){ return nom; }
 
@@ -65,12 +65,10 @@ public class Joueur implements Comparable<Joueur>,Serializable,Iterable<Case>{
 		return pions.length;
 	}
 
-	public void initialiserPionsJoueurs(int nbPionsParJoueur, CaseDepart departm,boolean b){
+	public void initialiserPionsJoueurs(int nbPionsParJoueur, CaseDepart depart){
 		pions=new Pion[nbPionsParJoueur];
-		for (int i=0;i<nbPionsParJoueur;i++){
-			if(b) pions[i]=new Pion(depart);
-			else pions[i]=new Pion(depart,i);
-			}
+		for (int i=0;i<nbPionsParJoueur;i++)
+			pions[i]=new Pion(depart);
 	}
 
 
@@ -86,19 +84,14 @@ public class Joueur implements Comparable<Joueur>,Serializable,Iterable<Case>{
 
 	class Pion{
 		private Case c;
-		private int score; 
 
 		void setCase(Case c){ 
 			this.c=c;
 		}
+
 		Case getCase(){ return c; }
 
-		int getScorePion(){return score;}
-
-		Pion(CaseDepart c){ this.c=c; score=0;}
-		Pion(){ this(null); }
-		Pion(CaseDepart c,int n){this.c=c;score=n;}
-		Pion(int n){this(null,n);}	
+		Pion(CaseDepart c){ this.c=c; }
 	}
 	
 }

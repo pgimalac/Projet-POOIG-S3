@@ -21,7 +21,7 @@ public class Plateau implements Serializable{
 	public Case getCase(int i){ return cases[i]; }
 
 	public int getCase(Case c){
-		int i=1;
+		int i=0;
 		for (Case cc : cases){
 			if (cc==c)
 				break;

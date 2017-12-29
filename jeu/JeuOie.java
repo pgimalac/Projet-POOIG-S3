@@ -22,15 +22,14 @@ public class JeuOie extends Jeu{
 	private static final long serialVersionUID = -6311358070333990328L;
 
 	public JeuOie(Plateau plateau, int nombreDeJoueursHumains, int nombreDeJoueursIA){
-		super(plateau,nombreDeJoueursHumains,nombreDeJoueursIA,true);
-		super.initialiserPionsJoueurs(1,(CaseDepart)getCase(0),true); //est ce que cette ligne est pas redondante ?
+		super(plateau,nombreDeJoueursHumains,nombreDeJoueursIA,1,(CaseDepart)plateau.getCase(0));
 
 		super.addOption(new OptionPositionFinOie());
 		super.addOption(new OptionPionCaseOie());
 	}
 
 	public JeuOie(int nombreDeJoueursHumains, int nombreDeJoueursIA){
-		this(Plateau.getDefaultOie(),nombreDeJoueursHumains,nombreDeJoueursIA,true);
+		this(Plateau.getDefaultOie(),nombreDeJoueursHumains,nombreDeJoueursIA);
 	}
 
 	@Override

@@ -167,18 +167,18 @@ public abstract class Jeu implements Serializable,Iterable<Joueur> {
 		gameListeners = new ArrayList<GameListener>();
 	}
 
-	public Jeu(Plateau plateau, int nombreDeJoueursHumains, int nombreDeJoueursIA, int nbPionsParJoueur, CaseDepart depart,boolean b){
+	public Jeu(Plateau plateau, int nombreDeJoueursHumains, int nombreDeJoueursIA, int nbPionsParJoueur, CaseDepart depart){
 		this(plateau,nombreDeJoueursHumains,nombreDeJoueursIA);
-		initialiserPionsJoueurs(nbPionsParJoueur,depart,b);
+		initialiserPionsJoueurs(nbPionsParJoueur,depart);
 	}
 
-	public Jeu(Plateau plateau, int nombreDeJoueursHumains, int nombreDeJoueursIA, int nbPionsParJoueur,boolean b){
-		this(plateau,nombreDeJoueursHumains,nombreDeJoueursIA,nbPionsParJoueur,(CaseDepart)plateau.getCase(0),b);
+	public Jeu(Plateau plateau, int nombreDeJoueursHumains, int nombreDeJoueursIA, int nbPionsParJoueur){
+		this(plateau,nombreDeJoueursHumains,nombreDeJoueursIA,nbPionsParJoueur,(CaseDepart)plateau.getCase(0));
 	} 
 
-	protected void initialiserPionsJoueurs(int nbPionsParJoueur, CaseDepart depart,boolean b){ // doit être appelée avant de commencer à jouer
+	protected void initialiserPionsJoueurs(int nbPionsParJoueur, CaseDepart depart){ // doit être appelée avant de commencer à jouer
 		for (Joueur joueur:joueurs)
-			joueur.initialiserPionsJoueurs(nbPionsParJoueur,depart,b);
+			joueur.initialiserPionsJoueurs(nbPionsParJoueur,depart);
 	}
 
 	public void recommencer(){

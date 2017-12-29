@@ -6,23 +6,31 @@ package jeu;
 
 import jeu.plateau.Plateau;
 import jeu.plateau.cases.Case;
+import jeu.plateau.cases.CaseDepart;
 
 import jeu.events.GameOverEvent;
+import jeu.events.PlayEvent;
 
 import jeu.exceptions.ChoiceException;
 import jeu.exceptions.WrongOptionException;
 
+import java.util.Scanner;
+import java.util.ArrayList;
+
 public class JeuNumeri extends Jeu{
 
 	private static final long serialVersionUID = -7585923130073982710L;
+	private final ArrayList<Case> CASES_FINALES=new ArrayList<Case>();
 
 	public JeuNumeri(Plateau plateau, int nombreDeJoueursHumains, int nombreDeJoueursIA){
-		super(plateau,nombreDeJoueursHumains,nombreDeJoueursIA,false);
-		super.initialiserPionsJoueurs(6,null,false);// meme remarque que pour le jeu de l'oie
+		super(plateau,nombreDeJoueursHumains,nombreDeJoueursIA,6,(CaseDepart)plateau.getCase(0));
+		CASES_FINALES.add(super.getCase(40));
+		CASES_FINALES.add(super.getCase(39));
+		CASES_FINALES.add(super.getCase(38));
 	}
 
 	public JeuNumeri(int nombreDeJoueursHumains, int nombreDeJoueursIA){
-		this(Plateau.getDefaultNumeri(),nombreDeJoueursHumains,nombreDeJoueursIA,false);
+		this(Plateau.getDefaultNumeri(),nombreDeJoueursHumains,nombreDeJoueursIA);
 	}
 
 	public static int getMinimumJoueurs(){
@@ -33,10 +41,10 @@ public class JeuNumeri extends Jeu{
 		return 6;
 	}
 
-	public Case getProchaineCaseVide(Case c){
+	private Case getProchaineCaseVide(Case c){
 		int n=plateau.getCase(c);
 		for(;n<plateau.size(); n++){
-			if(estVide(plateau.getCase(i))) return plateau.getCase(n);
+			if(estVide(plateau.getCase(n))) return plateau.getCase(n);
 		}
 		return null;
 	}
@@ -91,13 +99,15 @@ public class JeuNumeri extends Jeu{
 	@Override
 	public void jouer(){
 		if (choix())
-			throw ChoiceException("Il y a un choix à faire.");
+			throw new ChoiceException("Il y a un choix à faire.");
 
 		Joueur joueur = joueurEnTrainDeJouer();
 		int de=super.lancerDes();
 		for(Integer integer : choixPions){
 			int i=integer.intValue()-1;
-			joueur.setCase(i,plateau.getProchaineCaseVide(joueur.getCase(i)));
+			Case tmp=getProchaineCaseVide(joueur.getCase(i));
+			if (tmp!=null)
+				joueur.setCase(i,tmp);
 		}
 		choixPions.removeAll(choixPions);
 
@@ -119,13 +129,6 @@ public class JeuNumeri extends Jeu{
 		return true;
 	}
 
-	private static final ArrayList<Case> CASES_FINALES=new ArrayList<Case>();
-
-	static{
-		CASES_FINALES.add(super.getCase(39));
-		CASES_FINALES.add(super.getCase(38));
-		CASES_FINALES.add(super.getCase(37));
-	}
 
 	@Override
 	public boolean estFini(){
