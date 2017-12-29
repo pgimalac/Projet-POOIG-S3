@@ -50,9 +50,9 @@ public class Plateau implements Serializable{
 		return new Plateau(c);
 	}
 	public static final Plateau getDefaultNumeri() {
-		Case[] c=new Case[40];
 		int[] t={-3,-3,-3,-2,-2,-1,-1,0,0,1,0,0,0,2,0,3,0,4,0,5,6,0,0,7,0,0,8,0,9,10,0,11,12,0,13,15,0,20,25,30};
-		for (int i=0;i<40;i++){
+		Case[] c=new Case[t.length];
+		for (int i=0;i<t.length;i++){
 			if (t[i]==0) c[i]=new Case();
 			else c[i]=new CaseScore(t[i]);
 		}

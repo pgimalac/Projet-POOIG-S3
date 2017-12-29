@@ -26,6 +26,7 @@ public abstract class Option{
 	public void setValue(int i){
 		if (i<0 || i>valeurs.length)
 			throw new WrongOptionException(this.getClass(),i);
-		valeur=i;
+		else
+			valeur=i;
 	}
 }

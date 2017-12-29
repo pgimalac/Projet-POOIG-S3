@@ -47,13 +47,11 @@ public class JeuOie extends Jeu{
 	@Override
 	public String getChoix(){
 		throw new ChoiceException();
-		//return "";
 	}
 
 	@Override
 	public boolean choix(String entree){
 		throw new ChoiceException();
-		//return false;
 	}
 
 	@Override

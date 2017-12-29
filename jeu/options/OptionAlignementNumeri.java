@@ -1,7 +1,7 @@
 package jeu.options;
 
-public class OptionPositionFinOie extends Option{
-	public OptionPositionFinOie(){
+public class OptionAlignementNumeri extends Option{
+	public OptionAlignementNumeri(){
 		super.option="arrivée à la fin du plateau";
 		String[] s=new String[2];
 		s[0]="on fait demi tour sur le nombre de case qu'il reste à parcourir";
