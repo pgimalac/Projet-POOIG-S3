@@ -30,7 +30,7 @@ import java.util.ArrayList;
 
 public class AffichageCUI extends Affichage implements GameOverListener,CannotPlayListener,PlayListener{
 
-	private static Scanner sc=new Scanner(System.in);
+	private static Scanner sc=new Scanner(System.in,"UTF-8");
 
 	class AffichagePlateauSpiraleCUI implements AffichagePlateau{
 		private String plateauS;

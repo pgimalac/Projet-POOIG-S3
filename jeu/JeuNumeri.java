@@ -80,10 +80,10 @@ public class JeuNumeri extends Jeu{
 			throw new ChoiceException();
 
 		try{
-			Scanner sc=new Scanner(entree);
+			Scanner scan=new Scanner(entree);
 			int e=0;
-			while (sc.hasNext()){
-				Integer integer=new Integer(Integer.parseInt(sc.next()));
+			while (scan.hasNext()){
+				Integer integer=new Integer(Integer.parseInt(scan.next()));
 				choixPions.add(integer);
 				e+=integer.intValue();
 			}

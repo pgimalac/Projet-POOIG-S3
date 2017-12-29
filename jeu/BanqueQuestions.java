@@ -2,7 +2,10 @@ package jeu.options;
 
 import java.util.Random;
 import java.util.ArrayList;
+import java.util.Scanner;
+
 import java.io.Serializable;
+import java.io.File;
 
 public class BanqueQuestions implements Serializable{
 	class Question implements Serializable{
