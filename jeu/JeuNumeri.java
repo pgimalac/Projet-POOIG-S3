@@ -102,7 +102,12 @@ public class JeuNumeri extends Jeu{
 			throw new ChoiceException("Il y a un choix à faire.");
 
 		Joueur joueur = joueurEnTrainDeJouer();
-		int de=super.lancerDes();
+		int optionDe=super.getOption(OptionFaceSuppNumeri.class).getIntValue();
+		switch(optionDe){
+			case 0:
+				int de=super.lancerDes();
+				break;
+			case 1: 
 		for(Integer integer : choixPions){
 			int i=integer.intValue()-1;
 			Case tmp=getProchaineCaseVide(joueur.getCase(i));
