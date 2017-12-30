@@ -8,4 +8,8 @@ public abstract class GameException extends RuntimeException{
 	protected void setMessage(String s){
 		message=s;
 	}
+
+	public String toString(){
+		return message;
+	}
 }

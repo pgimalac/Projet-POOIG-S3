@@ -18,7 +18,6 @@ public class Joueur implements Comparable<Joueur>,Serializable,Iterable<Case>{
 	private Pion[] pions;
 	private String nom;
 	private int score;
-
 	private CaseDepart depart;
 
 	public Case getCase(){ return getCase(0); }
@@ -70,6 +69,7 @@ public class Joueur implements Comparable<Joueur>,Serializable,Iterable<Case>{
 
 	public void initialiserPionsJoueurs(int nbPionsParJoueur, CaseDepart depart){
 		pions=new Pion[nbPionsParJoueur];
+		this.depart=depart;
 		for (int i=0;i<nbPionsParJoueur;i++)
 			pions[i]=new Pion(depart);
 	}

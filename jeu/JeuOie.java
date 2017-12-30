@@ -6,9 +6,15 @@ package jeu;
 
 import jeu.options.OptionPionCaseOie;
 import jeu.options.OptionPositionFinOie;
+import jeu.options.OptionQuestionOie;
+import jeu.options.questions.*;
+
+import jeu.listeners.GameListener;
+import jeu.listeners.QuestionListener;
 
 import jeu.events.GameOverEvent;
 import jeu.events.PlayEvent;
+import jeu.events.QuestionEvent;
 
 import jeu.exceptions.ChoiceException;
 import jeu.exceptions.WrongOptionException;
@@ -28,6 +34,7 @@ public class JeuOie extends Jeu{
 
 		super.addOption(new OptionPositionFinOie());
 		super.addOption(new OptionPionCaseOie());
+		super.addOption(new OptionQuestionOie());
 	}
 
 	public JeuOie(int nombreDeJoueursHumains, int nombreDeJoueursIA){
@@ -57,19 +64,22 @@ public class JeuOie extends Jeu{
 
 	@Override
 	public boolean estFini(){
+		if (gameOverFired) 
+			return true;
+
 		boolean tousFini=true;
-		 for(Joueur joueur : this){
+		for(Joueur joueur : this){
 		 	if (joueur.getCase().willPlay())
 				return false;
 			if (tousFini && !joueur.getCase().estFinale())
 				tousFini=false;
-		 }
+		}
 
 		 if (!gameOverFired){
 		 	if (tousFini)
-		 		super.fireGameOver(new GameOverEvent(this,"tous les joueurs ont fini",super.getClassement()));
+		 		super.fireGameOver(new GameOverEvent(this,"Tous les joueurs ont fini",super.getClassement()));
 		 	else
-		 		super.fireGameOver(new GameOverEvent(this,"tous les joueurs ont fini ou ne peuvent plus jouer",super.getClassement()));
+		 		super.fireGameOver(new GameOverEvent(this,"Tous les joueurs ont fini ou ne peuvent plus jouer",super.getClassement()));
 		 	gameOverFired=true;
 		 }
 		 return true;
@@ -77,6 +87,7 @@ public class JeuOie extends Jeu{
 	}
 
 	private boolean gameOverFired=false;
+	private BanqueQuestions questions=new BanqueQuestions();
 
 	public static int getMinimumJoueurs(){
 		return 2;
@@ -85,6 +96,14 @@ public class JeuOie extends Jeu{
 	public static int getMaximumJoueurs(){
 		return Integer.MAX_VALUE-1;
 	}
+
+	private void fireQuestion(QuestionEvent e){
+		for (GameListener listener : gameListeners){
+			if (listener instanceof QuestionListener)
+				((QuestionListener)listener).question(e);
+		}
+	}
+
 
 	@Override
 	public void jouer(){
@@ -100,6 +119,19 @@ public class JeuOie extends Jeu{
 		joueur.setScore(super.getCase(tmp));
 		super.firePlay(new PlayEvent(this,joueur,super.getDes())); // TOOD
 		super.classement();
+
+		int option=super.getOption(OptionQuestionOie.class).getIntValue();
+
+		switch (option){
+			case 0:
+				break;
+			case 1:
+				Question q=questions.get();
+				fireQuestion(new QuestionEvent(this,q.getQuestion()));
+				break;
+			default :
+				throw new WrongOptionException(OptionQuestionOie.class,option);
+		}
 		while (!estFini() && !super.joueurSuivant().estHumain()){
 			jouer();
 		}
@@ -161,18 +193,25 @@ public class JeuOie extends Jeu{
 		return tmp.getCase();
 	}
 
+	@Override
+	public void recommencer(){
+		super.recommencer();
+		gameOverFired=false;
+	}
+
 }
 
 /* TODO
-!- rejouer en case oie
+- rejouer en case oie
 - cases pont, mort et labyrinthe -> envoient sur une autre case
-!- paramètres de l'affichage ne s'affichent pas
-!- paramètre du jeu ne sont pas modifiables
-!- cannotPlayEvent
+- cannotPlayEvent
+- game over détaillé ? (pas juste afficher 'fini')
+- recommencer
 !- option avec questions
 !	-> si questions pas d'IA
 !	-> si questions la fin du jeu est dès qu'un joueur finit
-!- game over détaillé ? (pas juste afficher 'fini')
+!- paramètres de l'affichage ne s'affichent pas
+!- paramètre du jeu ne sont pas modifiables
 !- au début afficher une description des jeux,...
 
 */

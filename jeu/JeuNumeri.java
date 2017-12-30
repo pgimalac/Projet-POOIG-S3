@@ -14,6 +14,9 @@ import jeu.events.PlayEvent;
 import jeu.exceptions.ChoiceException;
 import jeu.exceptions.WrongOptionException;
 
+import jeu.options.OptionFaceSuppNumeri;
+import jeu.options.OptionAlignementNumeri;
+
 import java.util.Scanner;
 import java.util.ArrayList;
 
@@ -108,11 +111,13 @@ public class JeuNumeri extends Jeu{
 				int de=super.lancerDes();
 				break;
 			case 1: 
-		for(Integer integer : choixPions){
-			int i=integer.intValue()-1;
-			Case tmp=getProchaineCaseVide(joueur.getCase(i));
-			if (tmp!=null)
-				joueur.setCase(i,tmp);
+				for(Integer integer : choixPions){
+					int i=integer.intValue()-1;
+					Case tmp=getProchaineCaseVide(joueur.getCase(i));
+					if (tmp!=null)
+						joueur.setCase(i,tmp);
+				}
+				break;
 		}
 		choixPions.removeAll(choixPions);
 

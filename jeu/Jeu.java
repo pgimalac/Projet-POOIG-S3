@@ -65,7 +65,7 @@ public abstract class Jeu implements Serializable,Iterable<Joueur> {
 	protected final ArrayList<Joueur> classement;
 	protected final int nombreDeJoueurs;
 
-	private final ArrayList<GameListener> gameListeners;
+	protected final ArrayList<GameListener> gameListeners;
 
 	public void addGameListener(GameListener j){
 		gameListeners.add(j);
@@ -108,6 +108,10 @@ public abstract class Jeu implements Serializable,Iterable<Joueur> {
 
 	protected void addOption(Option o){
 		options.add(o);
+	}
+
+	public boolean partieCommencee(){
+		return numeroDuTour!=1 || enTrainDeJouer!=0;
 	}
 
     public int getValeurDes(){
@@ -185,6 +189,9 @@ public abstract class Jeu implements Serializable,Iterable<Joueur> {
 		for (Joueur joueur : joueurs)
 			joueur.recommencer();
 		plateau.recommencer();
+		valeurDes=1;
+		enTrainDeJouer=0;
+		numeroDuTour=1;
 	}
 
 	protected Joueur joueurSuivant(){
@@ -192,10 +199,10 @@ public abstract class Jeu implements Serializable,Iterable<Joueur> {
 		enTrainDeJouer=(enTrainDeJouer+1)%nombreDeJoueurs;
 		if (enTrainDeJouer==0) numeroDuTour++;
 
-		if (peutJouer())
+		if (peutJouer(joueurEnTrainDeJouer())){
 			return joueurEnTrainDeJouer();
-		else{
-			fireCannotPlay(new CannotPlayEvent(this,joueurEnTrainDeJouer()));
+		}else{
+			fireCannotPlay(new CannotPlayEvent(this,joueurEnTrainDeJouer(),joueurEnTrainDeJouer().getCase()));
 			return joueurSuivant();
 		}
 	}
@@ -204,20 +211,16 @@ public abstract class Jeu implements Serializable,Iterable<Joueur> {
 		return plateau;
 	}
 
-	protected void classement(){
+	public void classement(){ // met à jour le classement
 
 	}
 
-	public String getClassement(){ //TODO ?
+	public String getClassement(){ //TODO
 		int j=1;
 		StringBuilder sb=new StringBuilder();
 		for (int i=0;i<nombreDeJoueurs;i++)
 			sb.append((i+1)+". "+classement.get(i)+"\n");
 		return sb.toString();
-	}
-
-	public boolean peutJouer(){
-		return peutJouer(joueurEnTrainDeJouer());
 	}
 
 	public boolean estVide(Case c){

@@ -489,7 +489,7 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 	}
 
 	public void gameOver(GameOverEvent e){
-		System.out.println("Partie finie !");
+		System.out.println("Partie finie ! "+e+".\n\n"+e.getClassement());
 	}
 
 	public void cannotPlay(CannotPlayEvent e){
