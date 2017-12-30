@@ -173,19 +173,37 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 			menu();
 			char c=getCommande(super.jeuEnCours(),super.jeuFini());
 			switch (c){
-				case QUITTER : System.exit(0);
-				case SAUVEGARDER : Affichage.sauvegarderLeJeu(super.getJeu()); break;
-				case CHARGER : charger(); break;
-				case NOUVEAU : setJeu(); jouer(); break;
-				case CREDITS : credits(); break;
-				case RECOMMENCER : super.getJeu().recommencer();
-				case CONTINUER : jouer(); break;
-				case MODIFIER_PARAM : modifierParam(); break;
+				case NOUVEAU :
+					setJeu();
+					if (jeuEnCours() && !jeuFini())
+						jouer();
+					break;
+				case QUITTER : 
+					System.exit(0);
+				case SAUVEGARDER : 
+					Affichage.sauvegarderLeJeu(super.getJeu()); 
+					break;
+				case CHARGER :
+					charger(); 
+					if (jeuEnCours() && !jeuFini())
+						jouer(); 
+					break;
+				case RECOMMENCER : 
+					super.getJeu().recommencer();
+				case CONTINUER : 
+					jouer(); 
+					break;
+				case MODIFIER_PARAM : 
+					modifierParam(); 
+					break;
+				case CREDITS : 
+					credits(); 
+					break;
 			}
 		}
 	}
 
-	private void modifierParam(){
+	private void modifierParam(){ // TODO ?
 		while(true){
 			String[] t=new String[4];
 			t[0]="type d'affichage du plateau";
@@ -443,8 +461,7 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 		}
 		super.setJeu(jeu);
 
-
-		// paramétrage de la partie
+		// paramétrage de la partie // TODO
 		System.out.print("Modifier les options par défaut du jeu ? (o/N) ");
 		sc.nextLine();
 		String tmp=sc.nextLine();
@@ -459,7 +476,6 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 				}
 			}
 		}
-
 		return jeu;
 	}
 

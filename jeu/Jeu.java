@@ -208,7 +208,7 @@ public abstract class Jeu implements Serializable,Iterable<Joueur> {
 
 	}
 
-	public String getClassement(){ //TODO
+	public String getClassement(){ //TODO ?
 		int j=1;
 		StringBuilder sb=new StringBuilder();
 		for (int i=0;i<nombreDeJoueurs;i++)

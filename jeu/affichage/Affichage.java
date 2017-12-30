@@ -6,6 +6,7 @@ package jeu.affichage;
 
 import jeu.Jeu;
 import jeu.plateau.Plateau;
+import jeu.listeners.GameListener;
 
 import java.io.Serializable;
 import java.io.File;
@@ -19,7 +20,7 @@ import java.util.Date;
 
 import java.text.SimpleDateFormat;
 
-public abstract class Affichage implements Serializable{
+public abstract class Affichage implements Serializable,GameListener{
 
 	interface AffichagePlateau{
 		public void afficher(Plateau plateau);
@@ -66,6 +67,7 @@ public abstract class Affichage implements Serializable{
 
 	protected void setJeu(Jeu j){
 		jeu=j;
+		jeu.addGameListener(this);
 	}
 
 	protected Jeu getJeu(){

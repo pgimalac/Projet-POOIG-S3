@@ -17,6 +17,8 @@ import jeu.plateau.Plateau;
 import jeu.plateau.cases.Case;
 import jeu.plateau.cases.CaseDepart;
 
+import java.util.ArrayList;
+
 public class JeuOie extends Jeu{
 
 	private static final long serialVersionUID = -6311358070333990328L;
@@ -88,27 +90,12 @@ public class JeuOie extends Jeu{
 	public void jouer(){
 		Joueur joueur=super.joueurEnTrainDeJouer();
 		Case tmp=getCase(joueur.getCase(),super.getDes());
-		int option=super.getOption(OptionPionCaseOie.class).getIntValue();
-		switch (option){
-			case 0:
-				break;
-			case 1:
-				if (!tmp.estInitiale() && !tmp.estFinale()){ // il peut y avoir plusieurs joueurs sur les cases finales et initiales
-					for (Joueur j : this){
-						if (j.getCase()==tmp){
-							j.setCase(joueur.getCase());
-							break;
-						}
-					}
-				}
-				break;
-			case 2:
-				while(!tmp.estFinale() && !tmp.estInitiale() && !super.estVide(tmp) && super.getCase(tmp)!=0)
-					tmp=super.getCase(super.getCase(tmp)-1);
-				break;
-			default :
-				throw new WrongOptionException(OptionPionCaseOie.class,option);
+		ArrayList<Case> list=new ArrayList<Case>();
+		while(tmp.moveAgain() && !list.contains(tmp)){ // pour éviter de boucler sur des cases oie
+			list.add(tmp);
+			tmp=getCase(joueur.getCase(),super.getDes());
 		}
+
 		joueur.setCase(tmp);
 		joueur.setScore(super.getCase(tmp));
 		super.firePlay(new PlayEvent(this,joueur,super.getDes())); // TOOD
@@ -127,7 +114,8 @@ public class JeuOie extends Jeu{
 		return getCase(getCase(depart),des);
 	}
 
-	private Case getCase(int depart, int des){
+	private Case getCase(int depart, int des){ // pas optimisé, TODO ?
+		Case departC=super.getCase(depart);
 		while (des!=0){
 			if (depart==0 && des<0) des=0;
 			else if (depart==super.getPlateau().size()-1 && des>0){
@@ -147,7 +135,30 @@ public class JeuOie extends Jeu{
 				des-=Math.abs(des)/des;
 			}
 		}
-		return getCase(depart);
+		Case tmp=super.getCase(depart);
+
+		int option=super.getOption(OptionPionCaseOie.class).getIntValue();
+		switch (option){
+			case 0:
+				break;
+			case 1:
+				if (!tmp.estInitiale() && !tmp.estFinale()){ // il peut y avoir plusieurs joueurs sur les cases finales et initiales
+					for (Joueur j : this){
+						if (j.getCase()==tmp){
+							j.setCase(departC);
+							break;
+						}
+					}
+				}
+				break;
+			case 2:
+				while(!tmp.estFinale() && !tmp.estInitiale() && !super.estVide(tmp) && super.getCase(tmp)!=0)
+					tmp=super.getCase(super.getCase(tmp)-1);
+				break;
+			default :
+				throw new WrongOptionException(OptionPionCaseOie.class,option);
+		}
+		return tmp;
 	}
 
 }
