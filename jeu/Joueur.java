@@ -27,7 +27,9 @@ public class Joueur implements Comparable<Joueur>,Serializable,Iterable<Case>{
 	public void setCase(Case c){ setCase(0,c); }
 	public void setCase(int i, Case c){
 		if (c==null) c=depart;
-		pions[i].setCase(c.getCase());
+		pions[i].setCase(c);
+		c.arriveSurCase(this);
+
 	}
 
 	public Iterator<Case> iterator(){
@@ -57,7 +59,8 @@ public class Joueur implements Comparable<Joueur>,Serializable,Iterable<Case>{
 	}
 
 	public int compareTo(Joueur j){
-		if (j==null) throw new NullPointerException();
+		if (j==null)
+			throw new NullPointerException();
 		return ((j.getScore()==this.getScore())?0:((j.getScore()>this.getScore())?-1:1));
 	}
 
@@ -70,7 +73,6 @@ public class Joueur implements Comparable<Joueur>,Serializable,Iterable<Case>{
 		for (int i=0;i<nbPionsParJoueur;i++)
 			pions[i]=new Pion(depart);
 	}
-
 
 	public void recommencer(){
 		score=0;
@@ -91,7 +93,9 @@ public class Joueur implements Comparable<Joueur>,Serializable,Iterable<Case>{
 
 		Case getCase(){ return c; }
 
-		Pion(CaseDepart c){ this.c=c; }
+		Pion(CaseDepart c){
+			this.c=c;
+		}
 	}
 	
 }
