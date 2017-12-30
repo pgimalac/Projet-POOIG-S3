@@ -158,7 +158,21 @@ public class JeuOie extends Jeu{
 			default :
 				throw new WrongOptionException(OptionPionCaseOie.class,option);
 		}
-		return tmp;
+		return tmp.getCase();
 	}
 
 }
+
+/* TODO
+!- rejouer en case oie
+- cases pont, mort et labyrinthe -> envoient sur une autre case
+!- paramètres de l'affichage ne s'affichent pas
+!- paramètre du jeu ne sont pas modifiables
+!- cannotPlayEvent
+!- option avec questions
+!	-> si questions pas d'IA
+!	-> si questions la fin du jeu est dès qu'un joueur finit
+!- game over détaillé ? (pas juste afficher 'fini')
+!- au début afficher une description des jeux,...
+
+*/
