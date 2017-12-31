@@ -67,7 +67,7 @@ public abstract class Affichage implements Serializable,GameListener{
 
 	protected void setJeu(Jeu j){
 		jeu=j;
-		jeu.addGameListener(this);
+		jeu.setGameListener(this);
 	}
 
 	protected Jeu getJeu(){
