@@ -29,16 +29,16 @@ public class JeuOie extends Jeu{
 
 	private static final long serialVersionUID = -6311358070333990328L;
 
-	public JeuOie(Plateau plateau, int nombreDeJoueursHumains, int nombreDeJoueursIA){
-		super(plateau,nombreDeJoueursHumains,nombreDeJoueursIA,1,(CaseDepart)plateau.getCase(0));
+	public JeuOie(Plateau plateau, int nombreDeJoueursHumains){
+		super(plateau,nombreDeJoueursHumains,1,(CaseDepart)plateau.getCase(0));
 
-		super.addOption(new OptionPositionFinOie());
-		super.addOption(new OptionPionCaseOie());
-		super.addOption(new OptionQuestionOie());
+		super.addOption(new OptionPositionFinOie(this));
+		super.addOption(new OptionPionCaseOie(this));
+		super.addOption(new OptionQuestionOie(this));
 	}
 
-	public JeuOie(int nombreDeJoueursHumains, int nombreDeJoueursIA){
-		this(Plateau.getDefaultOie(),nombreDeJoueursHumains,nombreDeJoueursIA);
+	public JeuOie(int nombreDeJoueursHumains){
+		this(Plateau.getDefaultOie(),nombreDeJoueursHumains);
 	}
 
 	@Override
@@ -98,12 +98,13 @@ public class JeuOie extends Jeu{
 	}
 
 	private void fireQuestion(QuestionEvent e){
-		for (GameListener listener : gameListeners){
-			if (listener instanceof QuestionListener)
-				((QuestionListener)listener).question(e);
-		}
+		listener.question(e);
 	}
 
+	public boolean repondre(String reponse){
+		this.reponse=reponse;
+		return question.getReponse().equals(reponse);
+	}
 
 	@Override
 	public void jouer(){
@@ -116,26 +117,28 @@ public class JeuOie extends Jeu{
 		}
 
 		joueur.setCase(tmp);
-		joueur.setScore(super.getCase(tmp));
-		super.firePlay(new PlayEvent(this,joueur,super.getDes())); // TOOD
-		super.classement();
+		super.firePlay(new PlayEvent(this,joueur,super.getDes())); // TODO
 
 		int option=super.getOption(OptionQuestionOie.class).getIntValue();
 
 		switch (option){
 			case 0:
+				joueur.setScore(super.getCase(tmp));
 				break;
 			case 1:
-				Question q=questions.get();
-				fireQuestion(new QuestionEvent(this,q.getQuestion()));
+				question=questions.get();
+				fireQuestion(new QuestionEvent(this,question.getQuestion(),question.getReponse()));
+				if (question.getReponse().equals(reponse))
+					joueur.incrementerScore();
 				break;
 			default :
 				throw new WrongOptionException(OptionQuestionOie.class,option);
 		}
-		while (!estFini() && !super.joueurSuivant().estHumain()){
-			jouer();
-		}
+		super.classement();
 	}
+
+	private Question question;
+	private String reponse;
 
 	@Override
 	public boolean peutJouer(Joueur joueur){

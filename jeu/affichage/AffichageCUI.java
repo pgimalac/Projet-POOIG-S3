@@ -8,7 +8,6 @@ import jeu.Jeu;
 import jeu.JeuOie;
 import jeu.JeuNumeri;
 import jeu.Joueur;
-import jeu.JoueurIA;
 
 import jeu.listeners.GameListener;
 import jeu.listeners.GameOverListener;
@@ -19,6 +18,7 @@ import jeu.events.GameEvent;
 import jeu.events.GameOverEvent;
 import jeu.events.CannotPlayEvent;
 import jeu.events.PlayEvent;
+import jeu.events.QuestionEvent;
 
 import jeu.options.Option;
 
@@ -430,7 +430,7 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 			}
 		}while(b);
 
-		System.out.print("Il doit y avoir entre "+min+" et "+max+" joueurs. Combien de joueurs humains y-a-t-il ? ");
+		System.out.print("Il doit y avoir entre "+min+" et "+max+" joueurs. Entrez le nombre de joueurs : ");
 
 		int humains=-1;
 		do{
@@ -441,23 +441,10 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 			}
 		}while(humains<0 || humains>max);
 
-		min=Math.max(0,min-humains);
-		max-=humains;
-		System.out.print("Combien y-a-t-il de joueurs IA (entre "+min+" et "+max+") ? ");
-
-		int ia=-1;
-		do{
-			try{
-				ia=Integer.parseInt(sc.next());
-			}catch(NumberFormatException nfe){
-				commandeInvalide();
-			}
-		}while(ia<0 || ia>max);
-
 		if (s.charAt(0)=='o'){
-			jeu=new JeuOie(humains,ia);
+			jeu=new JeuOie(humains);
 		}else{
-			jeu=new JeuNumeri(humains,ia);
+			jeu=new JeuNumeri(humains);
 		}
 		super.setJeu(jeu);
 
@@ -498,8 +485,17 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 
 	public void play(PlayEvent e){
 		Joueur joueur=e.getJoueur();
-		System.out.println(((joueur.estHumain())?"":"C'est au tour de "+joueur+" de jouer.\n")+joueur+" fait "+e.getDes()+" : "+getPositions(joueur));
+		System.out.println(joueur+" fait "+e.getDes()+" : "+getPositions(joueur));
 		sleep();
+	}
+
+	public void question(QuestionEvent e){
+		System.out.println(e.getQuestion());
+		if (((JeuOie)super.getJeu()).repondre(sc.nextLine()))
+			System.out.println("Bonne réponse !");
+		else{
+			System.out.println("Mauvaise réponse ! La réponse était "+e.getReponse()+".");
+		}
 	}
 
 	private void sleep(){
