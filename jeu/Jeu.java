@@ -49,15 +49,16 @@ public abstract class Jeu implements Serializable,Iterable<Joueur> {
 		return valeurDes;
 	} // lancé d'un dé à 6 faces
 
-	protected void setDes(int i){
+	protected final void setDes(int i){
 		valeurDes=i;
+		fireChangeDesValue(valeurDes);
 	}
 
-	public int getDes(){
+	public final int getDes(){
 		return valeurDes;
 	}
 
-	protected int valeurDes=1;
+	private int valeurDes=1;
 	protected int numeroDuTour;
 	private int enTrainDeJouer;
 	protected final Joueur[] joueurs;
@@ -65,31 +66,30 @@ public abstract class Jeu implements Serializable,Iterable<Joueur> {
 	protected final ArrayList<Joueur> classement;
 	protected final int nombreDeJoueurs;
 
-	protected final ArrayList<GameListener> gameListeners;
+	protected GameListener listener;
 
-	public void addGameListener(GameListener j){
-		gameListeners.add(j);
+	public void setGameListener(GameListener j){
+		listener=j;
 	}
 
 	protected void fireGameOver(GameOverEvent e) {
-		for (GameListener listener : gameListeners){
-			if (listener instanceof GameOverListener)
-				((GameOverListener)listener).gameOver(e);
-		}
+		if (listener instanceof GameOverListener)
+			((GameOverListener)listener).gameOver(e);
     }
 
     protected void fireCannotPlay(CannotPlayEvent e){
-		for (GameListener listener : gameListeners){
-			if (listener instanceof CannotPlayListener)
-				((CannotPlayListener)listener).cannotPlay(e);
-		}
+		if (listener instanceof CannotPlayListener)
+			((CannotPlayListener)listener).cannotPlay(e);
     }
 
     protected void firePlay(PlayEvent e){
-		for (GameListener listener : gameListeners){
-			if (listener instanceof PlayListener)
-				((PlayListener)listener).play(e);
-		}
+		if (listener instanceof PlayListener)
+			((PlayListener)listener).play(e);
+    }
+
+    protected void fireChangeDesValue(int i){
+    	if (listener instanceof DesValueListener)
+    		((DesValueListener)listener).changeDesValue(i);
     }
 
 	private ArrayList<Option> options=new ArrayList<Option>();
@@ -103,11 +103,18 @@ public abstract class Jeu implements Serializable,Iterable<Joueur> {
 	}
 
 	public ArrayList<Option> getOptions(){
-		return options;
+		ArrayList<Option> copie=new ArrayList<Option>();
+		copie.addAll(options);
+		return copie;
 	}
 
 	protected void addOption(Option o){
-		options.add(o);
+		if (partieCommencee())
+			throw new OptionException("Impossible d'ajouter une option après le début de la partie.");
+		else if (o.checkJeu(this))
+			options.add(o);
+		else
+			throw new OptionException("Cette option n'est pas associée à ce jeu.");
 	}
 
 	public boolean partieCommencee(){
@@ -142,45 +149,37 @@ public abstract class Jeu implements Serializable,Iterable<Joueur> {
 		return numeroDuTour;
 	}
 
-	protected Jeu(Plateau plateau, int nombreDeJoueursHumains, int nombreDeJoueursIA){
+	protected Jeu(Plateau plateau, int nombreDeJoueursHumains, int nbPionsParJoueur, CaseDepart depart){
 		if (plateau==null)
 			throw new IllegalArgumentException("Le plateau n'a pas été initialisé");
-		else if (nombreDeJoueursHumains<0 || nombreDeJoueursIA<0)
-			throw new IllegalArgumentException("Le nombre d"+((nombreDeJoueursHumains<0)?"e joueurs":"'IA")+"est négatif");
-		else if (nombreDeJoueursHumains+nombreDeJoueursIA>MAXIMUM_JOUEURS)
+		else if (nombreDeJoueursHumains<this.getMinimumJoueurs())
+			throw new IllegalArgumentException("Le nombre de joueurs est trop petit");
+		else if (nombreDeJoueursHumains>this.getMaximumJoueurs())
 			throw new IllegalArgumentException("Le nombre de joueurs est trop grand");
 
-		nombreDeJoueurs=nombreDeJoueursHumains+nombreDeJoueursIA;
+		nombreDeJoueurs=nombreDeJoueursHumains;
 		numeroDuTour=1;
 		this.plateau=plateau;
 		joueurs=new Joueur[nombreDeJoueurs];
 		classement=new ArrayList<Joueur>(){
 			public Iterator<Joueur> iterator(){
 				Collections.sort(this, Collections.reverseOrder());
-				return (Iterator<Joueur>)this;
+				return super.iterator();
 			}
 		};
 		for (int i=0;i<nombreDeJoueurs;i++){
-			if (i<nombreDeJoueursHumains) 
-				joueurs[i]=new Joueur(i+1); 
-			else 
-				joueurs[i]=new JoueurIA(i+1); 
+			joueurs[i]=new Joueur(i+1); 
 			classement.add(getJoueur(i));
 		}
 		enTrainDeJouer=0;
-		gameListeners = new ArrayList<GameListener>();
-	}
-
-	public Jeu(Plateau plateau, int nombreDeJoueursHumains, int nombreDeJoueursIA, int nbPionsParJoueur, CaseDepart depart){
-		this(plateau,nombreDeJoueursHumains,nombreDeJoueursIA);
 		initialiserPionsJoueurs(nbPionsParJoueur,depart);
 	}
 
-	public Jeu(Plateau plateau, int nombreDeJoueursHumains, int nombreDeJoueursIA, int nbPionsParJoueur){
-		this(plateau,nombreDeJoueursHumains,nombreDeJoueursIA,nbPionsParJoueur,(CaseDepart)plateau.getCase(0));
+	public Jeu(Plateau plateau, int nombreDeJoueursHumains, int nbPionsParJoueur){
+		this(plateau,nombreDeJoueursHumains,nbPionsParJoueur,(CaseDepart)plateau.getCase(0));
 	} 
 
-	protected void initialiserPionsJoueurs(int nbPionsParJoueur, CaseDepart depart){ // doit être appelée avant de commencer à jouer
+	private void initialiserPionsJoueurs(int nbPionsParJoueur, CaseDepart depart){ // doit être appelée avant de commencer à jouer
 		for (Joueur joueur:joueurs)
 			joueur.initialiserPionsJoueurs(nbPionsParJoueur,depart);
 	}
@@ -212,7 +211,7 @@ public abstract class Jeu implements Serializable,Iterable<Joueur> {
 	}
 
 	public void classement(){ // met à jour le classement
-
+		Collections.sort(classement, Collections.reverseOrder());
 	}
 
 	public String getClassement(){ //TODO
