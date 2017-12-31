@@ -31,6 +31,18 @@ public class Joueur implements Comparable<Joueur>,Serializable,Iterable<Case>{
 
 	}
 
+	public boolean estSurCase(Case c){
+		for (Case cc : this){
+			if (cc==c)
+				return true;
+		}
+		return false;
+	}
+
+	public void incrementerScore(){
+		score++;
+	}
+
 	public Iterator<Case> iterator(){
 		ArrayList<Case> a=new ArrayList<Case>();
 		for (Pion p : pions)
@@ -40,8 +52,6 @@ public class Joueur implements Comparable<Joueur>,Serializable,Iterable<Case>{
 
 	public int getScore(){ return score; }
 	public void setScore(int sc){ score=sc; }
-
-	public boolean estHumain(){ return true; }
 
 	public void setNom(String nom){ this.nom=nom; }
 	public String toString(){ return nom; }
