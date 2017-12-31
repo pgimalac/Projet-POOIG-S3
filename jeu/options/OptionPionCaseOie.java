@@ -1,7 +1,10 @@
 package jeu.options;
 
+import jeu.Jeu;
+
 public class OptionPionCaseOie extends Option{
-	public OptionPionCaseOie(){
+	public OptionPionCaseOie(Jeu j){
+		super.setJeu(j);
 		super.option="arrivée d'un pion sur une case occupée";
 		String[] s=new String[3];
 		s[0]="rien ne se passe (plusieurs pions sont sur la même case)";

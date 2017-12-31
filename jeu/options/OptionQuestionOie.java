@@ -1,7 +1,10 @@
 package jeu.options;
 
+import jeu.Jeu;
+
 public class OptionQuestionOie extends Option{
-	public OptionQuestionOie(){
+	public OptionQuestionOie(Jeu jeu){
+		super.setJeu(jeu);
 		super.option="pose d'une question à la fin du tour";
 		String[] s=new String[2];
 		s[0]="pas de question posée à la fin du tour (la partie finit quand tous les joueurs ont fini)";
