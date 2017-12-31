@@ -25,15 +25,19 @@ public class JeuNumeri extends Jeu{
 	private static final long serialVersionUID = -7585923130073982710L;
 	private final ArrayList<Case> CASES_FINALES=new ArrayList<Case>();
 
-	public JeuNumeri(Plateau plateau, int nombreDeJoueursHumains, int nombreDeJoueursIA){
-		super(plateau,nombreDeJoueursHumains,nombreDeJoueursIA,6,(CaseDepart)plateau.getCase(0));
+	public JeuNumeri(Plateau plateau, int nombreDeJoueursHumains){
+		super(plateau,nombreDeJoueursHumains,6,(CaseDepart)plateau.getCase(0));
 		CASES_FINALES.add(super.getCase(40));
 		CASES_FINALES.add(super.getCase(39));
 		CASES_FINALES.add(super.getCase(38));
+
+		super.addOption(new OptionAlignementNumeri(this));
+		super.addOption(new OptionFaceSuppNumeri(this));
+
 	}
 
-	public JeuNumeri(int nombreDeJoueursHumains, int nombreDeJoueursIA){
-		this(Plateau.getDefaultNumeri(),nombreDeJoueursHumains,nombreDeJoueursIA);
+	public JeuNumeri(int nombreDeJoueursHumains){
+		this(Plateau.getDefaultNumeri(),nombreDeJoueursHumains);
 	}
 
 	public static int getMinimumJoueurs(){
@@ -52,56 +56,78 @@ public class JeuNumeri extends Jeu{
 		return null;
 	}
 
-	//private int getDerniereCaseOccupee(){
-	//	int ppc=0;
-	//	int caseCourante=0;
-	//	for(Joueur joueur: this){
-	//		for(int)
-	//	}
-	//	return ppc;
-	//}
-
-	private int SUM_DICES=6;
-	private boolean pionEnnemi=false;
+	private int pionEnnemi=-1;
 	private ArrayList<Integer> choixPions=new ArrayList<Integer>();
 
 	@Override
 	public boolean choix(){
-		return choixPions.isEmpty();
+		if (super.getDes()==0 && !unPionPeutReculer(joueurEnTrainDeJouer()))
+			return false;
+		return (super.getDes()==0 && pionEnnemi==-1) || (super.getDes()!=0 && choixPions.isEmpty());
 	}
 
 	@Override
 	public String getChoix(){
 		if (!choix())
 			throw new ChoiceException();
-		else 
-			if(pionEnnemi) return "Entrer le numero de la case ou se trouve le pion adverse que vous souhaitez deplacer :";
-			return "Entrer les numéros des pions à bouger séparés par un espace : ";
+		else{
+			if(super.getDes()==0 && pionEnnemi==-1) 
+				return "Entrer le numero de la case ou se trouve le pion adverse que vous souhaitez deplacer : ";
+			else if (super.getDes()!=0 && choixPions.isEmpty())
+				return "Entrer les numéros des pions à bouger séparés par un espace : ";
+		}
+		throw new ChoiceException("Problème avec le choix.");
 	}
 
 	@Override
 	public boolean choix(String entree){
 		if (!choix())
 			throw new ChoiceException();
+		else if (super.getDes()==0 && pionEnnemi==-1){
+			return (pionEnnemi>0 && pionEnnemi<super.plateau.size() && !super.estVide(super.getCase(pionEnnemi)) && !joueurEnTrainDeJouer().estSurCase(super.plateau.getCase(pionEnnemi)));
+		}else if (super.getDes()!=0 && choixPions.isEmpty()){
+			try{
+				Scanner scan=new Scanner(entree);
+				int e=0;
+				while (scan.hasNext()){
+					Integer integer=Integer.valueOf(scan.next());
 
-		try{
-			Scanner scan=new Scanner(entree);
-			int e=0;
-			while (scan.hasNext()){
-				Integer integer=new Integer(Integer.parseInt(scan.next()));
-				choixPions.add(integer);// ici il faudra faire un truc pour check qu'on a pas mis plusieurs fois un meme pion 
-				e+=integer.intValue();
+					if (choixPions.contains(integer))
+						throw new NumberFormatException();
+
+					choixPions.add(integer);
+					e+=integer.intValue();
+				}
+				if (e!=super.getDes())
+					throw new NumberFormatException();
+				else
+					return true;
+			}catch(NumberFormatException e){
+				choixPions.removeAll(choixPions);
+				return false;
 			}
-			if(pionEnnemi){
-				return pionEnnemi()//trouver un moyen de passer le joueur actuel
-			}
-			else if (e!=SUM_DICES)
-				throw new NumberFormatException();
-		}catch(NumberFormatException e){
-			choixPions.removeAll(choixPions);
-			return false;
+		}else{
+			throw new ChoiceException("Problème avec le choix.");
 		}
-		return true;
+	}
+
+	@Override
+	public int lancerDes(){
+		int option=super.getOption(OptionFaceSuppNumeri.class).getIntValue();
+		int d=-1;
+		switch (option){
+			case 0:
+				super.setDes(super.des.nextInt(6)+1);
+				break;
+			case 1:
+				do{
+					super.setDes(super.des.nextInt(7));
+				}while(d==0 && !unPionPeutReculer(joueurEnTrainDeJouer()));
+				break;
+			default:
+				throw new WrongOptionException(OptionFaceSuppNumeri.class,option);
+		}
+		return super.getDes();
 	}
 
 	@Override
@@ -109,41 +135,66 @@ public class JeuNumeri extends Jeu{
 		if (choix())
 			throw new ChoiceException("Il y a un choix à faire.");
 
-		Joueur joueur = joueurEnTrainDeJouer();
-		int optionDe=super.getOption(OptionFaceSuppNumeri.class).getIntValue();
-		switch(optionDe){
-			case 0:
-				SUM_DICES=super.lancerDes();
-				break;
-			case 1: 
-				Random r =new Random();
-				SUM_DICES=r.nextInt(7);
-				if(SUM_DICES==0){
-					//choix d'un pion ennemi
+		int d=super.getDes();
+		Joueur joueur=joueurEnTrainDeJouer();
+
+		if (d==0){
+			Case c=super.getCase(pionEnnemi);
+			for (Joueur j : this){
+				if (j==joueur)
+					continue;
+				int i=0;
+				for (Case cc : j){
+					if (cc!=c)
+						i++;
+					else{
+						do{
+							pionEnnemi--;
+						}while(pionEnnemi!=0 && !super.estVide(super.getCase(pionEnnemi)));
+						j.setCase(i,super.getCase(pionEnnemi));
+						actualiserScore(j);
+						pionEnnemi=-1;
+						return;
+					}
 				}
-				break;
 			}
+		}else{
 			for(Integer integer : choixPions){
 				int i=integer.intValue()-1;
 				Case tmp=getProchaineCaseVide(joueur.getCase(i));
 				if (tmp!=null)
 					joueur.setCase(i,tmp);
 			}
-		}
-		choixPions.removeAll(choixPions);
+			choixPions.removeAll(choixPions);
 
-		actualiserScore(joueur);
+			actualiserScore(joueur);
 
-		int optionAli=super.getOption(OptionAlignementNumeri.class).getIntValue();
-		switch(optionAli){
-			case 0 : break;
-			case 1 : if (pionsAlignes()){
-						jouer();
-					}
+			int optionAli=super.getOption(OptionAlignementNumeri.class).getIntValue();
+			switch(optionAli){
+				case 1 : 
+					if (pionsAlignes(joueur))
+						break;
+				case 0 :
+					super.joueurSuivant();
 					break;
+				default :
+					throw new WrongOptionException(OptionAlignementNumeri.class,optionAli);
+			}
+			super.firePlay(new PlayEvent(this,joueur,super.getDes()));//je sais pas si c'est ca Pierre tu corrigeras merci <3
 		}
+	}
 
-		super.firePlay(new PlayEvent(this,joueur,super.getDes()));//je sais pas si c'est ca Pierre tu corrigeras merci <3
+	private boolean unPionPeutReculer(Joueur joueur){
+		// renvoie si un pion n'appartenant pas à ce joueur peut reculer
+		for (Joueur j : this){
+			if (j==joueur)
+				continue;
+			for (Case c : j){
+				if (c!=super.getCase(0))
+					return true;
+			}
+		}
+		return false;
 	}
 
 	private boolean pionsAlignes(Joueur joueur){
