@@ -1,8 +1,6 @@
 package jeu.affichage;
 
-/**
- *	L'affichage graphique	
- */
+import jeu.events.QuestionEvent;
 
 public class AffichageGUI extends Affichage{
 	
@@ -20,6 +18,10 @@ public class AffichageGUI extends Affichage{
 
 	protected AffichagePlateau getDefaultAffichagePlateau(){
 		return null;
+	}
+
+	public void question(QuestionEvent e){
+
 	}
 
 
