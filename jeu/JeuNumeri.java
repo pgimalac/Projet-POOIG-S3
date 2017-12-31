@@ -61,7 +61,8 @@ public class JeuNumeri extends Jeu{
 	//	return ppc;
 	//}
 
-	private final static int SUM_DICES=6;
+	private int SUM_DICES=6;
+	private boolean pionEnnemi=false;
 	private ArrayList<Integer> choixPions=new ArrayList<Integer>();
 
 	@Override
@@ -74,6 +75,7 @@ public class JeuNumeri extends Jeu{
 		if (!choix())
 			throw new ChoiceException();
 		else 
+			if(pionEnnemi) return "Entrer le numero de la case ou se trouve le pion adverse que vous souhaitez deplacer :";
 			return "Entrer les numéros des pions à bouger séparés par un espace : ";
 	}
 
@@ -87,10 +89,13 @@ public class JeuNumeri extends Jeu{
 			int e=0;
 			while (scan.hasNext()){
 				Integer integer=new Integer(Integer.parseInt(scan.next()));
-				choixPions.add(integer);
+				choixPions.add(integer);// ici il faudra faire un truc pour check qu'on a pas mis plusieurs fois un meme pion 
 				e+=integer.intValue();
 			}
-			if (e!=SUM_DICES)
+			if(pionEnnemi){
+				return pionEnnemi()//trouver un moyen de passer le joueur actuel
+			}
+			else if (e!=SUM_DICES)
 				throw new NumberFormatException();
 		}catch(NumberFormatException e){
 			choixPions.removeAll(choixPions);
@@ -108,22 +113,54 @@ public class JeuNumeri extends Jeu{
 		int optionDe=super.getOption(OptionFaceSuppNumeri.class).getIntValue();
 		switch(optionDe){
 			case 0:
-				int de=super.lancerDes();
+				SUM_DICES=super.lancerDes();
 				break;
 			case 1: 
-				for(Integer integer : choixPions){
-					int i=integer.intValue()-1;
-					Case tmp=getProchaineCaseVide(joueur.getCase(i));
-					if (tmp!=null)
-						joueur.setCase(i,tmp);
+				Random r =new Random();
+				SUM_DICES=r.nextInt(7);
+				if(SUM_DICES==0){
+					//choix d'un pion ennemi
 				}
 				break;
+			}
+			for(Integer integer : choixPions){
+				int i=integer.intValue()-1;
+				Case tmp=getProchaineCaseVide(joueur.getCase(i));
+				if (tmp!=null)
+					joueur.setCase(i,tmp);
+			}
 		}
 		choixPions.removeAll(choixPions);
 
 		actualiserScore(joueur);
 
+		int optionAli=super.getOption(OptionAlignementNumeri.class).getIntValue();
+		switch(optionAli){
+			case 0 : break;
+			case 1 : if (pionsAlignes()){
+						jouer();
+					}
+					break;
+		}
+
 		super.firePlay(new PlayEvent(this,joueur,super.getDes()));//je sais pas si c'est ca Pierre tu corrigeras merci <3
+	}
+
+	private boolean pionsAlignes(Joueur joueur){
+		for(int i=0;i<7;i++){
+			if(casesAutour(joueur.getCase(i),joueur)) return true;
+		}
+		return false;
+	}
+
+	private boolean casesAutour(Case c, Joueur j){
+		boolean avant=false;
+		boolean apres=false;
+		for (int i=0;i<7 ;i++ ) {
+			if(getCase(j.getCase(i))==getCase(c)-1)avant=true;
+			if(getCase(j.getCase(i))==getCase(c)+1)apres=true;			
+		}
+		return (avant&&apres);
 	}
 
 	private void actualiserScore(Joueur joueur){
