@@ -20,10 +20,10 @@ public class BanqueQuestions implements Serializable{
 		liste.addAll(questions);
 		questions.removeAll(questions);
 
-		int i=liste.size();
-		while (i!=0){
-			i--;
+		int i=liste.size()-1;
+		while (i>0){
 			questions.add(liste.remove(rand.nextInt(i)));
+			i--;
 		}
 	}
 
@@ -49,6 +49,7 @@ public class BanqueQuestions implements Serializable{
 		if (!b){
 			throw new QuestionException("Problème avec le fichier de questions");
 		}
+		randomize();
 	}
 
 	public BanqueQuestions(){
