@@ -34,10 +34,12 @@ public abstract class Affichage implements Serializable,GameListener{
 	public static final String REGEX_SAVE=".+\\.save$";
 	public static final File sauvegardes;
 
+	protected static final boolean sauvegarde;
 	static{
 		sauvegardes=new File(CHEMIN_SAUVEGARDE);
 		if (!sauvegardes.exists() || !sauvegardes.isDirectory()) System.out.println("Sauvegarde ou chargement de sauvegarde impossible."); // throw Exception ??
 		else if (!sauvegardes.canWrite() || !sauvegardes.canRead()) System.out.println("Droits manquants sur le dossier de sauvegarde pour charger et sauvegarder des parties."); // throw Exception ?
+		sauvegarde=sauvegardes.exists() && sauvegardes.isDirectory() && sauvegardes.canWrite() && sauvegardes.canRead();
 	}
 
 	{
