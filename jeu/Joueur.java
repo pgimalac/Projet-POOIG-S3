@@ -94,7 +94,7 @@ public class Joueur implements Comparable<Joueur>,Serializable,Iterable<Case>{
 		return true;
 	}
 
-	class Pion{
+	class Pion implements Serializable{
 		private Case c;
 
 		void setCase(Case c){ 

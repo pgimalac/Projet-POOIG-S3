@@ -4,6 +4,8 @@ import jeu.Joueur;
 
 import java.util.ArrayList;
 
+import java.io.Serializable;
+
 /**
  *	
  */
@@ -19,7 +21,7 @@ public class CaseHotel extends Case{
 	private Hotel hotel;
 	private int TOURS_A_PASSER;
 
-	private class Hotel{
+	private class Hotel implements Serializable{
 		private ArrayList<Chambre> chambres;
 
 		Hotel(){
@@ -46,7 +48,7 @@ public class CaseHotel extends Case{
 			chambres.add(new Chambre(joueur,TOURS_A_PASSER));
 		}
 
-		private class Chambre{ // couple joueur-entier (je trouvais ça plus sympa de faire une classe chambre et une classe hotel que d'utiliser map ^^)
+		private class Chambre implements Serializable{ // couple joueur-entier (je trouvais ça plus sympa de faire une classe chambre et une classe hotel que d'utiliser map ^^)
 			private Joueur joueur;
 			private int temps;
 
