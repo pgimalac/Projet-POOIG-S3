@@ -1,7 +1,7 @@
 package jeu.listeners;
 
-import jeu.events.QuestionEvent;
+import jeu.options.questions.Question;
 
 public interface GameListener extends java.util.EventListener{
-	public void question(QuestionEvent e);
+	public void question(Question e);
 }
