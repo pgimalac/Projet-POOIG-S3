@@ -1,7 +1,11 @@
 package jeu.plateau;
 
 import jeu.plateau.cases.*;
+
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Arrays;
+
 import java.io.Serializable;
 
 /**
@@ -9,10 +13,9 @@ import java.io.Serializable;
  *
  */
 
-public class Plateau implements Serializable{
+public class Plateau implements Serializable,Iterable<Case>{
 
 	private static final long serialVersionUID = 2520277206423394352L;
-
 	private final Case[] cases;
 
 	private Plateau(int i){ cases=new Case[i]; }
@@ -30,13 +33,17 @@ public class Plateau implements Serializable{
 		return i;
 	}
 
+	public Iterator<Case> iterator(){
+		return (new ArrayList<Case>(Arrays.asList(cases))).iterator();
+	}
+
 	public int size(){ return cases.length; }
 
 	public static final Plateau getDefaultOie() {
 		Case[] c=new Case[63];
-		for (int i=0;i<63;i++){
-			if (i==0) c[i]=new CaseDepart();
-			else if (i==6) c[i]=null;
+		c[0]=new CaseDepart();
+		for (int i=1;i<c.length;i++){
+			if (i==6) c[i]=null;
 			else if (i==62) c[i]=new CaseGagnante();
 			else if (i==18) c[i]=new CaseHotel();
 			else if (i==30) c[i]=new CasePuit();
@@ -50,9 +57,10 @@ public class Plateau implements Serializable{
 		return new Plateau(c);
 	}
 	public static final Plateau getDefaultNumeri() {
-		int[] t={-3,-3,-3,-2,-2,-1,-1,0,0,1,0,0,0,2,0,3,0,4,0,5,6,0,0,7,0,0,8,0,9,10,0,11,12,0,13,15,0,20,25,30};
+		int[] t={0,-3,-3,-3,-2,-2,-1,-1,0,0,1,0,0,0,2,0,3,0,4,0,5,6,0,0,7,0,0,8,0,9,10,0,11,12,0,13,15,0,20,25,30};
 		Case[] c=new Case[t.length];
-		for (int i=0;i<t.length;i++){
+		c[0]=new CaseDepart();
+		for (int i=1;i<t.length;i++){
 			if (t[i]==0) c[i]=new Case();
 			else c[i]=new CaseScore(t[i]);
 		}
@@ -66,6 +74,11 @@ public class Plateau implements Serializable{
 	public void recommencer(){
 		for (Case c : cases)
 			c.recommencer();
+	}
+
+	public void unTourPasse(){
+		for (Case c:this)
+			c.unTourPasse();
 	}
 
 }
