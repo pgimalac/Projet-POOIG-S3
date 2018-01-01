@@ -137,7 +137,7 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 	}
 
 	public boolean estCommande(char c){
-		return c==MENU || c==QUITTER || c==SAUVEGARDER || c==CONTINUER || c==RECOMMENCER || c==CHARGER || c==NOUVEAU || c==CREDITS;
+		return c==MENU || c==QUITTER || c==SAUVEGARDER || c==CONTINUER || c==RECOMMENCER || c==CHARGER || c==NOUVEAU || c==CREDITS || c==MODIFIER_PARAM;
 	}
 
 	public AffichageCUI(){
@@ -210,7 +210,7 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 			t[1]="nombre de case sur la largeur de l'écran";
 			t[2]="largeur d'une case";
 			t[3]="temps d'attente après le tour d'une IA ou à la fin d'un tour";
-			StringBuilder sb=new StringBuilder("Voici les paramètres qui peuvent être modifiés :\n");
+			StringBuilder sb=new StringBuilder("\nVoici les paramètres qui peuvent être modifiés :\n");
 			for (int i=0;i<t.length;i++)
 				sb.append((i+1)+". "+t[i]+"\n");
 			sb.append("\nEntrez le numero de l'option à modifier. Entrez rien ou autre chose pour retourner au menu. ");
@@ -244,7 +244,7 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 					}
 					break;
 				case "3" :
-					System.out.println("La largeur actuelle d'une case est "+NOMBRE_CASE_LARGEUR+". Entrez la nouvelle valeur : ");
+					System.out.println("La largeur actuelle d'une case est "+LARGEUR_CASE+". Entrez la nouvelle valeur : ");
 					try{
 						LARGEUR_CASE=Integer.parseInt(sc.nextLine());
 					}catch(NumberFormatException nfe){
@@ -252,9 +252,9 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 					}
 					break;
 				case "4" :
-					System.out.println("Le temps d'attente actuel après le tour d'une IA est "+WAITING_TIME+". Entrez la nouvelle valeur : ");
+					System.out.println("Le temps d'attente actuel après le tour d'une IA est "+WAITING_TIME+"ms. Entrez la nouvelle valeur : ");
 					try{
-						NOMBRE_CASE_LARGEUR=Integer.parseInt(sc.nextLine());
+						WAITING_TIME=Integer.parseInt(sc.nextLine());
 					}catch(NumberFormatException nfe){
 						System.out.println("Entrée invalide.");
 					}
@@ -365,6 +365,7 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 			int i=1;
 			for (Case c : joueur){
 				sb.append("pion "+i+" : "+(jeu.getCase(c)+1)+" (case "+c+"). ");
+				i++;
 			}
 		}
 		return sb.toString();
@@ -376,9 +377,14 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 			if (s!=null && s.length()==1){
 				char c=s.charAt(0);
 				if (estCommande(c)){
-					if (!jeuEnCours && c!=CONTINUER && c!=SAUVEGARDER && c!=RECOMMENCER) return c;
-					else if (jeuEnCours && !jeuFini) return c;
-					else if (jeuEnCours && jeuFini && c!=CONTINUER && c!=SAUVEGARDER) return c;
+					if (c==SAUVEGARDER || c==CHARGER){ // cas particuliers
+						if (super.sauvegarde && (c==CHARGER || (c==SAUVEGARDER && jeuEnCours && !jeuFini))) return c;
+					}
+					else if (c==CONTINUER){
+						if (jeuEnCours && !jeuFini) return c;
+					}
+					else if (!jeuEnCours && c!=RECOMMENCER) return c;
+					else if (jeuEnCours) return c;
 				}
 			}
 			commandeInvalide();
@@ -393,10 +399,10 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 		StringBuilder sb=new StringBuilder("MENU\n\n");
 		if (super.getJeu()!=null){
 			if (!super.getJeu().estFini())
-				sb.append("Continuer ("+CONTINUER+")\nSauvegarder ("+SAUVEGARDER+")\n");
+				sb.append("Continuer ("+CONTINUER+")\n"+((super.sauvegarde)?"Sauvegarder ("+SAUVEGARDER+")\n":""));
 			sb.append("Recommencer avec les mêmes paramètres ("+RECOMMENCER+")\n");
 		}
-		sb.append("Nouveau jeu ("+NOUVEAU+")\nCharger une sauvegarde ("+CHARGER+")\nModifier les paramètres ("+MODIFIER_PARAM+")\nCrédits ("+CREDITS+")\nQuitter ("+QUITTER+")\n");
+		sb.append("Nouveau jeu ("+NOUVEAU+")\n"+((super.sauvegarde)?"Charger une sauvegarde ("+CHARGER+")\n":"")+"Modifier les paramètres ("+MODIFIER_PARAM+")\nCrédits ("+CREDITS+")\nQuitter ("+QUITTER+")\n");
 		System.out.println(sb.toString());
 	}
 
@@ -468,7 +474,14 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 
 
 	public void help(){
-		System.out.println(RESET+HELP);
+		StringBuilder sb=new StringBuilder(RESET+HELP+"\n");
+		for (Class c : Jeu.get()){
+			sb.append("\n"+c.getSimpleName()+"\n");
+			try{
+				sb.append("\n"+c.getDeclaredField("description").get(null)+"\n");
+			}catch(Exception e){}
+		}
+		System.out.println(sb.toString());
 	}
 
 	public void credits(){
@@ -477,15 +490,17 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 
 	public void gameOver(GameOverEvent e){
 		System.out.println("Partie finie ! "+e+".\n\n"+e.getClassement());
+		sleep();
 	}
 
 	public void cannotPlay(CannotPlayEvent e){
 		System.out.println(e.toString());
+		sleep();
 	}
 
 	public void play(PlayEvent e){
 		Joueur joueur=e.getJoueur();
-		System.out.println(joueur+" fait "+e.getDes()+" : "+getPositions(joueur));
+		System.out.println(joueur+" a fait "+e.getDes()+" : "+getPositions(joueur));
 		sleep();
 	}
 
@@ -496,6 +511,7 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 		else{
 			System.out.println("Mauvaise réponse ! La réponse était "+e.getReponse()+".");
 		}
+		sleep();
 	}
 
 	private void sleep(){
