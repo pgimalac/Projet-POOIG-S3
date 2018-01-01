@@ -12,7 +12,9 @@ public class Question implements Serializable{
 	}
 
 	public boolean isTrue(String s){
-		return reponse.equals(s);
+		if (s==null)
+			return false;
+		return reponse.toLowerCase().equals(s.toLowerCase());
 	}
 
 	public String getQuestion(){
