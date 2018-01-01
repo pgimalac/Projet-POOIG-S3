@@ -29,6 +29,8 @@ public class JeuOie extends Jeu{
 
 	private static final long serialVersionUID = -6311358070333990328L;
 
+	public static final String description="Ce jeu est joué par au moins 2 joueurs, chaque joueur possède un pion situé sur la premiere case au début. A chaque tour le joueur lance un dé et avance du nombre du case indiqué par le dé. Certaines cases ont des effets spéciaux : la case oie fait avancer du même nombre de case, la case hotel passe 2 tours, le labyrinthe envoie sur une case en arrière alors que le pont envoie sur une case en avant, la case mort renvoie au début, la prison et le puit bloquent un joueur indéfiniement tant qu'un autre joueur ne les libère pas en arrivant sur la même case : dans le cas de la case puit le joueur est alors bloqué. Une des options possibles concerne le placement des pions : il est possible d'avoir plusieurs pions sur la même case ou alors quand un pion arrive sur une case occupée il recule jusqu'à une case libre ou alors il échange de place avec le pion qui y était avant. Une autre option est la possibilité qu'une question soit posée au joueur à la fin de son tour : le joueur gagne alors des points en répondant à celle-ci (la partie finie alors dès qu'un joueur finit). Les joueurs en prison, dans le puit ou à l'hotel n'auront pas de question.";
+
 	public JeuOie(Plateau plateau, int nombreDeJoueursHumains){
 		super(plateau,nombreDeJoueursHumains,1,(CaseDepart)plateau.getCase(0));
 
@@ -67,9 +69,15 @@ public class JeuOie extends Jeu{
 		if (gameOverFired) 
 			return true;
 
+		int option=super.getOption(OptionQuestionOie.class).getIntValue();
 		boolean tousFini=true;
 		for(Joueur joueur : this){
-		 	if (joueur.getCase().willPlay())
+			if (option==1 && joueur.getCase().estFinale()){ // cas où l'on pose une question : fin dès qu'un joueur a fini
+				super.fireGameOver(new GameOverEvent(this,joueur+" a fini",super.getClassement()));
+				gameOverFired=true;
+				return true;
+			}
+		 	if (joueur.getCase().willPlay(joueur))
 				return false;
 			if (tousFini && !joueur.getCase().estFinale())
 				tousFini=false;
@@ -111,11 +119,10 @@ public class JeuOie extends Jeu{
 		Joueur joueur=super.joueurEnTrainDeJouer();
 		Case tmp=getCase(joueur.getCase(),super.getDes());
 		ArrayList<Case> list=new ArrayList<Case>();
-		while(tmp.moveAgain() && !list.contains(tmp)){ // pour éviter de boucler sur des cases oie
+		while(tmp!=null && tmp.moveAgain() && !list.contains(tmp)){ // pour éviter de boucler sur des cases oie // tmp==null ssi on tombe sur la case mort
 			list.add(tmp);
-			tmp=getCase(joueur.getCase(),super.getDes());
+			tmp=getCase(tmp,super.getDes());
 		}
-
 		joueur.setCase(tmp);
 		super.firePlay(new PlayEvent(this,joueur,super.getDes())); // TODO
 
@@ -123,7 +130,7 @@ public class JeuOie extends Jeu{
 
 		switch (option){
 			case 0:
-				joueur.setScore(super.getCase(tmp));
+				joueur.setScore(super.getCase(joueur.getCase()));
 				break;
 			case 1:
 				question=questions.get();
@@ -134,6 +141,8 @@ public class JeuOie extends Jeu{
 			default :
 				throw new WrongOptionException(OptionQuestionOie.class,option);
 		}
+		if (!estFini())
+			super.joueurSuivant();
 		super.classement();
 	}
 
@@ -150,6 +159,7 @@ public class JeuOie extends Jeu{
 	}
 
 	private Case getCase(int depart, int des){ // pas optimisé, TODO ?
+		Joueur joueur=super.joueurEnTrainDeJouer();
 		Case departC=super.getCase(depart);
 		while (des!=0){
 			if (depart==0 && des<0) des=0;
@@ -177,7 +187,8 @@ public class JeuOie extends Jeu{
 			case 0:
 				break;
 			case 1:
-				if (!tmp.estInitiale() && !tmp.estFinale()){ // il peut y avoir plusieurs joueurs sur les cases finales et initiales
+				if (!tmp.estInitiale() && !tmp.estFinale() && tmp.willPlay(joueur)){ // il peut y avoir plusieurs joueurs sur les cases finales et initiales, ainsi que sur les cases puit et prison
+									// je sais que c'est en partie redondant mais c'est plus clair
 					for (Joueur j : this){
 						if (j.getCase()==tmp){
 							j.setCase(departC);
@@ -187,7 +198,7 @@ public class JeuOie extends Jeu{
 				}
 				break;
 			case 2:
-				while(!tmp.estFinale() && !tmp.estInitiale() && !super.estVide(tmp) && super.getCase(tmp)!=0)
+				while(!tmp.estFinale() && !tmp.estInitiale() && tmp.willPlay(joueur) && !super.estVide(tmp) && super.getCase(tmp)!=0)
 					tmp=super.getCase(super.getCase(tmp)-1);
 				break;
 			default :
@@ -203,18 +214,3 @@ public class JeuOie extends Jeu{
 	}
 
 }
-
-/* TODO
-- rejouer en case oie
-- cases pont, mort et labyrinthe -> envoient sur une autre case
-- cannotPlayEvent
-- game over détaillé ? (pas juste afficher 'fini')
-- recommencer
-!- option avec questions
-!	-> si questions pas d'IA
-!	-> si questions la fin du jeu est dès qu'un joueur finit
-!- paramètres de l'affichage ne s'affichent pas
-!- paramètre du jeu ne sont pas modifiables
-!- au début afficher une description des jeux,...
-
-*/
