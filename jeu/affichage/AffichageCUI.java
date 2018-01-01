@@ -18,9 +18,9 @@ import jeu.events.GameEvent;
 import jeu.events.GameOverEvent;
 import jeu.events.CannotPlayEvent;
 import jeu.events.PlayEvent;
-import jeu.events.QuestionEvent;
 
 import jeu.options.Option;
+import jeu.options.questions.Question;
 
 import jeu.plateau.Plateau;
 import jeu.plateau.cases.Case;
@@ -181,7 +181,8 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 				case QUITTER : 
 					System.exit(0);
 				case SAUVEGARDER : 
-					Affichage.sauvegarderLeJeu(super.getJeu()); 
+					Affichage.sauvegarderLeJeu(super.getJeu());
+					super.getJeu().setGameListener(this);
 					break;
 				case CHARGER :
 					charger(); 
@@ -203,7 +204,7 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 		}
 	}
 
-	private void modifierParam(){ // TODO ?
+	private void modifierParam(){
 		while(true){
 			String[] t=new String[4];
 			t[0]="type d'affichage du plateau";
@@ -270,12 +271,15 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 		int i=1;
 		for (String s:t){
 			if (s.matches(Affichage.REGEX_SAVE)){
-				sb.append((i+1)+". "+t[i]+"\n");
+				sb.append((i)+". "+t[i-1]+"\n");
 				i++;
 			}
 		}
 
-		if (i==1){ System.out.println("Il n'existe aucune sauvegarde !"); return false; }
+		if (i==1){ 
+			System.out.println("Il n'existe aucune sauvegarde !");
+			return false;
+		}
 
 		sb.append("\nEntrez le numéro ou le nom complet d'une sauvegarde pour charger la partie : ");
 		System.out.print(sb.toString());
@@ -304,8 +308,12 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 							}
 							else if (s.matches(REGEX_SAVE)) j--;
 						}
+					}else{
+						throw new NumberFormatException();
 					}
-				}catch(NumberFormatException nfe){}
+				}catch(NumberFormatException nfe){
+					commandeInvalide();
+				}
 			}
 			return false;
 		}
@@ -340,7 +348,7 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 
 			int d=jeu.lancerDes();
 			while(jeu.choix()){ // tant qu'il y a un choix à faire
-				System.out.println(jeu.getChoix()); // on affiche le choix à faire
+				System.out.print(jeu.getChoix()); // on affiche le choix à faire
 				while (!jeu.choix(sc.nextLine()))	// tant que la réponse au choix n'est pas valide, on demande une réponse
 					System.out.println("Entrée invalide !");
 			}
@@ -352,7 +360,7 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 		StringBuilder sb=new StringBuilder();
 		Jeu jeu=super.getJeu();
 		for (Joueur joueur : jeu)
-			sb.append(joueur+" : "+getPositions(joueur)+"\n");
+			sb.append(joueur+" (score "+joueur.getScore()+") : "+getPositions(joueur)+"\n");
 		return sb.toString();
 	}
 
@@ -458,16 +466,55 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 		System.out.print("Modifier les options par défaut du jeu ? (o/N) ");
 		sc.nextLine();
 		String tmp=sc.nextLine();
-		if (tmp.length()!=0 && tmp.toLowerCase().charAt(0)=='o'){
+		if (tmp!=null && tmp.length()!=0 && tmp.toLowerCase().charAt(0)=='o'){
+			StringBuilder sb=new StringBuilder("\nEntrer le numero de l'option que vous souhaitez changer, entrer autre chose qu'un nombre pour quitter :\n"+0+". modifier les noms des joueurs\n");
 			ArrayList<Option> options=jeu.getOptions();
-			if (options.isEmpty()){
-				System.out.println("Aucune option disponible pour ce jeu !");
-			}else{
-				int nb=1;
-				for (Option option : options){
-					System.out.println(nb+". "+option);
-				}
+			int nb=1;
+			for (Option option : options){
+				sb.append(nb+". "+option+"\n");
+				nb++;
 			}
+			tmp=sc.nextLine();
+			nb=-2;
+			loop:
+			do{
+				System.out.print(sb.toString());		
+				try{
+					nb=Integer.parseInt(sc.nextLine())-1;
+					if (nb==-1){
+						System.out.println("\nEntrez les nouveaux noms des joueurs : "); 
+						int n=0;
+						for (Joueur joueur : jeu){
+							b=false;
+							do{
+								if (b)
+									System.out.println("Ce nom est déjà pris.");
+								System.out.print(joueur+" : ");
+								b=!jeu.setNom(n,sc.nextLine());
+							}while(b);
+							n++;
+						}
+					}else if (nb>=0 && nb<options.size()){
+						Option o=options.get(nb);
+						System.out.println("Entrez le numero de la valeur à donner à l'option, une entrée invalide fera retourner à l'affichage des options : \n"+o);
+						int i=1;
+						for (String t : o.getValues()){
+							System.out.println("    "+i+". "+t);
+							i++;
+						}
+						try{
+							int m=Integer.parseInt(sc.nextLine())-1;
+							if (m<0 || m>=o.getNombreValue())
+								throw new NumberFormatException();
+							else{
+								o.setValue(m);
+							}
+						}catch(NumberFormatException e){}
+					}
+				}catch(NumberFormatException e){
+					break loop;
+				}
+			}while(true);
 		}
 		return jeu;
 	}
@@ -500,11 +547,11 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 
 	public void play(PlayEvent e){
 		Joueur joueur=e.getJoueur();
-		System.out.println(joueur+" a fait "+e.getDes()+" : "+getPositions(joueur));
+		System.out.println(joueur+" (score "+joueur.getScore()+") a fait "+e.getDes()+" : "+getPositions(joueur));
 		sleep();
 	}
 
-	public void question(QuestionEvent e){
+	public void question(Question e){
 		System.out.println(e.getQuestion());
 		if (((JeuOie)super.getJeu()).repondre(sc.nextLine()))
 			System.out.println("Bonne réponse !");
@@ -518,6 +565,10 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 		try{
 			Thread.sleep(WAITING_TIME);
 		}catch(InterruptedException e){}
+	}
+
+	protected void display(String s){
+		System.out.println(s);
 	}
 
 }
