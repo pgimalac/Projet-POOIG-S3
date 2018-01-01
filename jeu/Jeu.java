@@ -56,6 +56,18 @@ public abstract class Jeu implements Serializable,Iterable<Joueur> {
 		return (new ArrayList<Joueur>(Arrays.asList(joueurs))).iterator();
 	}
 
+	public boolean setNom(int numero, String nom){
+		if (numero<0 || numero>=joueurs.length)
+			throw new IllegalArgumentException("le numero du joueur est invalide.");
+		Joueur joueur=getJoueur(numero);
+		for (Joueur j : this){
+			if (j==joueur) continue;
+			if (j.toString().equals(nom)) return false;
+		}
+		joueur.setNom(nom);
+		return true;
+	}
+
 	public int lancerDes(){
 		setDes(des.nextInt(6)+1);
 		return valeurDes;
@@ -123,7 +135,9 @@ public abstract class Jeu implements Serializable,Iterable<Joueur> {
 	protected void addOption(Option o){
 		if (partieCommencee())
 			throw new OptionException("Impossible d'ajouter une option après le début de la partie.");
-		else if (o.checkJeu(this))
+		else if (getOption(o.getClass())!=null){
+			throw new OptionException("Cette option est déjà dans le jeu.");
+		}else if (o.checkJeu(this))
 			options.add(o);
 		else
 			throw new OptionException("Cette option n'est pas associée à ce jeu.");
