@@ -10,11 +10,9 @@ import jeu.options.OptionQuestionOie;
 import jeu.options.questions.*;
 
 import jeu.listeners.GameListener;
-import jeu.listeners.QuestionListener;
 
 import jeu.events.GameOverEvent;
 import jeu.events.PlayEvent;
-import jeu.events.QuestionEvent;
 
 import jeu.exceptions.ChoiceException;
 import jeu.exceptions.WrongOptionException;
@@ -105,13 +103,13 @@ public class JeuOie extends Jeu{
 		return Integer.MAX_VALUE-1;
 	}
 
-	private void fireQuestion(QuestionEvent e){
-		listener.question(e);
+	private void fireQuestion(Question q){
+		listener.question(q);
 	}
 
 	public boolean repondre(String reponse){
 		this.reponse=reponse;
-		return question.getReponse().equals(reponse);
+		return question.isTrue(reponse);
 	}
 
 	@Override
@@ -134,9 +132,10 @@ public class JeuOie extends Jeu{
 				break;
 			case 1:
 				question=questions.get();
-				fireQuestion(new QuestionEvent(this,question.getQuestion(),question.getReponse()));
-				if (question.getReponse().equals(reponse))
+				fireQuestion(question);
+				if (question.isTrue(reponse))
 					joueur.incrementerScore();
+				reponse=null;
 				break;
 			default :
 				throw new WrongOptionException(OptionQuestionOie.class,option);
@@ -147,7 +146,7 @@ public class JeuOie extends Jeu{
 	}
 
 	private Question question;
-	private String reponse;
+	private String reponse=null;
 
 	@Override
 	public boolean peutJouer(Joueur joueur){
