@@ -47,7 +47,7 @@ public class Plateau implements Serializable,Iterable<Case>{
 			else if (i==62) c[i]=new CaseGagnante();
 			else if (i==18) c[i]=new CaseHotel();
 			else if (i==30) c[i]=new CasePuit();
-			else if (i==41) c[i]=new CaseLabyrinthe(c[30]);
+			else if (i==41) c[i]=new CaseLabyrinthe(c[29]);
 			else if (i==51) c[i]=new CasePrison();
 			else if (i==57) c[i]=new CaseMort();
 			else if ((i+1)%9==0) c[i]=new CaseOie();
