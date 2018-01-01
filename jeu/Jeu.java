@@ -20,14 +20,26 @@ import java.util.Iterator;
 import java.util.Arrays;
 import java.util.Collections;
 
-// import javax.swing.event.EventListenerList; je voulais utiliser ça au début mais ça ne m'a pas eu l'air très pratique...
-
 import java.io.Serializable;
 
 
 public abstract class Jeu implements Serializable,Iterable<Joueur> {
 
 	private static final long serialVersionUID = 3350919143027733149L;
+	private static final ArrayList<Class<? extends Jeu>> jeux=new ArrayList<Class<? extends Jeu>>();
+	public static final void add(Class<? extends Jeu> c){ jeux.add(c); }
+	public static final ArrayList<Class<? extends Jeu>> get(){
+		ArrayList<Class<? extends Jeu>> copie=new ArrayList<Class<? extends Jeu>>();
+		copie.addAll(jeux);
+		return copie;
+	}
+
+	static{
+		add(JeuOie.class);
+		add(JeuNumeri.class);
+	}
+
+
 	private static final int MAXIMUM_JOUEURS=Integer.MAX_VALUE-1;
 	private static final int MINIMUM_JOUEURS=2;
 	protected static final Random des=new Random();
@@ -196,7 +208,10 @@ public abstract class Jeu implements Serializable,Iterable<Joueur> {
 	protected Joueur joueurSuivant(){
 		if (estFini()) throw new GameOverException("Le jeu est fini : aucun joueur ne peut jouer.");
 		enTrainDeJouer=(enTrainDeJouer+1)%nombreDeJoueurs;
-		if (enTrainDeJouer==0) numeroDuTour++;
+		if (enTrainDeJouer==0){
+			numeroDuTour++;
+			plateau.unTourPasse();
+		}
 
 		if (peutJouer(joueurEnTrainDeJouer())){
 			return joueurEnTrainDeJouer();
