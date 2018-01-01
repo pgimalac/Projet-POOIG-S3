@@ -37,8 +37,8 @@ public abstract class Affichage implements Serializable,GameListener{
 	protected static final boolean sauvegarde;
 	static{
 		sauvegardes=new File(CHEMIN_SAUVEGARDE);
-		if (!sauvegardes.exists() || !sauvegardes.isDirectory()) System.out.println("Sauvegarde ou chargement de sauvegarde impossible."); // throw Exception ??
-		else if (!sauvegardes.canWrite() || !sauvegardes.canRead()) System.out.println("Droits manquants sur le dossier de sauvegarde pour charger et sauvegarder des parties."); // throw Exception ?
+		if (!sauvegardes.exists() || !sauvegardes.isDirectory()) display("Sauvegarde ou chargement de sauvegarde impossible.");
+		else if (!sauvegardes.canWrite() || !sauvegardes.canRead()) display("Droits manquants sur le dossier de sauvegarde pour charger et sauvegarder des parties.");
 		sauvegarde=sauvegardes.exists() && sauvegardes.isDirectory() && sauvegardes.canWrite() && sauvegardes.canRead();
 	}
 
@@ -80,7 +80,7 @@ public abstract class Affichage implements Serializable,GameListener{
 		ObjectInputStream ois = null;
 		Jeu jeu=null;
 		try {
-			final FileInputStream fichier = new FileInputStream(nom);
+			final FileInputStream fichier = new FileInputStream("./sauvegardes/"+nom);
 			ois = new ObjectInputStream(fichier);
 			jeu = (Jeu) ois.readObject();
 		} catch (final java.io.IOException e) {
@@ -103,29 +103,28 @@ public abstract class Affichage implements Serializable,GameListener{
 		if (nom==null || nom.equals("")) sauvegarderLeJeu(jeu);
 		if (!nom.matches(REGEX_SAVE)) nom=nom+".save";
 
+		jeu.setGameListener(null);
 		ObjectOutputStream oos = null;
 		try {
-			final FileOutputStream fichier = new FileOutputStream("sauvegardes/"+nom);
+			final FileOutputStream fichier = new FileOutputStream("./sauvegardes/"+nom);
 			oos = new ObjectOutputStream(fichier);
 			oos.writeObject(jeu);
 			oos.flush();
 		} catch (IOException e) {
-			e.printStackTrace();
+			display("Erreur de sauvegarde.");
 		} finally {
 			try {
 				if (oos != null) {
 					oos.flush();
 					oos.close();
 				}
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			}
+			} catch (IOException ex) {}
 		}		
 	}
 
 	static protected void sauvegarderLeJeu(Jeu jeu){
-		Date aujourdhui=new Date();
-		SimpleDateFormat date=new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss");
+		Date aujourdhui=new Date(System.currentTimeMillis()+3600000); // décallage horaire d'une heure en plus
+		SimpleDateFormat date=new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 		sauvegarderLeJeu(jeu,date.format(aujourdhui)+".save");
 	}
 }
