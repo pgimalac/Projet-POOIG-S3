@@ -25,7 +25,7 @@ public class JeuNumeri extends Jeu{
 	private static final long serialVersionUID = -7585923130073982710L;
 	private final ArrayList<Case> CASES_FINALES=new ArrayList<Case>();
 
-	public static final String description="Ce jeu est joué avec entre 2 et 6 joueurs, chaque joueur possède 6 pions tous situés sur la première case au début. Pour bouger un pion situé sur la première case il faut tirer le numéro du pion avec le dé. Une fois un pion sorti de la première case, on peut le bouger en séparant le chiffre tiré avec le dé : si l'on fait 4, on peut bouger à la fois les pions 1 et 3. Une des options possibles est de rejouer lorsque l'on a réussi à aligner 3 pions et l'autre est de pouvoir faire 0 avec le dé ce qui permet de faire reculer un pion adverse. La partie finit lorsque les 3 dernières cases sont occupées.";
+	public static final String description="Ce jeu est joué avec entre 2 et 6 joueurs, chaque joueur possède 6 pions tous situés sur la première case au début. On peut bouger des pions en séparant le chiffre tiré avec le dé : si l'on fait 4, on peut bouger à la fois les pions 1 et 3, ou uniquement le 4. Une des options possibles est de rejouer lorsque l'on a réussi à aligner 3 pions et l'autre est de pouvoir faire 0 avec le dé ce qui permet de faire reculer un pion adverse. La partie finit lorsque les 3 dernières cases sont occupées.";
 
 	public JeuNumeri(Plateau plateau, int nombreDeJoueursHumains){
 		super(plateau,nombreDeJoueursHumains,6,(CaseDepart)plateau.getCase(0));
@@ -74,9 +74,9 @@ public class JeuNumeri extends Jeu{
 			throw new ChoiceException();
 		else{
 			if(super.getDes()==0 && pionEnnemi==-1) 
-				return "Entrer le numero de la case ou se trouve le pion adverse que vous souhaitez deplacer : ";
+				return "0 ! Entrer le numero de la case ou se trouve le pion adverse que vous souhaitez deplacer : ";
 			else if (super.getDes()!=0 && choixPions.isEmpty())
-				return "Entrer les numéros des pions à bouger séparés par un espace : ";
+				return super.getDes()+"! Entrer les numéros des pions à bouger séparés par un espace : ";
 		}
 		throw new ChoiceException("Problème avec le choix.");
 	}
@@ -86,6 +86,11 @@ public class JeuNumeri extends Jeu{
 		if (!choix())
 			throw new ChoiceException();
 		else if (super.getDes()==0 && pionEnnemi==-1){
+			try{
+				pionEnnemi=Integer.parseInt(entree)-1;
+			}catch(NumberFormatException e){
+				return false;
+			}
 			return (pionEnnemi>0 && pionEnnemi<super.plateau.size() && !super.estVide(super.getCase(pionEnnemi)) && !joueurEnTrainDeJouer().estSurCase(super.plateau.getCase(pionEnnemi)));
 		}else if (super.getDes()!=0 && choixPions.isEmpty()){
 			try{
@@ -200,7 +205,7 @@ public class JeuNumeri extends Jeu{
 	}
 
 	private boolean pionsAlignes(Joueur joueur){
-		for(int i=0;i<7;i++){
+		for(int i=0;i<6;i++){
 			if(casesAutour(joueur.getCase(i),joueur)) return true;
 		}
 		return false;
@@ -209,11 +214,11 @@ public class JeuNumeri extends Jeu{
 	private boolean casesAutour(Case c, Joueur j){
 		boolean avant=false;
 		boolean apres=false;
-		for (int i=0;i<7 ;i++ ) {
-			if(getCase(j.getCase(i))==getCase(c)-1)avant=true;
-			if(getCase(j.getCase(i))==getCase(c)+1)apres=true;			
+		for (int i=0;i<6;i++ ) {
+			if(getCase(j.getCase(i))==getCase(c)-1) avant=true;
+			if(getCase(j.getCase(i))==getCase(c)+1) apres=true;			
 		}
-		return (avant&&apres);
+		return (avant && apres);
 	}
 
 	private void actualiserScore(Joueur joueur){
