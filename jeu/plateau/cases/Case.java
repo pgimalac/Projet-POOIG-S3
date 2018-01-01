@@ -56,11 +56,11 @@ public class Case implements Serializable{
 
 	public void unTourPasse(){}
 
-	public boolean willPlay(){ // renvoie faux s'il faut une intervention exterieure pour que le joueur puisse jouer
+	public boolean willPlay(Joueur j){ // renvoie faux s'il faut une intervention exterieure pour que le joueur puisse jouer
 		return true;
 	}
 
-	public boolean moveAgain(){
+	public boolean moveAgain(){ // pour la case oie
 		return false;
 	}
 

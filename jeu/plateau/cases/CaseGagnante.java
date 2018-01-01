@@ -33,7 +33,7 @@ public class CaseGagnante extends Case{
 	}
 
 	@Override
-	public boolean willPlay(){
+	public boolean willPlay(Joueur j){
 		return false;
 	}
 

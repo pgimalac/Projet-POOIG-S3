@@ -38,5 +38,10 @@ public class CasePuit extends Case{
 	public void recommencer(){
 		emprisonne=null;
 	}
+
+	@Override
+	public boolean willPlay(Joueur j){
+		return j!=emprisonne;
+	}
 	
 }
