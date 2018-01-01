@@ -25,6 +25,8 @@ public class JeuNumeri extends Jeu{
 	private static final long serialVersionUID = -7585923130073982710L;
 	private final ArrayList<Case> CASES_FINALES=new ArrayList<Case>();
 
+	public static final String description="Ce jeu est joué avec entre 2 et 6 joueurs, chaque joueur possède 6 pions tous situés sur la première case au début. Pour bouger un pion situé sur la première case il faut tirer le numéro du pion avec le dé. Une fois un pion sorti de la première case, on peut le bouger en séparant le chiffre tiré avec le dé : si l'on fait 4, on peut bouger à la fois les pions 1 et 3. Une des options possibles est de rejouer lorsque l'on a réussi à aligner 3 pions et l'autre est de pouvoir faire 0 avec le dé ce qui permet de faire reculer un pion adverse. La partie finit lorsque les 3 dernières cases sont occupées.";
+
 	public JeuNumeri(Plateau plateau, int nombreDeJoueursHumains){
 		super(plateau,nombreDeJoueursHumains,6,(CaseDepart)plateau.getCase(0));
 		CASES_FINALES.add(super.getCase(40));
