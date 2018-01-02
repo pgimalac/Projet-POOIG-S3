@@ -34,6 +34,8 @@ public abstract class Affichage implements Serializable,GameListener{
 	public static final String REGEX_SAVE=".+\\.save$";
 	protected static File sauvegardes;
 
+	public static final String credits="Programme créé entièrement par Marie Bétend et Pierre Gimalac. Les bugs doivent avoir été causés par Maxime Flin car aucun code écrit par Marie ou Pierre ne peut être bugé.";
+
 	protected static boolean sauvegarde;
 
 	{
@@ -98,8 +100,8 @@ public abstract class Affichage implements Serializable,GameListener{
 		return jeu;
 	}
 
-	protected void sauvegarderLeJeu(Jeu jeu, String nom){
-		if (nom==null || nom.equals("")) sauvegarderLeJeu(jeu);
+	protected void sauvegarderLeJeu(String nom){
+		if (nom==null || nom.equals("")) sauvegarderLeJeu();
 		if (!nom.matches(REGEX_SAVE)) nom=nom+".save";
 
 		jeu.setGameListener(null);
@@ -112,6 +114,7 @@ public abstract class Affichage implements Serializable,GameListener{
 		} catch (IOException e) {
 			display("Erreur de sauvegarde.");
 		} finally {
+			jeu.setGameListener(this);
 			try {
 				if (oos != null) {
 					oos.flush();
@@ -121,9 +124,9 @@ public abstract class Affichage implements Serializable,GameListener{
 		}		
 	}
 
-	protected void sauvegarderLeJeu(Jeu jeu){
+	protected void sauvegarderLeJeu(){
 		Date aujourdhui=new Date(System.currentTimeMillis()+3600000); // décallage horaire d'une heure en plus
 		SimpleDateFormat date=new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-		sauvegarderLeJeu(jeu,date.format(aujourdhui)+".save");
+		sauvegarderLeJeu(date.format(aujourdhui)+".save");
 	}
 }
