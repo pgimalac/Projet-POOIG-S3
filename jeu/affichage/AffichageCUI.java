@@ -78,11 +78,8 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 
 			// c'est couteux mais je ne vois pas comment le faire autrement aussi facilement
 
-System.out.println("hauteur "+h+", largeur "+l);
-
 			StringBuilder sb=new StringBuilder();
 			for (int n=0;n<l*h;n++){
-System.out.println(n+" : directionH "+directionH+", directionV "+directionV+", coorH "+coorH+", coorV "+coorV);
 				String s;
 				if (n<taille)
 					s=COLORS[n%COLORS.length]+centrer(LARGEUR_CASE,(n+1)+"-"+plateau.getCase(n).toString());
