@@ -78,7 +78,7 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 
 			// c'est couteux mais je ne vois pas comment le faire autrement aussi facilement
 
-			StringBuilder sb=new StringBuilder();
+			StringBuilder sb=new StringBuilder(WHITEf);
 			for (int n=0;n<l*h;n++){
 				String s;
 				if (n<taille)
@@ -112,7 +112,7 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 				coorV+=directionV;
 			}
 			for (int n=0;n<h;n++)
-				sb.append(debut[n]+fin[n]+RESET+"\n");
+				sb.append(debut[n]+fin[n]+RESET+"\n"+WHITEf);
 
 			System.out.println(sb.toString()+RESET);
 
@@ -127,17 +127,12 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 	class AffichagePlateauRectangleCUI implements AffichagePlateau{
 		@Override
 		public void afficher(Plateau plateau){
-			StringBuilder sb=new StringBuilder(BLACKf);
-			StringBuilder separation=new StringBuilder(WHITEb+BLACKf);
+			StringBuilder sb=new StringBuilder(WHITEf);
 			int size=plateau.size();
 			for (int i=0;i<size;i++){
 				sb.append(COLORS[i%COLORS.length]+centrer(LARGEUR_CASE,(i+1)+"-"+plateau.getCase(i).toString()));
-				for (int j=LARGEUR_CASE;j>0;j--)
-					separation.append('-');
-				if ((i+1)%NOMBRE_CASE_LARGEUR==0 && i<size-NOMBRE_CASE_LARGEUR){
-					sb.append("\n"+separation.toString()+"\n"+BLACKf); 
-					separation=new StringBuilder(WHITEb);
-				}
+				if ((i+1)%NOMBRE_CASE_LARGEUR==0)
+					sb.append("\n"+WHITEf);
 			}
 			sb.append(RESET);
 			System.out.println(sb.toString());
@@ -152,7 +147,22 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 	class AffichagePlateauZigzagCUI implements AffichagePlateau{
 		@Override
 		public void afficher(Plateau plateau){
+			StringBuilder sb=new StringBuilder(WHITEf);
+			StringBuilder ligne=new StringBuilder();
+			for (int i=0;i<plateau.size();i++){
+				String  s=COLORS[i%COLORS.length]+centrer(LARGEUR_CASE,(i+1)+"-"+plateau.getCase(i).toString());
+				if (i/NOMBRE_CASE_LARGEUR%2==0)
+					sb.append(s);
+				else
+					ligne.insert(0,s);
 
+				if ((i+1)%NOMBRE_CASE_LARGEUR==0){
+					sb.append(ligne.toString()+RESET+"\n");
+					ligne=new StringBuilder();
+				}
+			}
+			sb.append(ligne.toString()+RESET);
+			System.out.println(sb.toString());
 		}
 
 		@Override
@@ -164,7 +174,10 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 	class AffichagePlateauColonneCUI implements AffichagePlateau{
 		@Override
 		public void afficher(Plateau plateau){
-
+			StringBuilder sb=new StringBuilder(BLACKf);
+			for (int i=0;i<plateau.size();i++)
+				sb.append(COLORS[i%COLORS.length]+centrer(LARGEUR_CASE,(i+1)+"-"+plateau.getCase(i).toString())+RESET+"\n"+WHITEf);
+			System.out.println(sb.toString());
 		}
 
 		@Override
