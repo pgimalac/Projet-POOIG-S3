@@ -32,22 +32,21 @@ public abstract class Affichage implements Serializable,GameListener{
 
 	public static final String CHEMIN_SAUVEGARDE="./sauvegardes/";
 	public static final String REGEX_SAVE=".+\\.save$";
-	public static final File sauvegardes;
+	protected static File sauvegardes;
 
-	protected static final boolean sauvegarde;
-	static{
+	protected static boolean sauvegarde;
+
+	{
 		sauvegardes=new File(CHEMIN_SAUVEGARDE);
 		if (!sauvegardes.exists() || !sauvegardes.isDirectory()) display("Sauvegarde ou chargement de sauvegarde impossible.");
 		else if (!sauvegardes.canWrite() || !sauvegardes.canRead()) display("Droits manquants sur le dossier de sauvegarde pour charger et sauvegarder des parties.");
 		sauvegarde=sauvegardes.exists() && sauvegardes.isDirectory() && sauvegardes.canWrite() && sauvegardes.canRead();
-	}
-
-	{
 		jeu=null;
 		setAffichage(this.getDefaultAffichagePlateau());
 	}
 
 	public abstract void afficher();
+	protected abstract void display(String s);
 
 	protected abstract AffichagePlateau getDefaultAffichagePlateau(); 
 
@@ -76,7 +75,7 @@ public abstract class Affichage implements Serializable,GameListener{
 		return jeu;
 	}
 
-	static protected Jeu chargerLeJeu(String nom){
+	protected Jeu chargerLeJeu(String nom){
 		ObjectInputStream ois = null;
 		Jeu jeu=null;
 		try {
@@ -99,7 +98,7 @@ public abstract class Affichage implements Serializable,GameListener{
 		return jeu;
 	}
 
-	static protected void sauvegarderLeJeu(Jeu jeu, String nom){
+	protected void sauvegarderLeJeu(Jeu jeu, String nom){
 		if (nom==null || nom.equals("")) sauvegarderLeJeu(jeu);
 		if (!nom.matches(REGEX_SAVE)) nom=nom+".save";
 
@@ -122,7 +121,7 @@ public abstract class Affichage implements Serializable,GameListener{
 		}		
 	}
 
-	static protected void sauvegarderLeJeu(Jeu jeu){
+	protected void sauvegarderLeJeu(Jeu jeu){
 		Date aujourdhui=new Date(System.currentTimeMillis()+3600000); // décallage horaire d'une heure en plus
 		SimpleDateFormat date=new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 		sauvegarderLeJeu(jeu,date.format(aujourdhui)+".save");
