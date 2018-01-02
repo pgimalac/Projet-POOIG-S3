@@ -176,18 +176,20 @@ public class JeuNumeri extends Jeu{
 
 			actualiserScore(joueur);
 
-			int optionAli=super.getOption(OptionAlignementNumeri.class).getIntValue();
-			switch(optionAli){
-				case 1 : 
-					if (pionsAlignes(joueur))
+			if (!estFini()){
+				int optionAli=super.getOption(OptionAlignementNumeri.class).getIntValue();
+				switch(optionAli){
+					case 1 : 
+						if (pionsAlignes(joueur))
+							break;
+					case 0 :
+						super.joueurSuivant();
 						break;
-				case 0 :
-					super.joueurSuivant();
-					break;
-				default :
-					throw new WrongOptionException(OptionAlignementNumeri.class,optionAli);
+					default :
+						throw new WrongOptionException(OptionAlignementNumeri.class,optionAli);
+				}
 			}
-			super.firePlay(new PlayEvent(this,joueur,super.getDes()));//je sais pas si c'est ca Pierre tu corrigeras merci <3
+			super.firePlay(new PlayEvent(this,joueur,super.getDes()));
 		}
 	}
 
