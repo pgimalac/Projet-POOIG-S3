@@ -33,10 +33,92 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 	private static Scanner sc=new Scanner(System.in,"UTF-8");
 
 	class AffichagePlateauSpiraleCUI implements AffichagePlateau{
-		private String plateauS;
-
 		@Override
 		public void afficher(Plateau plateau){
+			int taille=plateau.size();
+			int l=NOMBRE_CASE_LARGEUR;
+			int h=(taille/l)+1;
+
+			// on cherche un rectangle exact pour le plateau
+			for (int n=NOMBRE_CASE_LARGEUR;n>NOMBRE_CASE_LARGEUR/2;n--){
+				if (taille==(taille/n)*n){
+					l=n;
+					h=taille/n;
+					break;
+				}
+			}
+
+			if (taille!=l*h){
+				int d=(l*h)-taille;
+				for(int n=NOMBRE_CASE_LARGEUR-1;n>NOMBRE_CASE_LARGEUR/2;n--){
+					if (d>n*((taille/n)+1)-taille){
+						l=n;
+						h=(taille/l)+1;
+						d=(l*h)-taille;
+					}
+				}
+			}
+			// on trouve h et l tels que l'écart entre la taille du plateau et h*l soit la plus petite possible (en ayant l pas trop petit)
+
+			String[] debut=new String[h];
+			String[] fin=new String[h];
+
+			for (int n=0;n<h;n++){
+				debut[n]="";
+				fin[n]="";
+			}
+
+			int[] lignes=new int[h];
+			int[] colonnes=new int[l];
+
+			int directionH=1; // -1 si l'on va à gauche
+			int directionV=0; // -1 si l'on va vers le haut
+			int coorH=0;
+			int coorV=0;
+
+			// c'est couteux mais je ne vois pas comment le faire autrement aussi facilement
+
+System.out.println("hauteur "+h+", largeur "+l);
+
+			StringBuilder sb=new StringBuilder();
+			for (int n=0;n<l*h;n++){
+System.out.println(n+" : directionH "+directionH+", directionV "+directionV+", coorH "+coorH+", coorV "+coorV);
+				String s;
+				if (n<taille)
+					s=COLORS[n%COLORS.length]+centrer(LARGEUR_CASE,(n+1)+"-"+plateau.getCase(n).toString());
+				else
+					s=WHITEb+centrer(LARGEUR_CASE," ");
+
+				if (directionH==1 || directionV==-1)
+					debut[coorV]=debut[coorV]+s;
+				else // (directionH==-1 || directionV==-1)
+					fin[coorV]=s+fin[coorV];
+
+				lignes[coorV]++;
+				colonnes[coorH]++;
+
+				if (lignes[coorV]==l && directionV==0){
+					if (directionH==1)
+						directionV=1;
+					else
+						directionV=-1;
+					directionH=0;
+				}else if (colonnes[coorH]==h && directionH==0){
+					if (directionV==1)
+						directionH=-1;
+					else
+						directionH=1;
+					directionV=0;
+				}
+
+				coorH+=directionH;
+				coorV+=directionV;
+			}
+			for (int n=0;n<h;n++)
+				sb.append(debut[n]+fin[n]+RESET+"\n");
+
+			System.out.println(sb.toString()+RESET);
+
 		}
 
 		@Override
@@ -46,27 +128,22 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 	}
 
 	class AffichagePlateauRectangleCUI implements AffichagePlateau{
-		private String plateauS=null;
-
 		@Override
 		public void afficher(Plateau plateau){
-			if (plateauS==null){
-				StringBuilder sb=new StringBuilder(BLACKf);
-				StringBuilder separation=new StringBuilder(WHITEb+BLACKf);
-				int size=plateau.size();
-				for (int i=0;i<size;i++){
-					sb.append(COLORS[i%COLORS.length]+centrer(LARGEUR_CASE,(i+1)+"-"+plateau.getCase(i).toString()));
-					for (int j=LARGEUR_CASE;j>0;j--)
-						separation.append('-');
-					if ((i+1)%NOMBRE_CASE_LARGEUR==0 && i<size-NOMBRE_CASE_LARGEUR){
-						sb.append("\n"+separation.toString()+"\n"+BLACKf); 
-						separation=new StringBuilder(WHITEb);
-					}
+			StringBuilder sb=new StringBuilder(BLACKf);
+			StringBuilder separation=new StringBuilder(WHITEb+BLACKf);
+			int size=plateau.size();
+			for (int i=0;i<size;i++){
+				sb.append(COLORS[i%COLORS.length]+centrer(LARGEUR_CASE,(i+1)+"-"+plateau.getCase(i).toString()));
+				for (int j=LARGEUR_CASE;j>0;j--)
+					separation.append('-');
+				if ((i+1)%NOMBRE_CASE_LARGEUR==0 && i<size-NOMBRE_CASE_LARGEUR){
+					sb.append("\n"+separation.toString()+"\n"+BLACKf); 
+					separation=new StringBuilder(WHITEb);
 				}
-				sb.append(RESET);
-				plateauS=sb.toString();
 			}
-			System.out.println(plateauS);
+			sb.append(RESET);
+			System.out.println(sb.toString());
 		}
 
 		@Override
@@ -76,8 +153,6 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 	}
 
 	class AffichagePlateauZigzagCUI implements AffichagePlateau{
-		private String plateauS;
-
 		@Override
 		public void afficher(Plateau plateau){
 
@@ -90,8 +165,6 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 	}
 
 	class AffichagePlateauColonneCUI implements AffichagePlateau{
-		private String plateauS;
-
 		@Override
 		public void afficher(Plateau plateau){
 
@@ -104,7 +177,7 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 	}
 
 	protected AffichagePlateau getDefaultAffichagePlateau(){
-		return new AffichagePlateauRectangleCUI();
+		return new AffichagePlateauSpiraleCUI();
 	}
 
 	public static final String EFFACER,RESET;
@@ -181,7 +254,7 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 				case QUITTER : 
 					System.exit(0);
 				case SAUVEGARDER : 
-					Affichage.sauvegarderLeJeu(super.getJeu());
+					sauvegarderLeJeu(super.getJeu());
 					super.getJeu().setGameListener(this);
 					break;
 				case CHARGER :
@@ -267,7 +340,7 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 
 	private boolean charger(){
 		StringBuilder sb=new StringBuilder("Voici la liste des sauvegardes existantes :\n");
-		String[] t=Affichage.sauvegardes.list();
+		String[] t=sauvegardes.list();
 		int i=1;
 		for (String s:t){
 			if (s.matches(Affichage.REGEX_SAVE)){
@@ -293,7 +366,7 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 			else if (n.matches(Affichage.REGEX_SAVE)){
 				for (String s:t){
 					if (s.equals(n)){
-						super.setJeu(Affichage.chargerLeJeu(n));
+						super.setJeu(chargerLeJeu(n));
 						return true;
 					}
 				}
@@ -303,7 +376,7 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 					if (j>0 && j<i){
 						for (String s:t){
 							if (s.matches(REGEX_SAVE) && j==1){ 
-								super.setJeu(Affichage.chargerLeJeu(s));
+								super.setJeu(chargerLeJeu(s));
 								return true;
 							}
 							else if (s.matches(REGEX_SAVE)) j--;
