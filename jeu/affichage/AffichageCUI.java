@@ -264,8 +264,7 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 				case QUITTER : 
 					System.exit(0);
 				case SAUVEGARDER : 
-					sauvegarderLeJeu(super.getJeu());
-					super.getJeu().setGameListener(this);
+					sauvegarderLeJeu();
 					break;
 				case CHARGER :
 					charger(); 
@@ -322,7 +321,10 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 				case "2" :
 					System.out.println("Le nombre actuel de case sur la largeur de l'écran est "+NOMBRE_CASE_LARGEUR+". Entrez la nouvelle valeur : ");
 					try{
-						NOMBRE_CASE_LARGEUR=Integer.parseInt(sc.nextLine());
+						int n=Integer.parseInt(sc.nextLine());
+						if (n<1)
+							throw new NumberFormatException();
+						NOMBRE_CASE_LARGEUR=n;
 					}catch(NumberFormatException nfe){
 						System.out.println("Entrée invalide.");
 					}
@@ -330,7 +332,10 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 				case "3" :
 					System.out.println("La largeur actuelle d'une case est "+LARGEUR_CASE+". Entrez la nouvelle valeur : ");
 					try{
-						LARGEUR_CASE=Integer.parseInt(sc.nextLine());
+						int n=Integer.parseInt(sc.nextLine());
+						if (n<1)
+							throw new NumberFormatException();
+						LARGEUR_CASE=n;
 					}catch(NumberFormatException nfe){
 						System.out.println("Entrée invalide.");
 					}
@@ -338,12 +343,16 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 				case "4" :
 					System.out.println("Le temps d'attente actuel après le tour d'une IA est "+WAITING_TIME+"ms. Entrez la nouvelle valeur : ");
 					try{
-						WAITING_TIME=Integer.parseInt(sc.nextLine());
+						int n=Integer.parseInt(sc.nextLine());
+						if (n<1)
+							throw new NumberFormatException();
+						WAITING_TIME=n;
 					}catch(NumberFormatException nfe){
 						System.out.println("Entrée invalide.");
 					}
 					break;
-				default : return;
+				default :
+					return;
 			}
 		}
 	}
@@ -615,7 +624,7 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 	}
 
 	public void credits(){
-		System.out.println("Programme créé entièrement par Marie Bétend et Pierre Gimalac. Les bugs doivent avoir été causés par Maxime Flin car aucun code écrit par Marie ou Pierre ne peut être bugé.");
+		System.out.println(Affichage.credits);
 	}
 
 	public void gameOver(GameOverEvent e){
