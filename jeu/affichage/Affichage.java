@@ -22,13 +22,7 @@ import java.text.SimpleDateFormat;
 
 public abstract class Affichage implements Serializable,GameListener{
 
-	interface AffichagePlateau{
-		public void afficher(Plateau plateau);
-		public String toString();
-	}
-
 	private Jeu jeu;
-	private AffichagePlateau affichagePlateau;
 
 	public static final String CHEMIN_SAUVEGARDE="./sauvegardes/";
 	public static final String REGEX_SAVE=".+\\.save$";
@@ -43,22 +37,11 @@ public abstract class Affichage implements Serializable,GameListener{
 		if (!sauvegardes.exists() || !sauvegardes.isDirectory()) display("Sauvegarde ou chargement de sauvegarde impossible.");
 		else if (!sauvegardes.canWrite() || !sauvegardes.canRead()) display("Droits manquants sur le dossier de sauvegarde pour charger et sauvegarder des parties.");
 		sauvegarde=sauvegardes.exists() && sauvegardes.isDirectory() && sauvegardes.canWrite() && sauvegardes.canRead();
-		setJeu(null);
-		setAffichage(this.getDefaultAffichagePlateau());
+		jeu=null;
 	}
 
 	public abstract void afficher();
 	protected abstract void display(String s);
-
-	protected abstract AffichagePlateau getDefaultAffichagePlateau(); 
-
-	protected void setAffichage(AffichagePlateau affichage){
-		affichagePlateau=affichage;
-	}
-
-	protected void afficherPlateau(){
-		affichagePlateau.afficher(jeu.getPlateau());
-	}
 
 	public boolean jeuEnCours(){
 		return jeu!=null;
