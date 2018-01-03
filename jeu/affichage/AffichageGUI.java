@@ -22,6 +22,7 @@ import jeu.plateau.Plateau;
 import jeu.plateau.cases.Case;
 
 import java.util.ArrayList;
+import java.util.EventListener;
 
 import javax.swing.JPanel;
 import javax.swing.JFrame;
@@ -56,13 +57,12 @@ public class AffichageGUI extends Affichage{
 
 	public void afficher(){}
 
-	public AffichageGUI(){
-		Fenetre fenetre=new Fenetre();
-	}
+	private Fenetre fenetre;
 
-	@Override
-	protected AffichagePlateau getDefaultAffichagePlateau(){
-		return null;
+	public AffichageGUI(){
+		modifiedStateListeners=new ArrayList<JeuModifiedStateListener>();
+		fenetre=new Fenetre();
+		setJeu(null); // pas necéssaire mais on ne sait jamais
 	}
 
 	@Override
@@ -72,7 +72,7 @@ public class AffichageGUI extends Affichage{
 
 	@Override
 	protected void display(String s){
-
+		fenetre.display(s);
 	}
 
 	@Override
@@ -81,8 +81,20 @@ public class AffichageGUI extends Affichage{
 		fireJeuModifState(jeu);
 	}
 
-	private void fireJeuModifState(Jeu jeu){ //TODO
+	interface JeuModifiedStateListener extends EventListener{
+		public void modifiedState(Jeu jeu);
+	}
 
+	private ArrayList<JeuModifiedStateListener> modifiedStateListeners;
+
+	public void add(JeuModifiedStateListener j){
+		if (j!=null)
+			modifiedStateListeners.add(j);
+	}
+
+	private void fireJeuModifState(Jeu jeu){
+		for (JeuModifiedStateListener j : modifiedStateListeners)
+			j.modifiedState(jeu);
 	}
 
 	class Fenetre extends JFrame{
@@ -97,6 +109,8 @@ public class AffichageGUI extends Affichage{
 		JPanelListener charger;
 
 		JPanelListener affiche;
+
+		public void display(String s){}
 
 		public Fenetre(){
 			super();
@@ -153,9 +167,36 @@ public class AffichageGUI extends Affichage{
 		public void fireGoToMenu(){ affiche=menu; menu.goTo(); cardLayout.show(content,"menu"); }
 
 		class JPanelListener extends JPanel implements ComponentListener{
-			public void goTo(){}
+			public void goTo(){
+				Fenetre.this.setSize(Fenetre.this.getHeight()*129/92,Fenetre.this.getHeight());
+				Fenetre.this.setMinimumSize(new Dimension(387,276));
+			}
 
-			public void componentResized(ComponentEvent evt){}
+			private Image img = null;
+
+			{
+				try{
+					img=ImageIO.read(new File("assets/menu.JPG"));
+				}catch(IOException e){}
+			}
+
+			@Override
+			public void paintComponent(Graphics g) { 
+				g.drawImage(img,0,0,Fenetre.this.getWidth(),Fenetre.this.getHeight(),null);
+			}
+
+			public void componentResized(ComponentEvent evt){
+				if (this==Fenetre.this.affiche){
+					int width=Fenetre.this.getWidth();
+					int height=Fenetre.this.getHeight();
+					if (width==Fenetre.this.formerWidth){ // changement vertical
+						Fenetre.this.setSize(height*129/92,height);
+					}else{ // changement horizontal
+						Fenetre.this.setSize(width,width*92/129);
+					}
+					Fenetre.this.formerWidth=Fenetre.this.getWidth();
+				}
+			}
 			public void componentHidden(ComponentEvent evt){}
 			public void componentShown(ComponentEvent evt){}
 			public void componentMoved(ComponentEvent evt){}
@@ -186,34 +227,15 @@ public class AffichageGUI extends Affichage{
 			public void goTo(){}
 		}
 
-		class MenuPanel extends JPanelListener{
+		class MenuPanel extends JPanelListener implements JeuModifiedStateListener{
 
 			public JButton continuer,sauvegarder,recommencer,nouveau,charger,modifier,credits,quitter;
-			private Image img = null;
 
 			@Override
-			public void paintComponent(Graphics g) { 
-				g.drawImage(img,0,0,Fenetre.this.getWidth(),Fenetre.this.getHeight(),null);
-			}
-
-			@Override
-			public void goTo(){
-				Fenetre.this.setSize(Fenetre.this.getHeight()*129/92,Fenetre.this.getHeight());
-				Fenetre.this.setMinimumSize(new Dimension(387,276));
-			}
-
-			@Override
-			public void componentResized(ComponentEvent evt){
-				if (this==Fenetre.this.affiche){
-					int width=Fenetre.this.getWidth();
-					int height=Fenetre.this.getHeight();
-					if (width==Fenetre.this.formerWidth){ // changement vertical
-						Fenetre.this.setSize(height*129/92,height);
-					}else{ // changement horizontal
-						Fenetre.this.setSize(width,width*92/129);
-					}
-					Fenetre.this.formerWidth=Fenetre.this.getWidth();
-				}
+			public void modifiedState(Jeu j){
+				continuer.setEnabled(j!=null && !j.estFini());
+				sauvegarder.setEnabled(j!=null && !j.estFini());
+				recommencer.setEnabled(j!=null);
 			}
 
 			public MenuPanel(){
@@ -221,10 +243,7 @@ public class AffichageGUI extends Affichage{
 				setLayout(new GridBagLayout());
 				Box box = Box.createVerticalBox();
 				add(box,new GridBagConstraints());
-
-				try{
-					img=ImageIO.read(new File("assets/menu.JPG"));
-				}catch(IOException e){}
+				AffichageGUI.this.add(this);
 
 				continuer=new MenuButton(box,"Continuer",false,new ActionListener(){
 					public void actionPerformed(ActionEvent event){
@@ -288,7 +307,6 @@ public class AffichageGUI extends Affichage{
 					box1.add(this);
 					box.add(box1);
 					addActionListener(listener);
-
 					setOpaque(false);
 					setContentAreaFilled(true);
 					setBorderPainted(true);
