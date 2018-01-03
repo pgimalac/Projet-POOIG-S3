@@ -32,6 +32,11 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 
 	private static Scanner sc=new Scanner(System.in,"UTF-8");
 
+	interface AffichagePlateau{
+		public void afficher(Plateau plateau);
+		public String toString();
+	}	
+
 	class AffichagePlateauSpiraleCUI implements AffichagePlateau{
 		@Override
 		public void afficher(Plateau plateau){
@@ -186,10 +191,6 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 		}
 	}
 
-	protected AffichagePlateau getDefaultAffichagePlateau(){
-		return new AffichagePlateauSpiraleCUI();
-	}
-
 	public static final String EFFACER,RESET;
 	public static final String BLACKf, REDf, GREENf, YELLOWf, BLUEf, MAGENTAf, CYANf, WHITEf;
 	public static final String BLACKb, REDb, GREENb, YELLOWb, BLUEb, MAGENTAb, CYANb, WHITEb;
@@ -227,7 +228,10 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 		NOMBRE_CASE_LARGEUR=9;
 		LARGEUR_CASE=12;
 		WAITING_TIME=800;
+		affichagePlateau=new AffichagePlateauSpiraleCUI();
 	}
+
+	private AffichagePlateau affichagePlateau;
 
 	private int NOMBRE_CASE_LARGEUR;
 	private int LARGEUR_CASE;
@@ -250,6 +254,11 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 		}
 	}
 
+	private void afficherPlateau(){
+		affichagePlateau.afficher(super.getJeu().getPlateau());
+	}
+
+	@Override
 	public void afficher(){
 		help();
 		while(true){
@@ -305,16 +314,16 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 					String choix=sc.nextLine();
 					switch(choix){
 						case "1" :
-							super.setAffichage(new AffichagePlateauSpiraleCUI());
+							affichagePlateau=new AffichagePlateauSpiraleCUI();
 							break;
 						case "2" :
-							super.setAffichage(new AffichagePlateauRectangleCUI());
+							affichagePlateau=new AffichagePlateauRectangleCUI();
 							break;
 						case "3" :
-							super.setAffichage(new AffichagePlateauZigzagCUI());
+							affichagePlateau=new AffichagePlateauZigzagCUI();
 							break;
 						case "4" :
-							super.setAffichage(new AffichagePlateauColonneCUI());
+							affichagePlateau=new AffichagePlateauColonneCUI();
 							break;
 					}
 					break;
@@ -419,7 +428,7 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 			if (tour!=numeroDuTour){
 
 				System.out.print(RESET+EFFACER);
-				super.afficherPlateau();
+				afficherPlateau();
 				System.out.println("");
 
 				numeroDuTour=tour;
@@ -558,7 +567,7 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 		System.out.print("Modifier les options par défaut du jeu ? (o/N) ");
 		sc.nextLine();
 		String tmp=sc.nextLine();
-		if (tmp!=null && tmp.length()!=0 && tmp.toLowerCase().charAt(0)=='o'){
+		if (tmp!=null && tmp.length()==1 && tmp.toLowerCase().charAt(0)=='o'){
 			StringBuilder sb=new StringBuilder("\nEntrer le numero de l'option que vous souhaitez changer, entrer autre chose qu'un nombre pour quitter :\n"+0+". modifier les noms des joueurs\n");
 			ArrayList<Option> options=jeu.getOptions();
 			int nb=1;
@@ -566,7 +575,6 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 				sb.append(nb+". "+option+"\n");
 				nb++;
 			}
-			tmp=sc.nextLine();
 			nb=-2;
 			loop:
 			do{
