@@ -5,6 +5,8 @@ import jeu.JeuOie;
 import jeu.JeuNumeri;
 import jeu.Joueur;
 
+import jeu.affichage.MenuButton;
+
 //import jeu.listeners.GameListener;
 //import jeu.listeners.GameOverListener;
 //import jeu.listeners.CannotPlayListener;
@@ -104,11 +106,11 @@ public class AffichageGUI extends Affichage{
 
 		MenuPanel menu;
 		JeuPanel jeu;
-		JPanelListener nouveau;
-		JPanelListener parametres;
-		JPanelListener charger;
+		NouveauPanel nouveau;
+		JPanelUp parametres;
+		JPanelUp charger;
 
-		JPanelListener affiche;
+		JPanelUp affiche;
 
 		public void display(String s){}
 
@@ -124,18 +126,15 @@ public class AffichageGUI extends Affichage{
 
 			jeu=new JeuPanel();
 			menu=new MenuPanel();
-			parametres=new JPanelListener(){
-				public void goTo(){} 
+			nouveau=new NouveauPanel();
+			parametres=new JPanelUp(){
+				public void goTo(){}
 				public void componentResized(ComponentEvent evt){}
 			};
-			charger=new JPanelListener(){
-				public void goTo(){} 
-				public void componentResized(ComponentEvent evt){}
-			};
-			nouveau=new JPanelListener(){
+			charger=new JPanelUp(){
 				public void goTo(){
-					Fenetre.this.setSize(10,10);
-				} 
+
+				}
 				public void componentResized(ComponentEvent evt){}
 			};
 
@@ -166,7 +165,7 @@ public class AffichageGUI extends Affichage{
 		public void fireGoToCharger(){ affiche=charger; charger.goTo(); cardLayout.show(content,"charger"); }
 		public void fireGoToMenu(){ affiche=menu; menu.goTo(); cardLayout.show(content,"menu"); }
 
-		class JPanelListener extends JPanel implements ComponentListener{
+		class JPanelUp extends JPanel implements ComponentListener{
 			public void goTo(){
 				Fenetre.this.setSize(Fenetre.this.getHeight()*129/92,Fenetre.this.getHeight());
 				Fenetre.this.setMinimumSize(new Dimension(387,276));
@@ -202,7 +201,41 @@ public class AffichageGUI extends Affichage{
 			public void componentMoved(ComponentEvent evt){}
 		}
 
-		class JeuPanel extends JPanelListener{
+		class NouveauPanel extends JPanelUp{
+			public NouveauPanel(){
+				super();
+			}
+
+			public void goTo(){
+				this.removeAll();	
+			// on affiche les deux choix possibles :
+				setLayout(new GridBagLayout());
+				Box bo=Box.createVerticalBox();
+				add(bo,new GridBagConstraints());
+				bo.add(Box.createRigidArea(new Dimension(5,Fenetre.this.getHeight()/7)));
+				Box box = Box.createHorizontalBox();
+				bo.add(box);
+
+				ButtonUp oie=new ButtonUp("Jeu de l'oie",true,true,null);
+				ButtonUp numeri=new ButtonUp("Numéri",true,true,null);
+				oie.addToBox(box,true,Fenetre.this.getWidth()/8,5);
+				numeri.addToBox(box,true);
+
+				ButtonUp menu=new ButtonUp("Retourner au menu",true,true,new ActionListener(){
+					public void actionPerformed(ActionEvent event){
+						fireGoToMenu();
+					}
+				});
+				menu.addToBox(bo,false);
+
+				Box box1=Box.createHorizontalBox();
+				box1.add(menu);
+				bo.add(Box.createRigidArea(new Dimension(5,50)));
+				bo.add(box1);
+			}
+		}
+
+		class JeuPanel extends JPanelUp{
 
 			public JPanel infos;
 			public JPanel plateau;
@@ -227,9 +260,9 @@ public class AffichageGUI extends Affichage{
 			public void goTo(){}
 		}
 
-		class MenuPanel extends JPanelListener implements JeuModifiedStateListener{
+		class MenuPanel extends JPanelUp implements JeuModifiedStateListener{
 
-			public JButton continuer,sauvegarder,recommencer,nouveau,charger,modifier,credits,quitter;
+			public ButtonUp continuer,sauvegarder,recommencer,nouveau,charger,modifier,credits,quitter;
 
 			@Override
 			public void modifiedState(Jeu j){
@@ -245,73 +278,61 @@ public class AffichageGUI extends Affichage{
 				add(box,new GridBagConstraints());
 				AffichageGUI.this.add(this);
 
-				continuer=new MenuButton(box,"Continuer",false,new ActionListener(){
+				continuer=new ButtonUp("Continuer",true,false,new ActionListener(){
 					public void actionPerformed(ActionEvent event){
 						fireGoToJeu();
 					}
 				});
+				continuer.addToBox(box,false,5,5);
 
-				recommencer=new MenuButton(box,"Recommencer",false,new ActionListener(){
+				recommencer=new ButtonUp("Recommencer",true,false,new ActionListener(){
 					public void actionPerformed(ActionEvent event){
 						AffichageGUI.super.getJeu().recommencer();
 					}
 				});
+				recommencer.addToBox(box,false,5,5);
 
-				nouveau=new MenuButton(box,"Nouvelle partie",true,new ActionListener(){
+				nouveau=new ButtonUp("Nouvelle partie",true,true,new ActionListener(){
 					public void actionPerformed(ActionEvent event){
 						fireGoToNouveau();
 					}
 				});
+				nouveau.addToBox(box,false,5,5);
 
-				sauvegarder=new MenuButton(box,"Sauvegarder",false,new ActionListener(){
+				sauvegarder=new ButtonUp("Sauvegarder",true,false,new ActionListener(){
 					public void actionPerformed(ActionEvent event){
 						AffichageGUI.super.sauvegarderLeJeu();
 					}
 				});
+				sauvegarder.addToBox(box,false,5,5);
 
-				charger=new MenuButton(box,"Charger une partie",true,new ActionListener(){
+				charger=new ButtonUp("Charger une partie",true,true,new ActionListener(){
 					public void actionPerformed(ActionEvent event){
 						fireGoToCharger();
 					}
 				});
+				charger.addToBox(box,false,5,5);
 
-				modifier=new MenuButton(box,"Paramètres",true,new ActionListener(){
+				modifier=new ButtonUp("Paramètres",true,true,new ActionListener(){
 					public void actionPerformed(ActionEvent event){
 						fireGoToParam();
 					}
 				});
+				modifier.addToBox(box,false,5,5);
 
-				credits=new MenuButton(box,"Credits",true,new ActionListener(){
+				credits=new ButtonUp("Credits",true,true,new ActionListener(){
 					public void actionPerformed(ActionEvent event){
 						AffichageGUI.this.display(Affichage.credits);
 					}
 				});
+				credits.addToBox(box,false,5,5);
 
-				quitter=new MenuButton(box,"Quitter",true,new ActionListener(){
+				quitter=new ButtonUp("Quitter",true,true,new ActionListener(){
 					public void actionPerformed(ActionEvent event){
 						System.exit(0);
 					}
 				});
-			}
-
-			class MenuButton extends JButton{
-				public MenuButton(Box box, String etiquette, boolean enabled, ActionListener listener){
-					super(etiquette);
-					setForeground(Color.BLACK);
-					setVisible(true);
-					setEnabled(enabled);
-					setHorizontalAlignment(SwingConstants.CENTER);
-					setHorizontalTextPosition(SwingConstants.CENTER);
-					box.add(Box.createRigidArea(new Dimension(5,5)));
-					Box box1=Box.createHorizontalBox();
-					box1.add(this);
-					box.add(box1);
-					addActionListener(listener);
-					setOpaque(false);
-					setContentAreaFilled(true);
-					setBorderPainted(true);
-					setFocusPainted(true);
-				}
+				quitter.addToBox(box,false,5,5);
 			}
 		}
 	}
