@@ -235,22 +235,9 @@ public class AffichageGUI extends Affichage{
 				Box jeux = Box.createHorizontalBox();
 				Box bouton=Box.createHorizontalBox();
 
-				ButtonUp oie=new ButtonUp("Jeu de l'oie",true,true,new ActionListener(){
-					public void actionPerformed(ActionEvent event){
-						choisirJoueurs(true);
-					}
-				});
-				ButtonUp numeri=new ButtonUp("Numéri",true,true,new ActionListener(){
-					public void actionPerformed(ActionEvent event){
-						choisirJoueurs(false);
-					}
-				});
-				ButtonUp menu=new ButtonUp("Retourner au menu",true,true,new ActionListener(){
-					public void actionPerformed(ActionEvent event){
-						fireGoToMenu();
-					}
-				});
-
+				ButtonUp oie=new ButtonUp("Jeu de l'oie",true,true, event -> choisirJoueurs(true));
+				ButtonUp numeri=new ButtonUp("Numéri",true,true,event -> choisirJoueurs(false));
+				ButtonUp menu=new ButtonUp("Retourner au menu",true,true,event -> fireGoToMenu());
 				
 				oie.addToBox(jeux,true,Fenetre.this.getWidth()/8,5);
 				numeri.addToBox(jeux,true);
@@ -321,49 +308,45 @@ public class AffichageGUI extends Affichage{
 				box.add(liste);
 
 				JButton add=new JButton("Ajouter un joueur");
-				add.addActionListener(new ActionListener(){
-					public void actionPerformed(ActionEvent event){
-						if (numberPlayers<max){
-							numberPlayers++;
-							Box b=Box.createHorizontalBox();
+				add.addActionListener(event -> {
+					if (numberPlayers<max){
+						numberPlayers++;
+						Box b=Box.createHorizontalBox();
 
-							JTextField jtf=new JTextField(getNextValidName());
-							jtf.setBorder(BorderFactory.createLineBorder(Color.GREEN,2,true));
-							jtf.getDocument().addDocumentListener(new DocumentListener(){
-								public void changedUpdate(DocumentEvent e) {
-									if (validName(jtf.getText())==1)
-										jtf.setBorder(BorderFactory.createLineBorder(Color.GREEN,2,true));
-									else
-										jtf.setBorder(BorderFactory.createLineBorder(Color.RED,2,true));
-									checkValid(min,max);
-								}
-								public void removeUpdate(DocumentEvent e) { changedUpdate(e); }
-								public void insertUpdate(DocumentEvent e) { changedUpdate(e); }
-							});
+						JTextField jtf=new JTextField(getNextValidName());
+						jtf.setBorder(BorderFactory.createLineBorder(Color.GREEN,2,true));
+						jtf.getDocument().addDocumentListener(new DocumentListener(){
+							public void changedUpdate(DocumentEvent e) {
+								if (validName(jtf.getText())==1)
+									jtf.setBorder(BorderFactory.createLineBorder(Color.GREEN,2,true));
+								else
+									jtf.setBorder(BorderFactory.createLineBorder(Color.RED,2,true));
+								checkValid(min,max);
+							}
+							public void removeUpdate(DocumentEvent e) { changedUpdate(e); }
+							public void insertUpdate(DocumentEvent e) { changedUpdate(e); }
+						});
 
-							JButton jb=	new JButton(new ImageIcon(new ImageIcon("assets/suppr.png").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
-							jb.addActionListener(new ActionListener(){
-								public void actionPerformed(ActionEvent event){
-									liste.remove(b);
-									namesPlayer.remove(jtf);
-									numberPlayers--;
-									checkValid(min,max);
-									revalidate();
-									repaint();
-								}
-							});
-							b.add(jb);
-
-							namesPlayer.add(jtf);
-							b.add(jtf);
-							liste.add(b);
-
-							Fenetre.this.revalidate();
-							Fenetre.this.repaint();
+						JButton jb=	new JButton(new ImageIcon(new ImageIcon("assets/suppr.png").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
+						jb.addActionListener(e -> {
+							liste.remove(b);
+							namesPlayer.remove(jtf);
+							numberPlayers--;
 							checkValid(min,max);
-						}else{
-							Fenetre.this.display("Vous ne pouvez plus ajouter de joueur !");
-						}
+							revalidate();
+							repaint();
+							});
+						b.add(jb);
+
+						namesPlayer.add(jtf);
+						b.add(jtf);
+						liste.add(b);
+
+						Fenetre.this.revalidate();
+						Fenetre.this.repaint();
+						checkValid(min,max);
+					}else{
+						Fenetre.this.display("Vous ne pouvez plus ajouter de joueur !");
 					}
 				});
 				Box tmp=Box.createHorizontalBox();
@@ -373,25 +356,19 @@ public class AffichageGUI extends Affichage{
 
 				Box boutons=Box.createHorizontalBox();
 				tmp=Box.createVerticalBox();
-				tmp.add(new ButtonUp("Retourner au menu",true,true,new ActionListener(){
-					public void actionPerformed(ActionEvent event){
-						fireGoToMenu();
-					}
-				}));
+				tmp.add(new ButtonUp("Retourner au menu",true,true, event -> fireGoToMenu()));
 				boutons.add(tmp);
 				boutons.add(Box.createRigidArea(new Dimension(20,5)));
 				tmp=Box.createVerticalBox();
-				param=new ButtonUp("Paramétrer la partie",true,true,new ActionListener(){
-					public void actionPerformed(ActionEvent event){
-						Jeu jeu;
-						if (oie)
-							jeu=new JeuOie(namesPlayer.size());
-						else
-							jeu=new JeuNumeri(namesPlayer.size());
-						for (int i=0;i<namesPlayer.size();i++)
-							jeu.setNom(i,namesPlayer.get(i).getText());
-						parametrerPartie(jeu);
-					}
+				param=new ButtonUp("Paramétrer la partie",true,true,event -> {
+					Jeu jeu;
+					if (oie)
+						jeu=new JeuOie(namesPlayer.size());
+					else
+						jeu=new JeuNumeri(namesPlayer.size());
+					for (int i=0;i<namesPlayer.size();i++)
+						jeu.setNom(i,namesPlayer.get(i).getText());
+					parametrerPartie(jeu);
 				});
 				param.setOpaque(true);
 				tmp.add(param);
@@ -475,20 +452,11 @@ public class AffichageGUI extends Affichage{
 				}
 
 				Box tmp=Box.createVerticalBox();
-				tmp.add(new ButtonUp("Retourner au menu",true,true,new ActionListener(){
-					public void actionPerformed(ActionEvent event){
-						fireGoToMenu();
-					}
-				}));
+				tmp.add(new ButtonUp("Retourner au menu",true,true,event -> fireGoToMenu()));
 				boutons.add(tmp);
 				boutons.add(Box.createRigidArea(new Dimension(20,5)));
 				tmp=Box.createVerticalBox();
-				tmp.add(new ButtonUp("Créer la partie",true,true,new ActionListener(){
-					public void actionPerformed(ActionEvent event){
-						AffichageGUI.this.setJeu(jeu);
-						Fenetre.this.fireGoToJeu();
-					}
-				}));
+				tmp.add(new ButtonUp("Créer la partie",true,true, event -> { AffichageGUI.this.setJeu(jeu); Fenetre.this.fireGoToJeu(); }));
 				boutons.add(tmp);
 
 				this.repaint();
@@ -538,60 +506,28 @@ public class AffichageGUI extends Affichage{
 				add(box,new GridBagConstraints());
 				AffichageGUI.this.add(this);
 
-				continuer=new ButtonUp("Continuer",true,false,new ActionListener(){
-					public void actionPerformed(ActionEvent event){
-						fireGoToJeu();
-					}
-				});
+				continuer=new ButtonUp("Continuer",true,false,event -> fireGoToJeu());
 				continuer.addToBox(box,false,5,5);
 
-				recommencer=new ButtonUp("Recommencer",true,false,new ActionListener(){
-					public void actionPerformed(ActionEvent event){
-						AffichageGUI.super.getJeu().recommencer();
-					}
-				});
+				recommencer=new ButtonUp("Recommencer",true,false, event -> AffichageGUI.super.getJeu().recommencer());
 				recommencer.addToBox(box,false,5,5);
 
-				nouveau=new ButtonUp("Nouvelle partie",true,true,new ActionListener(){
-					public void actionPerformed(ActionEvent event){
-						fireGoToNouveau();
-					}
-				});
+				nouveau=new ButtonUp("Nouvelle partie",true,true, event -> fireGoToNouveau());
 				nouveau.addToBox(box,false,5,5);
 
-				sauvegarder=new ButtonUp("Sauvegarder",true,false,new ActionListener(){
-					public void actionPerformed(ActionEvent event){
-						AffichageGUI.super.sauvegarderLeJeu();
-					}
-				});
+				sauvegarder=new ButtonUp("Sauvegarder",true,false, event -> AffichageGUI.super.sauvegarderLeJeu());
 				sauvegarder.addToBox(box,false,5,5);
 
-				charger=new ButtonUp("Charger une partie",true,true,new ActionListener(){
-					public void actionPerformed(ActionEvent event){
-						fireGoToCharger();
-					}
-				});
+				charger=new ButtonUp("Charger une partie",true,true, event -> fireGoToCharger());
 				charger.addToBox(box,false,5,5);
 
-				modifier=new ButtonUp("Paramètres",true,true,new ActionListener(){
-					public void actionPerformed(ActionEvent event){
-						fireGoToParam();
-					}
-				});
+				modifier=new ButtonUp("Paramètres",true,true, event -> fireGoToParam());
 				modifier.addToBox(box,false,5,5);
 
-				credits=new ButtonUp("Credits",true,true,new ActionListener(){
-					public void actionPerformed(ActionEvent event){
-						AffichageGUI.this.display(Affichage.credits);
-					}
-				});
+				credits=new ButtonUp("Credits",true,true, event -> AffichageGUI.this.display(Affichage.credits));
 				credits.addToBox(box,false,5,5);
 
-				quitter=new ButtonUp("Quitter",true,true,new ActionListener(){
-					public void actionPerformed(ActionEvent event){
-						System.exit(0);
-					}
-				});
+				quitter=new ButtonUp("Quitter",true,true, event -> System.exit(0));
 				quitter.addToBox(box,false,5,5);
 			}
 		}
