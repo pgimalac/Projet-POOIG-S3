@@ -70,6 +70,11 @@ public class AffichageGUI extends Affichage implements GameOverListener,CannotPl
 			modifiedStateListeners.add(j);
 	}
 
+	public void recommencer(){
+		super.getJeu().recommencer();
+		fireJeuModifState(super.getJeu());
+	}
+
 	private void fireJeuModifState(Jeu jeu){
 		for (JeuModifiedStateListener j : modifiedStateListeners)
 			j.modifiedState(jeu);
