@@ -47,7 +47,7 @@ public class JPanelUp extends JPanel implements ComponentListener{
 	}
 
 	public void componentResized(ComponentEvent evt){
-		if (this==parent.getAffiche()){
+		if (parent.estAffiche(this)){
 			int width=parent.getWidth();
 			int height=parent.getHeight();
 			if (width==formerWidth){ // changement vertical
