@@ -75,7 +75,7 @@ public abstract class Jeu implements Serializable,Iterable<Joueur> {
 	protected final void setDes(int i){
 		int[] t=new int[1];
 		t[0]=i;
-		setDes(i);
+		setDes(t);
 	}
 
 	protected final void setDes(int[] t){
