@@ -51,13 +51,13 @@ public abstract class Affichage implements Serializable,GameListener{
 		return jeuEnCours() && jeu.estFini();
 	}
 
-	protected void setJeu(Jeu j){
+	public void setJeu(Jeu j){
 		jeu=j;
 		if (jeu!=null)
 			jeu.setGameListener(this);
 	}
 
-	protected Jeu getJeu(){
+	public Jeu getJeu(){
 		return jeu;
 	}
 
@@ -84,7 +84,7 @@ public abstract class Affichage implements Serializable,GameListener{
 		return jeu;
 	}
 
-	protected void sauvegarderLeJeu(String nom){
+	public void sauvegarderLeJeu(String nom){
 		if (nom==null || nom.equals("")) sauvegarderLeJeu();
 		if (!nom.matches(REGEX_SAVE)) nom=nom+".save";
 
@@ -108,7 +108,7 @@ public abstract class Affichage implements Serializable,GameListener{
 		}		
 	}
 
-	protected void sauvegarderLeJeu(){
+	public void sauvegarderLeJeu(){
 		Date aujourdhui=new Date(System.currentTimeMillis()+3600000); // décallage horaire d'une heure en plus
 		SimpleDateFormat date=new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 		sauvegarderLeJeu(date.format(aujourdhui)+".save");
