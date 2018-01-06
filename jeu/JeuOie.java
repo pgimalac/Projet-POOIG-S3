@@ -125,13 +125,13 @@ public class JeuOie extends Jeu{
 			tmp=getCase(tmp,super.getDes());
 		}
 		joueur.setCase(tmp);
-		super.firePlay(new PlayEvent(this,joueur,super.getDes())); // TODO
-
 		int option=super.getOption(OptionQuestionOie.class).getIntValue();
+		if (option==0) // on modifie le score après que les dés aient été lancés, mais on pose la question après avoir averti l'affichage que le joueur avait joué
+			joueur.setScore(super.getCase(joueur.getCase()));
+		super.firePlay(new PlayEvent(this,joueur,super.getDes()));
 
 		switch (option){
 			case 0:
-				joueur.setScore(super.getCase(joueur.getCase()));
 				break;
 			case 1:
 				question=questions.get();
