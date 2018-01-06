@@ -72,7 +72,6 @@ public class JeuPanel extends JSplitPane implements JeuModifiedStateListener, Co
 		this.affichage=affichage;
 
 		JScrollPane plateau=new JScrollPane(plateauIn,ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		plateau.add(plateauIn);
 		JPanel infos=new JPanel();
 
 		addImpl(infos,JSplitPane.LEFT,1);
@@ -394,8 +393,8 @@ public class JeuPanel extends JSplitPane implements JeuModifiedStateListener, Co
 			int size=cases.size();
 			int w=size;
 			int h=size;
-			for (int i=10;i>5;i++){
-				if (size/i*i==i){
+			for (int i=10;i>5;i--){
+				if (size/i*i==size){
 					w=i;
 					h=size/i;
 					break;
@@ -406,10 +405,11 @@ public class JeuPanel extends JSplitPane implements JeuModifiedStateListener, Co
 				}
 			}
 
-			plateauIn.setLayout(new GridLayout(w,h));
+			plateauIn.setLayout(new GridLayout(h,w));
 			for (CasePanel cp : cases){
 				plateauIn.add(cp);
 			}
+//plateauIn.repaint();
 		}
 
 		@Override
