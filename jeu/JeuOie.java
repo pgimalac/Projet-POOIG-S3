@@ -43,7 +43,10 @@ public class JeuOie extends Jeu{
 
 	@Override
 	public int lancerDes(){
-		super.setDes(Jeu.des.nextInt(6)+des.nextInt(6)+2);
+		int[] t=new int[2];
+		t[0]=Jeu.des.nextInt(6)+1;
+		t[1]=Jeu.des.nextInt(6)+1;
+		super.setDes(t);
 		return super.getDes();
 	}
 

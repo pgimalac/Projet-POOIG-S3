@@ -73,8 +73,17 @@ public abstract class Jeu implements Serializable,Iterable<Joueur> {
 	} // lancé d'un dé à 6 faces
 
 	protected final void setDes(int i){
-		valeurDes=i;
-		fireChangeDesValue(valeurDes);
+		int[] t=new int[1];
+		t[0]=i;
+		setDes(i);
+	}
+
+	protected final void setDes(int[] t){
+		int n=0;
+		for (int i : t)
+			n+=i;
+		valeurDes=n;
+		fireChangeDesValue(t);
 	}
 
 	public final int getDes(){
@@ -110,7 +119,7 @@ public abstract class Jeu implements Serializable,Iterable<Joueur> {
 			((PlayListener)listener).play(e);
     }
 
-    protected void fireChangeDesValue(int i){
+    protected void fireChangeDesValue(int[] i){
     	if (listener instanceof DesValueListener)
     		((DesValueListener)listener).changeDesValue(i);
     }

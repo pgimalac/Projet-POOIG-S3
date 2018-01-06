@@ -104,7 +104,7 @@ public class Fenetre extends JFrame{
 		jeu.play(e);
     }
 
-    public void changeDesValue(int i){
+    public void changeDesValue(int[] i){
 		jeu.changeDesValue(i);
     }	
 

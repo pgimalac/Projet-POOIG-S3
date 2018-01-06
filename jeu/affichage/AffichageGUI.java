@@ -87,7 +87,7 @@ public class AffichageGUI extends Affichage implements GameOverListener,CannotPl
 		fenetre.play(e);
     }
 
-    public void changeDesValue(int i){
+    public void changeDesValue(int[] i){
 		fenetre.changeDesValue(i);
     }
 }

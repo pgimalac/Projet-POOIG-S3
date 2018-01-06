@@ -91,12 +91,11 @@ public class JeuPanel extends JSplitPane implements JeuModifiedStateListener, Co
 		de.addActionListener( event -> {
 			setEnabled(false);
 			Jeu jeu=affichage.getJeu();
-			setBackground(jeu.lancerDes());
+			jeu.lancerDes();
 			while(jeu.choix()){
 				while (!jeu.choix(parent.ask(jeu.getChoix())))	// tant que la réponse au choix n'est pas valide, on demande une réponse
 					parent.display("Entrée invalide !");
 			}
-System.out.println("lancer");
 			jeu.jouer();
 			setEnabled(true);
 		});
@@ -151,8 +150,8 @@ System.out.println("lancer");
 
     }
 
-    public void changeDesValue(int i){
-    	//afficher la valeur du dé ?
+    public void changeDesValue(int[] i){
+
     }
 
 	@Override
