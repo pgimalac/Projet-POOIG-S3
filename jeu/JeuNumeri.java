@@ -63,7 +63,7 @@ public class JeuNumeri extends Jeu{
 
 	@Override
 	public boolean choix(){
-		if (super.getDes()==0 && !unPionPeutReculer(joueurEnTrainDeJouer()))
+		if (super.getDes()==0 && !unPionPeutReculer(joueurEnTrainDeJouer())) // la méthode qui tire les dés vérifie que cela n'arrive jamais
 			return false;
 		return (super.getDes()==0 && pionEnnemi==-1) || (super.getDes()!=0 && choixPions.isEmpty());
 	}
@@ -90,8 +90,15 @@ public class JeuNumeri extends Jeu{
 				pionEnnemi=Integer.parseInt(entree)-1;
 			}catch(NumberFormatException e){
 				return false;
+			}catch(NullPointerException e){
+				return false;
 			}
-			return (pionEnnemi>0 && pionEnnemi<super.plateau.size() && !super.estVide(super.getCase(pionEnnemi)) && !joueurEnTrainDeJouer().estSurCase(super.plateau.getCase(pionEnnemi)));
+			if (pionEnnemi>0 && pionEnnemi<super.plateau.size() && !super.estVide(super.getCase(pionEnnemi)) && !joueurEnTrainDeJouer().estSurCase(super.getCase(pionEnnemi)))
+				return true;
+			else{
+				pionEnnemi=-1;
+				return false;
+			}
 		}else if (super.getDes()!=0 && choixPions.isEmpty()){
 			try{
 				Scanner scan=new Scanner(entree);
@@ -111,6 +118,8 @@ public class JeuNumeri extends Jeu{
 					return true;
 			}catch(NumberFormatException e){
 				choixPions.removeAll(choixPions);
+				return false;
+			}catch(NullPointerException e){
 				return false;
 			}
 		}else{
