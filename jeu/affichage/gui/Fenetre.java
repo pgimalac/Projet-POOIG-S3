@@ -11,6 +11,7 @@ import jeu.events.PlayEvent;
 import jeu.options.questions.Question;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.Box;
 import javax.swing.JRadioButton;
@@ -40,6 +41,7 @@ public class Fenetre extends JFrame{
 	private boolean mouvement;
 	private boolean position;
 	private boolean cantPlay;
+
 	private int aff;
 
 	public static final int SPIRALE=1;
@@ -51,6 +53,13 @@ public class Fenetre extends JFrame{
 
 	public boolean estAffiche(Container c){
 		return affiche==c;
+	}
+
+	public void setAffichagePlateau(int aff){
+		if (this.aff!=aff){
+			this.aff=aff;
+			jeu.setAffichagePlateau(aff);
+		}
 	}
 
 	public boolean cantPlay(){ return cantPlay; }
@@ -136,13 +145,16 @@ public class Fenetre extends JFrame{
 		box1.add(b);
 		boite.add(box1);
 
-		aff=SPIRALE;
+		JLabel j=new JLabel("Type d'affichage du plateau");
+		b.add(j);
+
+		setAffichagePlateau(RECTANGLE);
 		ButtonGroup bg=new ButtonGroup();
 
 		JRadioButton jr=new JRadioButton("Spirale",aff==SPIRALE);
 		jr.addActionListener( event -> {
 			if (jr.isSelected())
-				aff=SPIRALE;
+				setAffichagePlateau(SPIRALE);
 		});
 		jr.setOpaque(false);
 		bg.add(jr);
@@ -151,7 +163,7 @@ public class Fenetre extends JFrame{
 		JRadioButton jr2=new JRadioButton("Zigzag",aff==ZIGZAG);
 		jr2.addActionListener( event -> {
 			if (jr2.isSelected())
-				aff=ZIGZAG;
+				setAffichagePlateau(ZIGZAG);
 		});
 		jr2.setOpaque(false);
 		bg.add(jr2);
@@ -160,7 +172,7 @@ public class Fenetre extends JFrame{
 		JRadioButton jr3=new JRadioButton("Rectangle",aff==RECTANGLE);
 		jr3.addActionListener( event -> {
 			if (jr3.isSelected())
-				aff=RECTANGLE;
+				setAffichagePlateau(RECTANGLE);
 		});
 		jr3.setOpaque(false);
 		bg.add(jr3);
@@ -169,7 +181,7 @@ public class Fenetre extends JFrame{
 		JRadioButton jr4=new JRadioButton("Colonne",aff==COLONNE);
 		jr.addActionListener( event -> {
 			if (jr4.isSelected())
-				aff=COLONNE;
+				setAffichagePlateau(COLONNE);
 		});
 		jr4.setOpaque(false);
 		bg.add(jr4);

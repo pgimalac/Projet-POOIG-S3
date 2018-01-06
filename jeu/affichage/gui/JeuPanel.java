@@ -3,9 +3,11 @@ package jeu.affichage.gui;
 import jeu.Jeu;
 import jeu.Joueur;
 
+import jeu.plateau.Plateau;
 import jeu.plateau.cases.Case;
 
 import jeu.affichage.Affichage;
+import jeu.affichage.AffichagePlateau;
 
 import jeu.events.GameEvent;
 import jeu.events.GameOverEvent;
@@ -223,20 +225,221 @@ public class JeuPanel extends JSplitPane implements JeuModifiedStateListener, Co
 				n++;
 			}
 			joueursLabels=new CopyOnWriteArrayList<JLabel>(tmp);
-			//S'éffondre si trop de joueurs...
 
 
-			// on dessine le plateau
-			// TODO
+			/* On crée les cases du plateau */
+			ArrayList<CasePanel> tmp2=new ArrayList<CasePanel>();
+			n=1;
+			for (Case c : jeu.getPlateau()){
+				tmp2.add(new CasePanel(c.toString(),n));
+				n++;
+			}
+			cases=new CopyOnWriteArrayList<CasePanel>(tmp2);
 		}
 	}
 
 	private CopyOnWriteArrayList<JLabel> joueursLabels;
+	private CopyOnWriteArrayList<CasePanel> cases; // propre à chaque jeu, contient la liste des cases du plateau du jeu
 
 	public void goTo(){
 		parent.setSize(parent.getHeight()*129/92,parent.getHeight());
 		parent.setMinimumSize(new Dimension(1161,828));
+
+		remplirPlateau();
+		paintPawns();
 	}
+
+	private AffichagePlateau affichagePlateau;
+
+	private void remplirPlateau(){
+		affichagePlateau.afficher();
+	}
+
+	public void setAffichagePlateau(int aff){
+		switch(aff){
+			case Fenetre.SPIRALE :
+				affichagePlateau=new AffichagePlateauSpiraleGUI();
+				break;
+			case Fenetre.COLONNE :
+				affichagePlateau=new AffichagePlateauColonneGUI();
+				break;
+			case Fenetre.RECTANGLE :
+				affichagePlateau=new AffichagePlateauRectangleGUI();
+				break;
+			case Fenetre.ZIGZAG :
+				affichagePlateau=new AffichagePlateauZigzagGUI();
+				break;
+		}
+		parent.setAffichagePlateau(aff);
+	}
+
+	private void paintPawns(){
+		//TODO
+		// positionne les pions sur le plateau
+	}
+
+
+	class AffichagePlateauSpiraleGUI implements AffichagePlateau{
+		@Override
+		public void afficher(){
+/*			int taille=plateau.size();
+			int l=NOMBRE_CASE_LARGEUR;
+			int h=(taille/l)+1;
+
+			// on cherche un rectangle exact pour le plateau
+			for (int n=NOMBRE_CASE_LARGEUR;n>NOMBRE_CASE_LARGEUR/2;n--){
+				if (taille==(taille/n)*n){
+					l=n;
+					h=taille/n;
+					break;
+				}
+			}
+
+			if (taille!=l*h){
+				int d=(l*h)-taille;
+				for(int n=NOMBRE_CASE_LARGEUR-1;n>NOMBRE_CASE_LARGEUR/2;n--){
+					if (d>n*((taille/n)+1)-taille){
+						l=n;
+						h=(taille/l)+1;
+						d=(l*h)-taille;
+					}
+				}
+			}
+			// on trouve h et l tels que l'écart entre la taille du plateau et h*l soit la plus petite possible (en ayant l pas trop petit)
+
+			String[] debut=new String[h];
+			String[] fin=new String[h];
+
+			for (int n=0;n<h;n++){
+				debut[n]="";
+				fin[n]="";
+			}
+
+			int[] lignes=new int[h];
+			int[] colonnes=new int[l];
+
+			int directionH=1; // -1 si l'on va à gauche
+			int directionV=0; // -1 si l'on va vers le haut
+			int coorH=0;
+			int coorV=0;
+
+			// c'est couteux mais je ne vois pas comment le faire autrement aussi facilement
+
+			StringBuilder sb=new StringBuilder(WHITEf);
+			for (int n=0;n<l*h;n++){
+				String s;
+				if (n<taille)
+					s=COLORS[n%COLORS.length]+centrer(LARGEUR_CASE,(n+1)+"-"+plateau.getCase(n).toString());
+				else
+					s=WHITEb+centrer(LARGEUR_CASE," ");
+
+				if (directionH==1 || directionV==-1)
+					debut[coorV]=debut[coorV]+s;
+				else // (directionH==-1 || directionV==-1)
+					fin[coorV]=s+fin[coorV];
+
+				lignes[coorV]++;
+				colonnes[coorH]++;
+
+				if (lignes[coorV]==l && directionV==0){
+					if (directionH==1)
+						directionV=1;
+					else
+						directionV=-1;
+					directionH=0;
+				}else if (colonnes[coorH]==h && directionH==0){
+					if (directionV==1)
+						directionH=-1;
+					else
+						directionH=1;
+					directionV=0;
+				}
+
+				coorH+=directionH;
+				coorV+=directionV;
+			}
+			for (int n=0;n<h;n++)
+				sb.append(debut[n]+fin[n]+RESET+"\n"+WHITEf);
+
+			System.out.println(sb.toString()+RESET);
+*/
+		}
+
+		@Override
+		public String toString(){
+			return "spirale";
+		}
+	}
+
+
+	class AffichagePlateauZigzagGUI implements AffichagePlateau{
+		@Override
+		public void afficher(){
+			for (CasePanel cp : cases){
+
+			}
+		}
+
+		@Override
+		public String toString(){
+			return "zigzag";
+		}
+	}
+	class AffichagePlateauRectangleGUI implements AffichagePlateau{
+		@Override
+		public void afficher(){
+	 		plateauIn.removeAll();
+			plateauIn.revalidate();
+
+			int size=cases.size();
+			int w=size;
+			int h=size;
+			for (int i=10;i>5;i++){
+				if (size/i*i==i){
+					w=i;
+					h=size/i;
+					break;
+				}
+				else if (size-size/i*i<w*h-size){
+					w=i;
+					h=size/i+1;
+				}
+			}
+
+			plateauIn.setLayout(new GridLayout(w,h));
+			for (CasePanel cp : cases){
+				plateauIn.add(cp);
+			}
+		}
+
+		@Override
+		public String toString(){
+			return "rectangle";
+		}
+	}
+
+	class AffichagePlateauColonneGUI implements AffichagePlateau{
+		@Override
+		public void afficher(){
+			plateauIn.removeAll();
+			plateauIn.revalidate();
+
+			plateauIn.setLayout(new GridLayout(cases.size(),1));
+			for (CasePanel cp : cases){
+				plateauIn.add(cp);
+			}
+		}
+
+		@Override
+		public String toString(){
+			return "colonne";
+		}
+	}
+
+
+
+
+
 
 	public void gameOver(GameOverEvent e) {
 		de.setEnabled(false);
@@ -285,18 +488,13 @@ public class JeuPanel extends JSplitPane implements JeuModifiedStateListener, Co
 	    	desImage2.setIcon(null);
     }
 
-/*	@Override
-	public void paintComponent(Graphics g) { 
-//		g.drawImage(img,0,0,parent.getWidth(),parent.getHeight(),null);
-	}
-*/
 	public void componentResized(ComponentEvent evt){
 		if (parent.estAffiche(this)){
 			int width=parent.getWidth();
 			int height=parent.getHeight();
 
 			joueursListe.setMaximumSize(new Dimension(140,height-200));
-			joueursListe.setMinimumSize(new Dimension(140,((height-200>jeu.nombreDeJoueurs*135)?jeu.nombreDeJoueurs*135:height-200)));
+			joueursListe.setMinimumSize(new Dimension(140,((height-200>jeu.nombreDeJoueurs*140)?jeu.nombreDeJoueurs*140:height-200)));
 
 			if (width==formerWidth){ // changement vertical
 				parent.setSize(height*129/92,height);
