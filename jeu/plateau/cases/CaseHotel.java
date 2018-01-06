@@ -2,7 +2,7 @@ package jeu.plateau.cases;
 
 import jeu.Joueur;
 
-import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import java.io.Serializable;
 
@@ -22,10 +22,10 @@ public class CaseHotel extends Case{
 	private int TOURS_A_PASSER;
 
 	private class Hotel implements Serializable{
-		private ArrayList<Chambre> chambres;
+		private CopyOnWriteArrayList<Chambre> chambres;
 
 		Hotel(){
-			chambres=new ArrayList<Chambre>();
+			chambres=new CopyOnWriteArrayList<Chambre>();
 		}
 
 		public void unTourPasse(){
