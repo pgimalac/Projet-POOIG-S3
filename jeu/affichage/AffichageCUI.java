@@ -32,14 +32,10 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 
 	private static Scanner sc=new Scanner(System.in,"UTF-8");
 
-	interface AffichagePlateau{
-		public void afficher(Plateau plateau);
-		public String toString();
-	}	
-
 	class AffichagePlateauSpiraleCUI implements AffichagePlateau{
 		@Override
-		public void afficher(Plateau plateau){
+		public void afficher(){
+			Plateau plateau=AffichageCUI.this.getJeu().getPlateau();
 			int taille=plateau.size();
 			int l=NOMBRE_CASE_LARGEUR;
 			int h=(taille/l)+1;
@@ -131,7 +127,8 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 
 	class AffichagePlateauRectangleCUI implements AffichagePlateau{
 		@Override
-		public void afficher(Plateau plateau){
+		public void afficher(){
+			Plateau plateau=AffichageCUI.this.getJeu().getPlateau();
 			StringBuilder sb=new StringBuilder(WHITEf);
 			int size=plateau.size();
 			for (int i=0;i<size;i++){
@@ -151,7 +148,8 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 
 	class AffichagePlateauZigzagCUI implements AffichagePlateau{
 		@Override
-		public void afficher(Plateau plateau){
+		public void afficher(){
+			Plateau plateau=AffichageCUI.this.getJeu().getPlateau();
 			StringBuilder sb=new StringBuilder(WHITEf);
 			StringBuilder ligne=new StringBuilder();
 			for (int i=0;i<plateau.size();i++){
@@ -178,7 +176,8 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 
 	class AffichagePlateauColonneCUI implements AffichagePlateau{
 		@Override
-		public void afficher(Plateau plateau){
+		public void afficher(){
+			Plateau plateau=AffichageCUI.this.getJeu().getPlateau();
 			StringBuilder sb=new StringBuilder(BLACKf);
 			for (int i=0;i<plateau.size();i++)
 				sb.append(COLORS[i%COLORS.length]+centrer(LARGEUR_CASE,(i+1)+"-"+plateau.getCase(i).toString())+RESET+"\n"+WHITEf);
@@ -255,7 +254,7 @@ public class AffichageCUI extends Affichage implements GameOverListener,CannotPl
 	}
 
 	private void afficherPlateau(){
-		affichagePlateau.afficher(super.getJeu().getPlateau());
+		affichagePlateau.afficher();
 	}
 
 	@Override
