@@ -26,11 +26,11 @@ public abstract class Affichage implements Serializable,GameListener{
 
 	public static final String CHEMIN_SAUVEGARDE="./sauvegardes/";
 	public static final String REGEX_SAVE=".+\\.save$";
-	protected static File sauvegardes;
+	public final File sauvegardes;
 
-	public static final String credits="Programme créé entièrement par Marie Bétend et Pierre Gimalac. Les bugs doivent avoir été causés par Maxime Flin car aucun code écrit par Marie ou Pierre ne peut être bugé.";
+	public static final String credits="Programme créé entièrement par Marie Bétend et Pierre Gimalac.\nLes bugs doivent avoir été causés par Maxime car aucun code écrit par Marie ou Pierre ne peut être bugé.";
 
-	protected static boolean sauvegarde;
+	public final boolean sauvegarde;
 
 	{
 		sauvegardes=new File(CHEMIN_SAUVEGARDE);
@@ -61,7 +61,7 @@ public abstract class Affichage implements Serializable,GameListener{
 		return jeu;
 	}
 
-	protected Jeu chargerLeJeu(String nom){
+	public Jeu chargerLeJeu(String nom){
 		ObjectInputStream ois = null;
 		Jeu jeu=null;
 		try {
