@@ -39,7 +39,6 @@ public abstract class Jeu implements Serializable,Iterable<Joueur> {
 		add(JeuNumeri.class);
 	}
 
-
 	private static final int MAXIMUM_JOUEURS=Integer.MAX_VALUE-1;
 	private static final int MINIMUM_JOUEURS=2;
 	protected static final Random des=new Random();
@@ -88,7 +87,7 @@ public abstract class Jeu implements Serializable,Iterable<Joueur> {
 	protected final Joueur[] joueurs;
 	protected final Plateau plateau;
 	protected final ArrayList<Joueur> classement;
-	protected final int nombreDeJoueurs;
+	public final int nombreDeJoueurs;
 
 	protected GameListener listener;
 
