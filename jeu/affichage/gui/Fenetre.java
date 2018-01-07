@@ -68,7 +68,7 @@ public class Fenetre extends JFrame{
 	public int aff(){ return aff; }
 
 	public void display(String s){
-		JOptionPane.showMessageDialog(null,s,"Information",JOptionPane.INFORMATION_MESSAGE);
+		javax.swing.SwingUtilities.invokeLater( () -> JOptionPane.showMessageDialog(null,s,"Information",JOptionPane.INFORMATION_MESSAGE));
 	}
 
 	public String question(Question q){

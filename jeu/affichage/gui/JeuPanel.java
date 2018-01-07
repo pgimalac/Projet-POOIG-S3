@@ -25,7 +25,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JScrollPane;
-import javax.swing.BoxLayout;
 import javax.swing.Box;
 import javax.swing.JLabel;
 import javax.swing.JButton;
@@ -137,14 +136,14 @@ public class JeuPanel extends JSplitPane implements JeuModifiedStateListener{
 		de.setHorizontalAlignment(SwingConstants.CENTER);
 		de.setHorizontalTextPosition(SwingConstants.CENTER);
 		de.addActionListener( event -> {
-			setEnabled(false);
+			de.setEnabled(false);
 			Jeu jeu=affichage.getJeu();
 			jeu.lancerDes();
 			while(jeu.choix() && !jeu.choix(parent.ask(jeu.getChoix())))	// tant que la réponse au choix n'est pas valide, on demande une réponse
 				parent.display("Entrée invalide !");
 			jeu.jouer();
 
-			paintPawns();
+			rePaintPawns();
 
 			if (!jeu.estFini()){
 				de.setEnabled(true);
@@ -273,34 +272,39 @@ public class JeuPanel extends JSplitPane implements JeuModifiedStateListener{
 	}
 
 	private void paintPawns(){
-		// utiliser joueursLabels qui contient les icones des joueurs
-		// utiliser cases qui contient la liste des casePanel pour les positionner
 		Jeu jeu=affichage.getJeu();
 		Plateau plateau=jeu.getPlateau();
-		int[] nb=new int[plateau.size()];
 
-//		plateauIn.repaint();
-
-		for (Joueur j : jeu){
-			for (Case c : j){
-				nb[plateau.getCase(c)]++;
-			}
-		}
-
-		int nombrePionsParJoueur=jeu.getJoueur(0).getNombrePions();
-		for (Joueur j : jeu){
-			Image i=((ImageIcon)getIcon(joueursLabels,j.toString())).getImage();
-			for (Case c : j){
-				CasePanel cp=cases.get(plateau.getCase(c));
-				cp.getGraphics().drawImage(i,0,0,cp.getWidth()/2,cp.getWidth()/2,null);
+		for (Joueur joueur : jeu){
+			int n=0;
+			for (Case c  : joueur){
+				cases.get(jeu.getCase(c)).add(new PionG(joueur,c,getIcon(joueursLabels,joueur.toString()).getImage(),n,joueur.getNombrePions()>1));
+				n++;
 			}
 		}
 	}
 
-	private Icon getIcon (CopyOnWriteArrayList<JLabel> liste, String s){
+	private void rePaintPawns(){
+		// utiliser joueursLabels qui contient les icones des joueurs
+		// utiliser cases qui contient la liste des casePanel pour les positionner
+		Jeu jeu=affichage.getJeu();
+		Plateau plateau=jeu.getPlateau();
+
+		for (CasePanel cp : cases){
+			for (PionG p : cp){
+				p.update(); // on le bouge à sa bonne case
+				if (p.getCase()!=cp.getCase()){
+					cp.remove(p);
+					cases.get(jeu.getCase(p.getCase())).add(p);
+				}
+			}
+		}
+	}
+
+	private ImageIcon getIcon (CopyOnWriteArrayList<JLabel> liste, String s){
 		for (JLabel jl : liste){
 			if (jl.getText().equals(s))
-				return jl.getIcon();
+				return (ImageIcon)jl.getIcon();
 		}
 		return null;
 	}
@@ -402,8 +406,29 @@ public class JeuPanel extends JSplitPane implements JeuModifiedStateListener{
 	class AffichagePlateauZigzagGUI implements AffichagePlateau{
 		@Override
 		public void afficher(){
-			for (CasePanel cp : cases){
+	 		plateauIn.removeAll();
+			plateauIn.revalidate();
 
+			int size=cases.size();
+			int w=size;
+			int h=size;
+			for (int i=10;i>5;i--){
+				if (size/i*i==size){
+					w=i;
+					h=size/i;
+					break;
+				}
+				else if (size-size/i*i<w*h-size){
+					w=i;
+					h=size/i+1;
+				}
+			}
+
+			plateauIn.setLayout(new GridLayout(h,w));
+			for (int n=0;n<w*h;n++){
+				if ((n/w)%2==0){
+				}else{
+				}
 			}
 		}
 
@@ -533,8 +558,5 @@ public class JeuPanel extends JSplitPane implements JeuModifiedStateListener{
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		setSize(new Dimension(parent.getWidth(),parent.getHeight()));
-/*		if (parent.estAffiche(this)){
-			paintPawns();
-		} */
 	} 
 }

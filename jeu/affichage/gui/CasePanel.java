@@ -12,8 +12,11 @@ import java.awt.Font;
 import java.awt.Color;
 
 import java.util.Random;
+import java.util.Iterator;
 
-public class CasePanel extends JPanel{
+import java.util.concurrent.CopyOnWriteArrayList;
+
+public class CasePanel extends JPanel implements Iterable<PionG>{
 
 	private final Image background;
 
@@ -22,10 +25,16 @@ public class CasePanel extends JPanel{
 	private final int numero;
 	private final int score;
 
+	private final CopyOnWriteArrayList<PionG> pions;
+
 	public static final int MINIMUM=100; // taille minimale d'une case
+
+	private final Case c;
 
 	public CasePanel(Case c, int numero, int numeroBis){
 		super();
+		this.c=c;
+		pions=new CopyOnWriteArrayList<PionG>();
 		String nom=c.toString();
 		this.numero=numero;
 		setMinimumSize(new Dimension(MINIMUM,MINIMUM));
@@ -50,7 +59,29 @@ public class CasePanel extends JPanel{
 			score=0;
 			background=(new ImageIcon("assets/cases/"+nom.replace("é","e").replace("ô","o")+".png")).getImage();
 		}
+	}
 
+	public Iterator<PionG> iterator(){
+		return pions.iterator();
+	}
+
+	public Case getCase(){
+		return c;
+	}
+
+	public void add(PionG p){
+		if (pions.add(p))
+			this.repaint();
+	}
+
+	public PionG remove(PionG p){
+		if (pions.remove(p))
+			this.repaint();
+		return p;
+	}
+
+	public boolean contains(PionG p){
+		return pions.contains(p);
 	}
 
 	@Override
@@ -60,7 +91,14 @@ public class CasePanel extends JPanel{
 		g.drawString(""+numero,getWidth()-15,getHeight()-5); // numéro de la case affiché en bas à gauche
 		if (affScore)
 			g.drawString("("+score+")",getWidth()-22,10); // score affiché en haut à droite
+
+		int n=1;
+		for (PionG p : pions){
+			p.paint(g,0,0,getHeight()/2);
+		}
 	}
+
+
 
 	
 }
