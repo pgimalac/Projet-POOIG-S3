@@ -92,9 +92,14 @@ public class CasePanel extends JPanel implements Iterable<PionG>{
 		if (affScore)
 			g.drawString("("+score+")",getWidth()-22,10); // score affiché en haut à droite
 
-		int n=1;
+		int n=0;
 		for (PionG p : pions){
-			p.paint(g,0,0,getHeight()/2);
+			if (n==0){
+				p.paint(g,0,0,getHeight()/2);
+			}else{
+				p.paint(g,0,n*getHeight()/(2*(pions.size()-1)),getHeight()/2);
+			}
+			n++;
 		}
 	}
 

@@ -100,7 +100,6 @@ public class Fenetre extends JFrame{
 	/* PAGE DE PARAMETRES */
 		parametres=new JPanelUp(this){
 			public void goTo(){
-				Fenetre.this.setSize(parent.getHeight()*129/92,parent.getHeight());
 				Fenetre.this.setMinimumSize(new Dimension(622,444));
 			}
 		};

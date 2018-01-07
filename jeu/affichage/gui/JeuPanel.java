@@ -21,6 +21,7 @@ import jeu.affichage.AffichageGUI.JeuModifiedStateListener;
 
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Scanner;
 
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
@@ -33,8 +34,10 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.ScrollPaneLayout;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.BorderFactory;
 
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Dimension;
@@ -45,6 +48,7 @@ import java.awt.GridLayout;
 public class JeuPanel extends JSplitPane implements JeuModifiedStateListener{
 
 	private JPanel plateauIn;
+	private JScrollPane plateau;
 	private JLabel tourLabel;
 	private JLabel joueurLabel;
 	private JScrollPane joueursListe;
@@ -67,7 +71,7 @@ public class JeuPanel extends JSplitPane implements JeuModifiedStateListener{
 		plateauIn=new JPanel();
 		this.affichage=affichage;
 
-		JScrollPane plateau=new JScrollPane(plateauIn,ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		plateau=new JScrollPane(plateauIn,ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		JPanel infos=new JPanel();
 
 		addImpl(infos,JSplitPane.LEFT,1);
@@ -251,6 +255,18 @@ public class JeuPanel extends JSplitPane implements JeuModifiedStateListener{
 	}
 
 	public void setAffichagePlateau(int aff){
+		if (cases!=null){
+			plateauIn.setMinimumSize(new Dimension(plateau.getWidth(),plateau.getHeight()));
+			plateauIn.setPreferredSize(new Dimension(plateau.getWidth(),plateau.getHeight()));
+			plateauIn.setMaximumSize(new Dimension(plateau.getWidth(),plateau.getHeight()));
+			for (CasePanel cp : cases){
+				cp.setBorder(null);
+				cp.setPreferredSize(new Dimension(CasePanel.MINIMUM,CasePanel.MINIMUM));
+				cp.setMaximumSize(null);
+				cp.setMinimumSize(new Dimension(CasePanel.MINIMUM,CasePanel.MINIMUM));
+			}
+		}
+
 		switch(aff){
 			case Fenetre.SPIRALE :
 				affichagePlateau=new AffichagePlateauSpiraleGUI();
@@ -265,6 +281,7 @@ public class JeuPanel extends JSplitPane implements JeuModifiedStateListener{
 				affichagePlateau=new AffichagePlateauZigzagGUI();
 				break;
 		}
+
 		parent.setAffichagePlateau(aff);
 		if (affichage.getJeu()!=null){
 			remplirPlateau();
@@ -313,30 +330,23 @@ public class JeuPanel extends JSplitPane implements JeuModifiedStateListener{
 	class AffichagePlateauSpiraleGUI implements AffichagePlateau{
 		@Override
 		public void afficher(){
-		/*	int taille=plateau.size();
-			int l=NOMBRE_CASE_LARGEUR;
-			int h=(taille/l)+1;
+	 		plateauIn.removeAll();
+			plateauIn.revalidate();
 
-			// on cherche un rectangle exact pour le plateau
-			for (int n=NOMBRE_CASE_LARGEUR;n>NOMBRE_CASE_LARGEUR/2;n--){
-				if (taille==(taille/n)*n){
-					l=n;
-					h=taille/n;
+			int size=cases.size();
+			int l=size;
+			int h=size;
+			for (int i=10;i>5;i--){
+				if (size/i*i==size){
+					l=i;
+					h=size/i;
 					break;
 				}
-			}
-
-			if (taille!=l*h){
-				int d=(l*h)-taille;
-				for(int n=NOMBRE_CASE_LARGEUR-1;n>NOMBRE_CASE_LARGEUR/2;n--){
-					if (d>n*((taille/n)+1)-taille){
-						l=n;
-						h=(taille/l)+1;
-						d=(l*h)-taille;
-					}
+				else if (size-size/i*i<l*h-size){
+					l=i;
+					h=size/i+1;
 				}
 			}
-			// on trouve h et l tels que l'écart entre la taille du plateau et h*l soit la plus petite possible (en ayant l pas trop petit)
 
 			String[] debut=new String[h];
 			String[] fin=new String[h];
@@ -354,15 +364,20 @@ public class JeuPanel extends JSplitPane implements JeuModifiedStateListener{
 			int coorH=0;
 			int coorV=0;
 
-			// c'est couteux mais je ne vois pas comment le faire autrement aussi facilement
-
-			StringBuilder sb=new StringBuilder(WHITEf);
+			StringBuilder sb=new StringBuilder();
 			for (int n=0;n<l*h;n++){
+				boolean[] bordures=new boolean[4]; // haut, gauche, bas, droite
+				bordures[0]=false;
+				bordures[1]=false;
+				bordures[2]=false;
+				bordures[3]=false;
+				int formerDirectionH=directionH;
+				int formerDirectionV=directionV;
 				String s;
-				if (n<taille)
-					s=COLORS[n%COLORS.length]+centrer(LARGEUR_CASE,(n+1)+"-"+plateau.getCase(n).toString());
+				if (n<size)
+					s=n+" ";
 				else
-					s=WHITEb+centrer(LARGEUR_CASE," ");
+					s=-1+" ";
 
 				if (directionH==1 || directionV==-1)
 					debut[coorV]=debut[coorV]+s;
@@ -373,27 +388,82 @@ public class JeuPanel extends JSplitPane implements JeuModifiedStateListener{
 				colonnes[coorH]++;
 
 				if (lignes[coorV]==l && directionV==0){
-					if (directionH==1)
+					if (directionH==1){
 						directionV=1;
-					else
+						bordures[0]=true;
+						bordures[3]=true;
+					}
+					else{
 						directionV=-1;
+						bordures[1]=true;
+						bordures[2]=true;
+					}
 					directionH=0;
 				}else if (colonnes[coorH]==h && directionH==0){
-					if (directionV==1)
+					if (directionV==1){
 						directionH=-1;
-					else
+						bordures[2]=true;
+						bordures[3]=true;
+					}
+					else{
 						directionH=1;
+						bordures[0]=true;
+						bordures[1]=true;
+					}
 					directionV=0;
+				}else{
+					if (directionV==0){
+						bordures[0]=true;
+						bordures[2]=true;
+					}else{
+						bordures[1]=true;
+						bordures[3]=true;
+					}
+				}
+
+				for (boolean b : bordures){
+					if (formerDirectionH==1 || formerDirectionV==-1)
+						debut[coorV]=debut[coorV]+b+" ";
+					else
+						fin[coorV]=b+" "+fin[coorV];
 				}
 
 				coorH+=directionH;
 				coorV+=directionV;
 			}
 			for (int n=0;n<h;n++)
-				sb.append(debut[n]+fin[n]+RESET+"\n"+WHITEf);
+				sb.append(debut[n]+fin[n]);
 
-			System.out.println(sb.toString()+RESET);
-*/
+			Scanner sc=new Scanner(sb.toString()); // on va lire les numéros obtenus dans l'ordre
+
+			plateauIn.setLayout(new GridLayout(h,l));
+			int n=0;
+			while (sc.hasNextInt() || sc.hasNextBoolean()){
+				int i;
+				boolean[] b=new boolean[4];
+				if (sc.hasNextInt()){
+					i=sc.nextInt();
+					for (int m=0;m<4;m++){
+						b[m]=sc.nextBoolean();
+					}
+				}else{
+					for (int m=3;m>=0;m--){
+						b[m]=sc.nextBoolean();
+					}
+					i=sc.nextInt();
+				}
+
+				if (i==-1){
+					Container c=new Container();
+					c.setVisible(false);
+					plateauIn.add(c);					
+				}
+				else{
+					CasePanel cp= cases.get(i);
+					cp.setBorder(BorderFactory.createMatteBorder((b[0]?1:0), (b[1]?1:0), (b[2]?1:0), (b[3]?1:0), Color.BLACK));
+					plateauIn.add(cases.get(i));
+				}
+			}
 		}
 
 		@Override
@@ -427,7 +497,21 @@ public class JeuPanel extends JSplitPane implements JeuModifiedStateListener{
 			plateauIn.setLayout(new GridLayout(h,w));
 			for (int n=0;n<w*h;n++){
 				if ((n/w)%2==0){
+					if (n<=size){
+						plateauIn.add(cases.get(n));
+					}else{
+						Container c=new Container();
+						c.setVisible(false);
+						plateauIn.add(c);
+					}
 				}else{
+					if (n<=size){
+						plateauIn.add(cases.get(n/w*w+w-1-(n%w)));
+					}else{
+						Container c=new Container();
+						c.setVisible(false);
+						plateauIn.add(c);
+					}
 				}
 			}
 		}
