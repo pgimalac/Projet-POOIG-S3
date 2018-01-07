@@ -53,7 +53,7 @@ public class Plateau implements Serializable,Iterable<Case>{
 			else if ((i+1)%9==0) c[i]=new CaseOie();
 			else c[i]=new Case();
 		}
-		c[6]=new CasePont(c[12]);
+		c[6]=new CasePont(c[11]);
 		return new Plateau(c);
 	}
 	public static final Plateau getDefaultNumeri() {

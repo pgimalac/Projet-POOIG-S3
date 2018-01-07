@@ -1,5 +1,7 @@
 package jeu.affichage.gui;
 
+import jeu.plateau.cases.Case;
+
 import javax.swing.JPanel;
 import javax.swing.ImageIcon;
 
@@ -20,10 +22,11 @@ public class CasePanel extends JPanel{
 	private final int numero;
 	private final int score;
 
-	private static final int MINIMUM=100; // taille minimale d'une case
+	public static final int MINIMUM=100; // taille minimale d'une case
 
-	public CasePanel(String nom, int numero){
+	public CasePanel(Case c, int numero, int numeroBis){
 		super();
+		String nom=c.toString();
 		this.numero=numero;
 		setMinimumSize(new Dimension(MINIMUM,MINIMUM));
 		if (nom.startsWith("score(")){
@@ -35,26 +38,28 @@ public class CasePanel extends JPanel{
 		}else if (nom.equals("normale")){
 			Random rand=new Random();
 			int n=rand.nextInt(9)+1;
-			affScore=true;
+			affScore=false;
 			score=0;
 			background=(new ImageIcon("assets/cases/nature"+n+".png")).getImage();
-		}else{
+		}else if(numero!=numeroBis){ // pont et labyrinthe
 			affScore=true;
-			score=0;
+			score=numeroBis;
 			background=(new ImageIcon("assets/cases/"+nom+".png")).getImage();
+		}else{
+			affScore=false;
+			score=0;
+			background=(new ImageIcon("assets/cases/"+nom.replace("é","e").replace("ô","o")+".png")).getImage();
 		}
 
 	}
 
 	@Override
 	public void paintComponent(Graphics g){
-//		g.setFont(new Font("Serif",Font.PLAIN,12));
-//		g.setColor(Color.BLACK);
 		super.paintComponent(g);
 		g.drawImage(background,0,0,getWidth(),getHeight(),null);
-		g.drawString(""+numero,getWidth()-10,getHeight()-10); // numéro de la case affiché en bas à gauche
+		g.drawString(""+numero,getWidth()-15,getHeight()-5); // numéro de la case affiché en bas à gauche
 		if (affScore)
-			g.drawString(""+score,getWidth()-10,0); // score affiché en haut à droite
+			g.drawString("("+score+")",getWidth()-22,10); // score affiché en haut à droite
 	}
 
 	

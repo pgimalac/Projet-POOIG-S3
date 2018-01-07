@@ -1,32 +1,27 @@
 package jeu.affichage.gui;
 
 import javax.swing.JTextArea;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.Dimension;
 import java.awt.Component;
+import java.awt.Graphics;
 
 
-public class LabelSized extends JTextArea implements ComponentListener{
+public class LabelSized extends JTextArea {
 
-	private final Component fenetre;
-	public LabelSized(String label, Component listened){
+	private final Fenetre fenetre;
+	public LabelSized(String label, Fenetre parent){
 		super(label,10,1);
 		this.setLineWrap(true);
 		this.setWrapStyleWord(true);
 		this.setEditable(false);
 		this.setVisible(true);
-		this.fenetre=listened;
-		this.setMinimumSize(new Dimension(4*fenetre.getWidth()/10,5));
-		this.setMaximumSize(new Dimension(4*fenetre.getWidth()/10,fenetre.getHeight()));
-		listened.addComponentListener(this);
+		this.fenetre=parent;
 	}
-	public void componentResized(ComponentEvent evt){
-		this.setMinimumSize(new Dimension(4*fenetre.getWidth()/10,5));
-		this.setMaximumSize(new Dimension(4*fenetre.getWidth()/10,fenetre.getHeight()));
-	}
-	public void componentHidden(ComponentEvent evt){}
-	public void componentShown(ComponentEvent evt){}
-	public void componentMoved(ComponentEvent evt){}
 
+	@Override
+	public void paintComponent(Graphics g){
+		super.paintComponent(g);
+		this.setMinimumSize(new Dimension(4*fenetre.getWidth()/10,5));
+		this.setMaximumSize(new Dimension(4*fenetre.getWidth()/10,fenetre.getHeight()));
+	}
 }

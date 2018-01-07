@@ -175,7 +175,7 @@ public abstract class Jeu implements Serializable,Iterable<Joueur> {
 		return joueurEnTrainDeJouer().toString();
 	}
 
-	private Joueur getJoueur(int i){
+	public Joueur getJoueur(int i){
 		return joueurs[i];
 	}
 

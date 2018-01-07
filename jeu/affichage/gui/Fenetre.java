@@ -179,7 +179,7 @@ public class Fenetre extends JFrame{
 		b.add(jr3);
 
 		JRadioButton jr4=new JRadioButton("Colonne",aff==COLONNE);
-		jr.addActionListener( event -> {
+		jr4.addActionListener( event -> {
 			if (jr4.isSelected())
 				setAffichagePlateau(COLONNE);
 		});
@@ -198,7 +198,6 @@ public class Fenetre extends JFrame{
 		if (affichage.sauvegarde){
 			charger=new JPanelUp(this){
 				public void goTo(){
-					Fenetre.this.setSize(parent.getHeight()*129/92,parent.getHeight());
 					Fenetre.this.setMinimumSize(new Dimension(387,276));
 
 					this.removeAll();

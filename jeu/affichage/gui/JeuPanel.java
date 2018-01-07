@@ -30,6 +30,7 @@ import javax.swing.Box;
 import javax.swing.JLabel;
 import javax.swing.JButton;
 import javax.swing.SwingConstants;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.ScrollPaneLayout;
 import javax.swing.ScrollPaneConstants;
@@ -42,11 +43,7 @@ import java.awt.Image;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-
-
-public class JeuPanel extends JSplitPane implements JeuModifiedStateListener, ComponentListener{
+public class JeuPanel extends JSplitPane implements JeuModifiedStateListener{
 
 	private JPanel plateauIn;
 	private JLabel tourLabel;
@@ -147,6 +144,8 @@ public class JeuPanel extends JSplitPane implements JeuModifiedStateListener, Co
 				parent.display("Entrée invalide !");
 			jeu.jouer();
 
+			paintPawns();
+
 			if (!jeu.estFini()){
 				de.setEnabled(true);
 				joueurLabel.setText(jeu.joueurEnTrainDeJouer().toString());
@@ -163,7 +162,6 @@ public class JeuPanel extends JSplitPane implements JeuModifiedStateListener, Co
 		this.setDividerLocation(165);
 		this.parent=parent;
 		formerWidth=parent.getWidth();
-		parent.addComponentListener(this);
 	}
 
 	public void modifiedState(Jeu jeu){ // appelée lorsque le jeu est modifié : une partie a été chargée ou créée
@@ -230,10 +228,13 @@ public class JeuPanel extends JSplitPane implements JeuModifiedStateListener, Co
 			ArrayList<CasePanel> tmp2=new ArrayList<CasePanel>();
 			n=1;
 			for (Case c : jeu.getPlateau()){
-				tmp2.add(new CasePanel(c.toString(),n));
+				tmp2.add(new CasePanel(c,n,jeu.getCase(c.getCase())+1));
 				n++;
 			}
 			cases=new CopyOnWriteArrayList<CasePanel>(tmp2);
+
+			remplirPlateau();
+			paintPawns();
 		}
 	}
 
@@ -241,11 +242,7 @@ public class JeuPanel extends JSplitPane implements JeuModifiedStateListener, Co
 	private CopyOnWriteArrayList<CasePanel> cases; // propre à chaque jeu, contient la liste des cases du plateau du jeu
 
 	public void goTo(){
-		parent.setSize(parent.getHeight()*129/92,parent.getHeight());
 		parent.setMinimumSize(new Dimension(1161,828));
-
-		remplirPlateau();
-		paintPawns();
 	}
 
 	private AffichagePlateau affichagePlateau;
@@ -270,18 +267,49 @@ public class JeuPanel extends JSplitPane implements JeuModifiedStateListener, Co
 				break;
 		}
 		parent.setAffichagePlateau(aff);
+		if (affichage.getJeu()!=null){
+			remplirPlateau();
+		}
 	}
 
 	private void paintPawns(){
-		//TODO
-		// positionne les pions sur le plateau
+		// utiliser joueursLabels qui contient les icones des joueurs
+		// utiliser cases qui contient la liste des casePanel pour les positionner
+		Jeu jeu=affichage.getJeu();
+		Plateau plateau=jeu.getPlateau();
+		int[] nb=new int[plateau.size()];
+
+//		plateauIn.repaint();
+
+		for (Joueur j : jeu){
+			for (Case c : j){
+				nb[plateau.getCase(c)]++;
+			}
+		}
+
+		int nombrePionsParJoueur=jeu.getJoueur(0).getNombrePions();
+		for (Joueur j : jeu){
+			Image i=((ImageIcon)getIcon(joueursLabels,j.toString())).getImage();
+			for (Case c : j){
+				CasePanel cp=cases.get(plateau.getCase(c));
+				cp.getGraphics().drawImage(i,0,0,cp.getWidth()/2,cp.getWidth()/2,null);
+			}
+		}
+	}
+
+	private Icon getIcon (CopyOnWriteArrayList<JLabel> liste, String s){
+		for (JLabel jl : liste){
+			if (jl.getText().equals(s))
+				return jl.getIcon();
+		}
+		return null;
 	}
 
 
 	class AffichagePlateauSpiraleGUI implements AffichagePlateau{
 		@Override
 		public void afficher(){
-/*			int taille=plateau.size();
+		/*	int taille=plateau.size();
 			int l=NOMBRE_CASE_LARGEUR;
 			int h=(taille/l)+1;
 
@@ -409,7 +437,6 @@ public class JeuPanel extends JSplitPane implements JeuModifiedStateListener, Co
 			for (CasePanel cp : cases){
 				plateauIn.add(cp);
 			}
-//plateauIn.repaint();
 		}
 
 		@Override
@@ -424,10 +451,23 @@ public class JeuPanel extends JSplitPane implements JeuModifiedStateListener, Co
 			plateauIn.removeAll();
 			plateauIn.revalidate();
 
-			plateauIn.setLayout(new GridLayout(cases.size(),1));
+			GridBagConstraints constraints=new GridBagConstraints();
+			constraints.weightx = 1;
+			constraints.weighty = 0;
+			constraints.gridx = 0;
+			constraints.gridy = 0;
+			constraints.fill = constraints.BOTH;
+			Box boite=Box.createVerticalBox();
+			plateauIn.setLayout(new GridBagLayout());
+			plateauIn.add(boite,constraints);
 			for (CasePanel cp : cases){
-				plateauIn.add(cp);
+				cp.setPreferredSize(new Dimension(CasePanel.MINIMUM,CasePanel.MINIMUM));
+				cp.setMaximumSize(new Dimension(CasePanel.MINIMUM,CasePanel.MINIMUM));
+				boite.add(Box.createHorizontalBox().add(cp));
 			}
+			plateauIn.setMinimumSize(new Dimension(CasePanel.MINIMUM,affichage.getJeu().getPlateau().size()*CasePanel.MINIMUM));
+			plateauIn.setPreferredSize(new Dimension(CasePanel.MINIMUM,affichage.getJeu().getPlateau().size()*CasePanel.MINIMUM));
+			plateauIn.setMaximumSize(new Dimension(CasePanel.MINIMUM,affichage.getJeu().getPlateau().size()*CasePanel.MINIMUM));
 		}
 
 		@Override
@@ -488,24 +528,13 @@ public class JeuPanel extends JSplitPane implements JeuModifiedStateListener, Co
 	    	desImage2.setIcon(null);
     }
 
-	public void componentResized(ComponentEvent evt){
-		if (parent.estAffiche(this)){
-			int width=parent.getWidth();
-			int height=parent.getHeight();
 
-			joueursListe.setMaximumSize(new Dimension(140,height-200));
-			joueursListe.setMinimumSize(new Dimension(140,((height-200>jeu.nombreDeJoueurs*140)?jeu.nombreDeJoueurs*140:height-200)));
-
-			if (width==formerWidth){ // changement vertical
-				parent.setSize(height*129/92,height);
-			}else{ // changement horizontal
-				parent.setSize(width,width*92/129);
-			}
-			formerWidth=parent.getWidth();
-		}
-	}
-	public void componentShown(ComponentEvent evt){}
-	public void componentHidden(ComponentEvent evt){}
-	public void componentMoved(ComponentEvent evt){}
-
+	@Override
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		setSize(new Dimension(parent.getWidth(),parent.getHeight()));
+/*		if (parent.estAffiche(this)){
+			paintPawns();
+		} */
+	} 
 }

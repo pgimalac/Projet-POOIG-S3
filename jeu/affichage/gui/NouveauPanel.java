@@ -41,8 +41,7 @@ public class NouveauPanel extends JPanelUp{
 		this.removeAll();
 		this.revalidate();
 
-		super.parent.setMinimumSize(new Dimension(781,557));
-
+		super.parent.setMinimumSize(new Dimension(900,630));
 		// on affiche les deux choix possibles :
 		this.setLayout(new GridBagLayout());
 		Box page=Box.createVerticalBox();
