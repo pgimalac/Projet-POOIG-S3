@@ -161,7 +161,6 @@ public class JeuPanel extends JSplitPane implements JeuModifiedStateListener{
 			}
 		});
 
-
 		this.setDividerLocation(165);
 		this.parent=parent;
 		formerWidth=parent.getWidth();
@@ -246,6 +245,7 @@ public class JeuPanel extends JSplitPane implements JeuModifiedStateListener{
 
 	public void goTo(){
 		parent.setMinimumSize(new Dimension(1161,828));
+		parent.getRootPane().setDefaultButton(de);
 	}
 
 	private AffichagePlateau affichagePlateau;

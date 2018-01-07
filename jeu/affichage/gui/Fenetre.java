@@ -98,9 +98,12 @@ public class Fenetre extends JFrame{
 		nouveau=new NouveauPanel(affichage,this);
 
 	/* PAGE DE PARAMETRES */
+		ButtonUp menuButton=new ButtonUp("MENU",true,true,event -> fireGoToMenu());
 		parametres=new JPanelUp(this){
 			public void goTo(){
 				Fenetre.this.setMinimumSize(new Dimension(622,444));
+				super.parent.getRootPane().setDefaultButton(menuButton);
+
 			}
 		};
 		parametres.setLayout(new GridBagLayout());
@@ -186,7 +189,6 @@ public class Fenetre extends JFrame{
 		bg.add(jr4);
 		b.add(jr4);
 
-		ButtonUp menuButton=new ButtonUp("MENU",true,true,event -> fireGoToMenu());
 		boite.add(Box.createRigidArea(new Dimension(5,10)));
 		box1=Box.createHorizontalBox();
 		box1.add(menuButton);

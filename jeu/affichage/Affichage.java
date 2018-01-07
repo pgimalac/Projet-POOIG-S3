@@ -34,7 +34,7 @@ public abstract class Affichage implements Serializable,GameListener{
 
 	{
 		sauvegardes=new File(CHEMIN_SAUVEGARDE);
-		if (!sauvegardes.exists() || !sauvegardes.isDirectory()) display("Sauvegarde ou chargement de sauvegarde impossible.");
+		if (!sauvegardes.exists() || !sauvegardes.isDirectory()) 	display("Sauvegarde ou chargement de sauvegarde impossible.");
 		else if (!sauvegardes.canWrite() || !sauvegardes.canRead()) display("Droits manquants sur le dossier de sauvegarde pour charger et sauvegarder des parties.");
 		sauvegarde=sauvegardes.exists() && sauvegardes.isDirectory() && sauvegardes.canWrite() && sauvegardes.canRead();
 		jeu=null;

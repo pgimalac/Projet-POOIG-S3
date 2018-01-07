@@ -5,6 +5,8 @@ import jeu.plateau.cases.Case;
 
 import java.awt.Image;
 import java.awt.Graphics;
+import java.awt.Font;
+import java.awt.Color;
 
 public class PionG{
 
@@ -44,7 +46,10 @@ public class PionG{
 
 	public void paint(Graphics g, int x, int y, int size){
 		g.drawImage(image,x,y,size,size,null);
-		if (affNum)
-			g.drawString(""+num,x+size/2,y+size/2);
+		if (affNum){
+			g.setFont(new Font("Arial", Font.BOLD, size/2)); 
+			g.setColor(Color.BLACK);
+			g.drawString(""+(num+1),x+size/3,y+2*size/3);
+		}
 	}
 }

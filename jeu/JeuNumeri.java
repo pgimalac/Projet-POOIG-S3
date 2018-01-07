@@ -130,7 +130,6 @@ public class JeuNumeri extends Jeu{
 	@Override
 	public int lancerDes(){
 		int option=super.getOption(OptionFaceSuppNumeri.class).getIntValue();
-		int d=-1;
 		switch (option){
 			case 0:
 				super.setDes(super.des.nextInt(6)+1);
@@ -138,7 +137,7 @@ public class JeuNumeri extends Jeu{
 			case 1:
 				do{
 					super.setDes(super.des.nextInt(7));
-				}while(d==0 && !unPionPeutReculer(joueurEnTrainDeJouer()));
+				}while(super.getDes()==0 && !unPionPeutReculer(joueurEnTrainDeJouer()));
 				break;
 			default:
 				throw new WrongOptionException(OptionFaceSuppNumeri.class,option);
@@ -189,8 +188,9 @@ public class JeuNumeri extends Jeu{
 				int optionAli=super.getOption(OptionAlignementNumeri.class).getIntValue();
 				switch(optionAli){
 					case 1 : 
-						if (pionsAlignes(joueur))
-							break;
+						if (!pionsAlignes(joueur))
+							super.joueurSuivant();
+						break;
 					case 0 :
 						super.joueurSuivant();
 						break;
@@ -216,18 +216,20 @@ public class JeuNumeri extends Jeu{
 	}
 
 	private boolean pionsAlignes(Joueur joueur){
-		for(int i=0;i<6;i++){
-			if(casesAutour(joueur.getCase(i),joueur)) return true;
+		for(Case c : joueur){
+			if(casesAutour(c,joueur)) return true;
 		}
 		return false;
 	}
 
 	private boolean casesAutour(Case c, Joueur j){
+		if (getCase(c)==0 || getCase(c)==1)
+			return false;
 		boolean avant=false;
 		boolean apres=false;
-		for (int i=0;i<6;i++ ) {
-			if(getCase(j.getCase(i))==getCase(c)-1) avant=true;
-			if(getCase(j.getCase(i))==getCase(c)+1) apres=true;			
+		for (Case cc : j) {
+			if(getCase(cc)==getCase(c)-1) avant=true;
+			if(getCase(cc)==getCase(c)+1) apres=true;
 		}
 		return (avant && apres);
 	}
@@ -244,7 +246,6 @@ public class JeuNumeri extends Jeu{
 	public boolean peutJouer(Joueur joueur){
 		return true;
 	}
-
 
 	@Override
 	public boolean estFini(){

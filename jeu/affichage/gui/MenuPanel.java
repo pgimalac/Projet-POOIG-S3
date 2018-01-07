@@ -65,4 +65,10 @@ public class MenuPanel extends JPanelUp implements JeuModifiedStateListener{
 		quitter=new ButtonUp("Quitter",true,true, event -> System.exit(0));
 		quitter.addToBox(box,false,5,5);
 	}
+
+	@Override
+	public void goTo(){
+		super.goTo();
+		super.parent.getRootPane().setDefaultButton(nouveau);
+	}
 }

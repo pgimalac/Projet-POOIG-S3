@@ -27,6 +27,8 @@ import jeu.plateau.cases.Case;
 import java.util.ArrayList;
 import java.util.EventListener;
 
+import javax.swing.JOptionPane;
+
 public class AffichageGUI extends Affichage implements GameOverListener,CannotPlayListener,PlayListener,DesValueListener{
 
 	public void afficher(){}
@@ -50,7 +52,7 @@ public class AffichageGUI extends Affichage implements GameOverListener,CannotPl
 
 	@Override
 	protected void display(String s){
-		fenetre.display(s);
+		javax.swing.SwingUtilities.invokeLater( () -> JOptionPane.showMessageDialog(null,s,"Information",JOptionPane.INFORMATION_MESSAGE));
 	}
 
 	@Override

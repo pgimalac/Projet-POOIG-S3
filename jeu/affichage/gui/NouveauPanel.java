@@ -41,6 +41,7 @@ public class NouveauPanel extends JPanelUp{
 		this.removeAll();
 		this.revalidate();
 
+
 		super.parent.setMinimumSize(new Dimension(900,630));
 		// on affiche les deux choix possibles :
 		this.setLayout(new GridBagLayout());
@@ -96,6 +97,7 @@ public class NouveauPanel extends JPanelUp{
 
 		page.add(descriptions);
 
+		super.parent.getRootPane().setDefaultButton(oie);
 		this.repaint();
 	}
 
@@ -188,7 +190,7 @@ public class NouveauPanel extends JPanelUp{
 		boutons.add(tmp);
 		box.add(boutons);
 
-
+		super.parent.getRootPane().setDefaultButton(add);
 		checkValid(min,max);
 		this.repaint();
 	}
@@ -269,9 +271,11 @@ public class NouveauPanel extends JPanelUp{
 		boutons.add(tmp);
 		boutons.add(Box.createRigidArea(new Dimension(20,5)));
 		tmp=Box.createVerticalBox();
-		tmp.add(new ButtonUp("Créer la partie",true,true, event -> { affichage.setJeu(jeu); super.parent.fireGoToJeu(); }));
+		ButtonUp creer=new ButtonUp("Créer la partie",true,true, event -> { affichage.setJeu(jeu); super.parent.fireGoToJeu(); } );
+		tmp.add(creer);
 		boutons.add(tmp);
 
+		super.parent.getRootPane().setDefaultButton(creer);
 		this.repaint();
 	}
 }
