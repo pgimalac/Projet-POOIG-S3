@@ -34,13 +34,14 @@ public class CasePanel extends JPanel implements Iterable<PionG>{
 	public CasePanel(Case c, int numero, int numeroBis){
 		super();
 		this.c=c;
+		setOpaque(false);
 		pions=new CopyOnWriteArrayList<PionG>();
 		String nom=c.toString();
 		this.numero=numero;
 		setMinimumSize(new Dimension(MINIMUM,MINIMUM));
-		if (nom.startsWith("score(")){
-			score=Integer.parseInt(nom.substring(6,nom.length()-1));
+		if (nom.startsWith("score")){
 			affScore=true;
+			score=numeroBis;
 			Random rand=new Random();
 			int n=rand.nextInt(9)+1;
 			background=(new ImageIcon("assets/cases/nature"+n+".png")).getImage();

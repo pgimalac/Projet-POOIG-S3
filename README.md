@@ -37,6 +37,5 @@ Néanmoins, rien n'est garanti !
 - [ ] petits chevaux
 
 
-## Fonctionnement théorique du programme final
+## Lancement du programme
 Pour lancer le programme il faut faire "java Jouer gui" (après avoir compilé les fichiers).
-Fonctionnement à décrire.

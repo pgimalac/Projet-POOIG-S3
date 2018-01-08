@@ -38,19 +38,21 @@ public class JPanelUp extends JPanel{
 
 	@Override
 	public void paintComponent(Graphics g) {
-		super.paintComponent(g);
-		setSize(new Dimension(parent.getWidth(),parent.getHeight()));
-		int w = 129;
-		int h = 92;
-		if (getWidth() > w) {
-			h = h*getWidth() / w;
-			w = getWidth();
-		}
-		if (getHeight() > h) {
-			w =w* getHeight() / h;
-			h = getHeight();
-		}
+		if (parent.estAffiche(this)){
+			super.paintComponent(g);
+			setSize(new Dimension(parent.getWidth(),parent.getHeight()));
+			int w = 129;
+			int h = 92;
+			if (getWidth() > w) {
+				h = h*getWidth() / w;
+				w = getWidth();
+			}
+			if (getHeight() > h) {
+				w =w* getHeight() / h;
+				h = getHeight();
+			}
 
-		g.drawImage(img, getWidth()/2-w/2, getHeight()/2-h/2, w, h, this);
+			g.drawImage(img, getWidth()/2-w/2, getHeight()/2-h/2, w, h, this);
+		}
 	}
 }

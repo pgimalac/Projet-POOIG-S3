@@ -45,6 +45,14 @@ import java.awt.Image;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 
+import java.awt.image.BufferedImage;
+
+import javax.imageio.ImageIO;
+
+import java.io.File;
+import java.io.IOException;
+
+
 public class JeuPanel extends JSplitPane implements JeuModifiedStateListener{
 
 	private JPanel plateauIn;
@@ -63,8 +71,6 @@ public class JeuPanel extends JSplitPane implements JeuModifiedStateListener{
 	private int formerWidth;	
 	private int numTour;
 
-	private Jeu jeu;
-
 	public JeuPanel(Affichage affichage, Fenetre parent){
 		super(JSplitPane.HORIZONTAL_SPLIT);
 
@@ -72,6 +78,8 @@ public class JeuPanel extends JSplitPane implements JeuModifiedStateListener{
 		this.affichage=affichage;
 
 		plateau=new JScrollPane(plateauIn,ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		plateau.setOpaque(false);
+		plateauIn.setOpaque(false);
 		JPanel infos=new JPanel();
 
 		addImpl(infos,JSplitPane.LEFT,1);
@@ -119,15 +127,18 @@ public class JeuPanel extends JSplitPane implements JeuModifiedStateListener{
 		/* IMAGES DES */	
 		JPanel desImages=new JPanel();
 		desImages.setMinimumSize(new Dimension(160,80));
+		desImages.setPreferredSize(new Dimension(160,80));
 		desImages.setMaximumSize(new Dimension(160,80));
 		desImages.setLayout(new GridLayout(1,2));
 		desImage1=new JLabel();
 		desImages.add(desImage1);
 		desImage1.setMinimumSize(new Dimension(80,80));
+		desImage1.setPreferredSize(new Dimension(80,80));
 		desImage1.setMaximumSize(new Dimension(80,80));
 		desImage2=new JLabel();
 		desImages.add(desImage2);
 		desImage2.setMinimumSize(new Dimension(80,80));
+		desImage2.setPreferredSize(new Dimension(80,80));
 		desImage2.setMaximumSize(new Dimension(80,80));
 
 		/* BOUTON DES */
@@ -148,6 +159,7 @@ public class JeuPanel extends JSplitPane implements JeuModifiedStateListener{
 			jeu.jouer();
 
 			rePaintPawns();
+			paintScores();
 
 			if (!jeu.estFini()){
 				de.setEnabled(true);
@@ -159,6 +171,7 @@ public class JeuPanel extends JSplitPane implements JeuModifiedStateListener{
 						parent.display("Positions des joueurs :\n"+getPositions());
 				}
 			}
+			paintScores();
 		});
 
 		this.setDividerLocation(165);
@@ -167,8 +180,6 @@ public class JeuPanel extends JSplitPane implements JeuModifiedStateListener{
 	}
 
 	public void modifiedState(Jeu jeu){ // appelée lorsque le jeu est modifié : une partie a été chargée ou créée
-		this.jeu=jeu;
-
 		desImage1.setIcon(null);
 		desImage2.setIcon(null);
 
@@ -190,6 +201,7 @@ public class JeuPanel extends JSplitPane implements JeuModifiedStateListener{
 			// on affiche la liste des joueurs
 			liste.setLayout(new GridBagLayout());
 			Box boite=Box.createVerticalBox();
+			boite.setOpaque(false);
 			GridBagConstraints constraints=new GridBagConstraints();
 			constraints.weightx = 1;
 			constraints.weighty = 0;
@@ -230,18 +242,35 @@ public class JeuPanel extends JSplitPane implements JeuModifiedStateListener{
 			ArrayList<CasePanel> tmp2=new ArrayList<CasePanel>();
 			n=1;
 			for (Case c : jeu.getPlateau()){
-				tmp2.add(new CasePanel(c,n,jeu.getCase(c.getCase())+1));
+				int i;
+				if (c.getScore()!=0)
+					i=c.getScore();
+				else if (c.getCase()==null){
+					i=1;
+				}else{
+					i=jeu.getCase(c.getCase())+1;
+				}
+				tmp2.add(new CasePanel(c,n,i));
 				n++;
 			}
 			cases=new CopyOnWriteArrayList<CasePanel>(tmp2);
 
 			remplirPlateau();
 			paintPawns();
+			paintScores();
 		}
 	}
 
 	private CopyOnWriteArrayList<JLabel> joueursLabels;
 	private CopyOnWriteArrayList<CasePanel> cases; // propre à chaque jeu, contient la liste des cases du plateau du jeu
+
+	private void paintScores(){
+		int n=0;
+		for (Joueur joueur : affichage.getJeu()){
+			joueursLabels.get(n).setText(joueur.toString()+" ("+joueur.getScore()+")");
+			n++;
+		}
+	}
 
 	public void goTo(){
 		parent.setMinimumSize(new Dimension(1161,828));
@@ -586,10 +615,6 @@ public class JeuPanel extends JSplitPane implements JeuModifiedStateListener{
 	}
 
 
-
-
-
-
 	public void gameOver(GameOverEvent e) {
 		de.setEnabled(false);
 		parent.display("Partie finie ! "+e.toString()+"\n"+e.getClassement());
@@ -640,7 +665,9 @@ public class JeuPanel extends JSplitPane implements JeuModifiedStateListener{
 
 	@Override
 	public void paintComponent(Graphics g) {
-		super.paintComponent(g);
-		setSize(new Dimension(parent.getWidth(),parent.getHeight()));
+		if (parent.estAffiche(this)){
+			super.paintComponent(g);
+			setSize(new Dimension(parent.getWidth(),parent.getHeight()));
+		}
 	} 
 }
