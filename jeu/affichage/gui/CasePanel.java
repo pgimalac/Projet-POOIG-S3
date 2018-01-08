@@ -31,6 +31,8 @@ public class CasePanel extends JPanel implements Iterable<PionG>{
 
 	private final Case c;
 
+	public static final int NATURE_NUMBER=11;
+
 	public CasePanel(Case c, int numero, int numeroBis){
 		super();
 		this.c=c;
@@ -43,11 +45,11 @@ public class CasePanel extends JPanel implements Iterable<PionG>{
 			affScore=true;
 			score=numeroBis;
 			Random rand=new Random();
-			int n=rand.nextInt(9)+1;
+			int n=rand.nextInt(NATURE_NUMBER)+1;
 			background=(new ImageIcon("assets/cases/nature"+n+".png")).getImage();
 		}else if (nom.equals("normale")){
 			Random rand=new Random();
-			int n=rand.nextInt(9)+1;
+			int n=rand.nextInt(NATURE_NUMBER)+1;
 			affScore=false;
 			score=0;
 			background=(new ImageIcon("assets/cases/nature"+n+".png")).getImage();
