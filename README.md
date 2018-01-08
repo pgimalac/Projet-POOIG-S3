@@ -22,18 +22,18 @@ Néanmoins, rien n'est garanti !
 - [x] faire les pages de création de partie
 - [x] faire l'affichage des crédits
 - [x] faire la page de chargement de partie
-- [ ] faire la page de jeu (affichage du plateau,...)
-- [ ] finir l'affichage graphique
-- [ ] finir de programmer
-- [ ] représenter la hierarchie des classes et leurs interactions avec UML (ou autre)
-- [ ] ecrire le rapport
+- [x] faire la page de jeu (affichage du plateau,...)
+- [x] finir l'affichage graphique
+- [x] finir de programmer
+- [x] représenter la hierarchie des classes et leurs interactions avec UML (ou autre)
+- [x] ecrire le rapport
 
 #### optionnel
 - [x] possibilité de sauvegarder / de charger une partie
 - [ ] mettre une visibilité minimale sur chaque variable, méthode, classe,...
 
 #### vraiment très très optionnel (impossible que j'ai le temps de le faire)
-- [ ] création interactive du jeu (options, plateau,...)
+- [ ] création interactive du jeu (plateau,...)
 - [ ] petits chevaux
 
 
