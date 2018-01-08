@@ -79,6 +79,7 @@ public class CaseHotel extends Case{
 	public CaseHotel(int temps){
 		super();
 		hotel=new Hotel();
+		this.TOURS_A_PASSER=temps;
 	}
 
 	@Override
