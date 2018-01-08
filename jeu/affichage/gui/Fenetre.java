@@ -150,7 +150,7 @@ public class Fenetre extends JFrame{
 		JLabel j=new JLabel("Type d'affichage du plateau");
 		b.add(j);
 
-		setAffichagePlateau(RECTANGLE);
+		setAffichagePlateau(SPIRALE);
 		ButtonGroup bg=new ButtonGroup();
 
 		JRadioButton jr=new JRadioButton("Spirale",aff==SPIRALE);
