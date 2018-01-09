@@ -13,11 +13,13 @@ Les fichiers sont rangés dans des dossiers (qui sont aussi les packages et sous
 Ci-dessous se trouve l'architecture du projet :
 (merci à Maxime Flin qui m'a fait découvrir dans son README les caractères pour représenter cette architecture)
 
+```
+.
 ├── assets      							  Images utilisées dans le projet
-├── README.md
 ├── sauvegardes								  Dossier contenant les sauvegardes du jeu
 ├── Jouer.java                                Classe principale du projet
 ├── fichiers.txt                              Liste des fichiers .java
+├── README.md
 └── jeu
     ├── affichage                             Vue     
     │   ├── Affichage.java                    Parties communes des affichages
@@ -82,6 +84,7 @@ Ci-dessous se trouve l'architecture du projet :
     ├── JeuOie.java                           Jeu de l'oie           
     ├── JeuNumeri.java                        Jeu de numéri              
     └── Joueur.java                                  
+```
 
 #### Fichiers à regarder
 - Le fichier *Jouer.java* est le fichier à executer, il ne contient qu'un bloc main et lance une des deux interfaces possibles du programme.
