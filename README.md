@@ -15,8 +15,8 @@ Ci-dessous se trouve l'architecture du projet :
 
 ```
 .
-├── assets      							  Images utilisées dans le projet
-├── sauvegardes								  Dossier contenant les sauvegardes du jeu
+├── assets                                    Images utilisées dans le projet
+├── sauvegardes                               Dossier contenant les sauvegardes du jeu
 ├── Jouer.java                                Classe principale du projet
 ├── fichiers.txt                              Liste des fichiers .java
 ├── README.md
