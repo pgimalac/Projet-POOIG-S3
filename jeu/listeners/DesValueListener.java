@@ -1,5 +1,5 @@
 package jeu.listeners;
 
-public interface DesValueListener extends GameListener{
-	public void changeDesValue(int[] d);
+public interface DesValueListener extends GameListener {
+    public void changeDesValue(int[] d);
 }

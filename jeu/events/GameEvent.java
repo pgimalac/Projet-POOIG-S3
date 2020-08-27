@@ -1,11 +1,8 @@
 package jeu.events;
 
+import java.util.EventObject;
 import jeu.Jeu;
 
-import java.util.EventObject;
-
-public class GameEvent extends EventObject{
-	public GameEvent(Jeu jeu){
-		super(jeu);
-	}
+public class GameEvent extends EventObject {
+    public GameEvent(Jeu jeu) { super(jeu); }
 }

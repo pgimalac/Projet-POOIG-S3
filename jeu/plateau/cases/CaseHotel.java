@@ -1,110 +1,105 @@
 package jeu.plateau.cases;
 
+import java.io.Serializable;
+import java.util.concurrent.CopyOnWriteArrayList;
 import jeu.Joueur;
 
-import java.util.concurrent.CopyOnWriteArrayList;
-
-import java.io.Serializable;
-
 /**
- *	
+ *
  */
 
-public class CaseHotel extends Case{
+public class CaseHotel extends Case {
 
-	/**
-	 * 
-	 */
-	
-	private static final long serialVersionUID = -7025272972861574181L;
+    /**
+     *
+     */
 
-	private Hotel hotel;
-	private int TOURS_A_PASSER;
+    private static final long serialVersionUID = -7025272972861574181L;
 
-	private class Hotel implements Serializable{
-		private CopyOnWriteArrayList<Chambre> chambres;
+    private Hotel hotel;
+    private int TOURS_A_PASSER;
 
-		Hotel(){
-			chambres=new CopyOnWriteArrayList<Chambre>();
-		}
+    private class Hotel implements Serializable {
+        private CopyOnWriteArrayList<Chambre> chambres;
 
-		public void unTourPasse(){
-			for (Chambre chambre : chambres){
-				chambre.unTourPasse();
-				if (chambre.getTime()==-1)
-					chambres.remove(chambre);
-			}
-		}
+        Hotel() { chambres = new CopyOnWriteArrayList<Chambre>(); }
 
-		public boolean contains(Joueur joueur){
-			for (Chambre chambre : chambres){
-				if (chambre.contains(joueur))
-					return true;
-			}
-			return false;
-		}
+        public void unTourPasse() {
+            for (Chambre chambre : chambres) {
+                chambre.unTourPasse();
+                if (chambre.getTime() == -1)
+                    chambres.remove(chambre);
+            }
+        }
 
-		public void add(Joueur joueur){
-			chambres.add(new Chambre(joueur,TOURS_A_PASSER));
-		}
+        public boolean contains(Joueur joueur) {
+            for (Chambre chambre : chambres) {
+                if (chambre.contains(joueur))
+                    return true;
+            }
+            return false;
+        }
 
-		private class Chambre implements Serializable{ // couple joueur-entier (je trouvais ça plus sympa de faire une classe chambre et une classe hotel que d'utiliser map ^^)
-			private Joueur joueur;
-			private int temps;
+        public void add(Joueur joueur) {
+            chambres.add(new Chambre(joueur, TOURS_A_PASSER));
+        }
 
-			Chambre(Joueur joueur, int temps){
-				this.joueur=joueur;
-				this.temps=temps;
-			}
+        private class Chambre
+            implements Serializable { // couple joueur-entier (je trouvais ça
+                                      // plus sympa de faire une classe chambre
+                                      // et une classe hotel que d'utiliser map
+                                      // ^^)
+            private Joueur joueur;
+            private int temps;
 
-			public int unTourPasse(){
-				temps--;
-				return temps;
-			}
+            Chambre(Joueur joueur, int temps) {
+                this.joueur = joueur;
+                this.temps = temps;
+            }
 
-			public boolean contains(Joueur joueur){
-				return this.joueur==joueur;
-			}
+            public int unTourPasse() {
+                temps--;
+                return temps;
+            }
 
-			public int getTime(){
-				return temps;
-			}
-		}
-	}
-	
-	public CaseHotel(){
-		this(2);
-	}
+            public boolean contains(Joueur joueur) {
+                return this.joueur == joueur;
+            }
 
-	public CaseHotel(int temps){
-		super();
-		hotel=new Hotel();
-		this.TOURS_A_PASSER=temps;
-	}
+            public int getTime() { return temps; }
+        }
+    }
 
-	@Override
-	public void arriveSurCase(Joueur j){
-		hotel.add(j);
-	}
+    public CaseHotel() { this(2); }
 
-	@Override
-	public boolean peutJouer(Joueur j){
-		return !hotel.contains(j);
-	}
+    public CaseHotel(int temps) {
+        super();
+        hotel = new Hotel();
+        this.TOURS_A_PASSER = temps;
+    }
 
-	@Override
-	public String toString(){
-		return "hôtel";
-	}
+    @Override
+    public void arriveSurCase(Joueur j) {
+        hotel.add(j);
+    }
 
-	@Override
-	public void unTourPasse(){
-		hotel.unTourPasse();
-	}
+    @Override
+    public boolean peutJouer(Joueur j) {
+        return !hotel.contains(j);
+    }
 
-	@Override
-	public void recommencer(){
-		hotel=new Hotel();
-	}
+    @Override
+    public String toString() {
+        return "hôtel";
+    }
 
+    @Override
+    public void unTourPasse() {
+        hotel.unTourPasse();
+    }
+
+    @Override
+    public void recommencer() {
+        hotel = new Hotel();
+    }
 }

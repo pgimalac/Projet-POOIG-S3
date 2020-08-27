@@ -3,32 +3,30 @@ package jeu.plateau.cases;
 import jeu.Joueur;
 
 /**
- *	
+ *
  */
 
-public class CaseLabyrinthe extends Case{
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -7985409714027022714L;
-	
-	private Case destination;
+public class CaseLabyrinthe extends Case {
 
-	public CaseLabyrinthe(Case c){
-		super();
-		destination=c;
-	}
+    /**
+     *
+     */
+    private static final long serialVersionUID = -7985409714027022714L;
 
-	@Override
-	public Case getCase(){
-		return destination;
-	}
+    private Case destination;
 
-	@Override
-	public String toString(){
-		return "labyrinthe";
-	}
+    public CaseLabyrinthe(Case c) {
+        super();
+        destination = c;
+    }
 
+    @Override
+    public Case getCase() {
+        return destination;
+    }
 
+    @Override
+    public String toString() {
+        return "labyrinthe";
+    }
 }
